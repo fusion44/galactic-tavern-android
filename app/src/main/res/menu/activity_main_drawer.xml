@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_comm_link"
+            android:icon="@drawable/ic_comm_link_black_24dp"
+            android:title="Comm-link" />
+        <item
+            android:id="@+id/nav_ships"
+            android:icon="@drawable/ic_near_me_black_24dp"
+            android:title="Ships" />
+        <item
+            android:id="@+id/nav_users"
+            android:icon="@drawable/ic_group_black_24dp"
+            android:title="Users" />
+        <item
+            android:id="@+id/nav_forums"
+            android:icon="@drawable/ic_comment_black_24dp"
+            android:title="Forums" />
+        <item
+            android:id="@+id/nav_orgs"
+            android:icon="@drawable/ic_location_city_black_24dp"
+            android:title="Organizations" />
+    </group>
+
+    <item android:title="Personal">
+        <menu>
+            <item
+                android:id="@+id/nav_favorites"
+                android:icon="@drawable/ic_star_black_24dp"
+                android:title="Favorites" />
+            <item
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_settings_black_24dp"
+                android:title="Settings" />
+
+        </menu>
+    </item>
+
+</menu>
