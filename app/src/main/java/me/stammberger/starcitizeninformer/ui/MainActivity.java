@@ -1,4 +1,4 @@
-package me.stammberger.starcitizeninformer;
+package me.stammberger.starcitizeninformer.ui;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -16,13 +16,14 @@ import com.hardsoftstudio.rxflux.action.RxError;
 import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
 import com.hardsoftstudio.rxflux.dispatcher.RxViewDispatch;
 import com.hardsoftstudio.rxflux.store.RxStoreChange;
-import com.pkmmte.pkrss.Article;
 
 import java.util.ArrayList;
 
+import me.stammberger.starcitizeninformer.R;
+import me.stammberger.starcitizeninformer.SciApplication;
 import me.stammberger.starcitizeninformer.actions.Actions;
+import me.stammberger.starcitizeninformer.models.CommLinkModel;
 import me.stammberger.starcitizeninformer.stores.CommLinkStore;
-import me.stammberger.starcitizeninformer.ui.CommLinkListFragment;
 import timber.log.Timber;
 
 
@@ -105,7 +106,7 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_comm_link) {
             // Check if the store has the articles already loaded
-            ArrayList<Article> commLinks = mCommLinkStore.getCommLinks();
+            ArrayList<CommLinkModel> commLinks = mCommLinkStore.getCommLinks();
             if (commLinks.size() == 0) {
                 // if not, instruct the action creator to start the fetch  comm links process
                 // The ActionCreator will create an action which will get the rss articles

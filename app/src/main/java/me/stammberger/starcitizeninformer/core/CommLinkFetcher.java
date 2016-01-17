@@ -11,6 +11,7 @@ import java.util.List;
 
 import me.stammberger.starcitizeninformer.R;
 import me.stammberger.starcitizeninformer.SciApplication;
+import me.stammberger.starcitizeninformer.models.CommLinkModel;
 import rx.Observable;
 import rx.subjects.AsyncSubject;
 import timber.log.Timber;
@@ -20,13 +21,14 @@ import timber.log.Timber;
  * This basically serves as a proxy class to turn PkRSS's output to an observable
  */
 public class CommLinkFetcher implements Callback {
-    final AsyncSubject<ArrayList<Article>> mSubject;
+    final AsyncSubject<ArrayList<CommLinkModel>> mSubject;
     private final Context mContext;
 
     public CommLinkFetcher() {
         mContext = SciApplication.getContext();
         PkRSS.with(mContext)
-                .load("https://robertsspaceindustries.com/comm-link/rss")
+                //.load("https://robertsspaceindustries.com/comm-link/rss")
+                .load("http://192.168.178.95:8000/sci_rss.xml")
                 .callback(this)
                 .async();
 
@@ -51,8 +53,18 @@ public class CommLinkFetcher implements Callback {
     public void onLoaded(List<Article> newArticles) {
         Timber.d("Finished loading comm links");
 
-        ArrayList<Article> aList = new ArrayList<>();
-        aList.addAll(newArticles);
+        ArrayList<CommLinkModel> aList = new ArrayList<>();
+
+        for (Article article : newArticles) {
+            CommLinkModel cl = new CommLinkModel();
+            cl.sourceUri = article.getSource();
+            cl.title = article.getTitle();
+            cl.content = article.getContent();
+            cl.date = article.getDate();
+            cl.description = article.getDescription();
+            cl.tags = (ArrayList<String>) article.getTags();
+            aList.add(cl);
+        }
 
         mSubject.onNext(aList);
         mSubject.onCompleted();
@@ -70,7 +82,7 @@ public class CommLinkFetcher implements Callback {
     /**
      * @return An RxJava observable for which will be called once all articles are loaded
      */
-    public Observable<ArrayList<Article>> observable() {
+    public Observable<ArrayList<CommLinkModel>> observable() {
         Timber.d("Observer subscribed for comm links");
 
         return mSubject.asObservable();

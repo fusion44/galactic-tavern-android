@@ -10,7 +10,7 @@
         tools:replace="android:name, android:allowBackup, android:label">
 
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:label="@string/app_name"
             tools:replace="android:name, android:label" />
     </application>

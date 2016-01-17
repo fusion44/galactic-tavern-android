@@ -4,11 +4,11 @@ import com.hardsoftstudio.rxflux.action.RxAction;
 import com.hardsoftstudio.rxflux.action.RxActionCreator;
 import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
 import com.hardsoftstudio.rxflux.util.SubscriptionManager;
-import com.pkmmte.pkrss.Article;
 
 import java.util.ArrayList;
 
 import me.stammberger.starcitizeninformer.core.CommLinkFetcher;
+import me.stammberger.starcitizeninformer.models.CommLinkModel;
 import me.stammberger.starcitizeninformer.stores.CommLinkStore;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -50,9 +50,9 @@ public class SciActionCreator extends RxActionCreator implements Actions {
         addRxAction(action, mCommLinkFetcher.observable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<ArrayList<Article>>() {
+                .subscribe(new Action1<ArrayList<CommLinkModel>>() {
                     @Override
-                    public void call(ArrayList<Article> comm_links) {
+                    public void call(ArrayList<CommLinkModel> comm_links) {
                         Timber.d("Got the comm links");
                         action.getData().put(Keys.COMM_LINKS, comm_links);
                         postRxAction(action);

@@ -10,11 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.pkmmte.pkrss.Article;
-
 import java.util.ArrayList;
 
 import me.stammberger.starcitizeninformer.R;
+import me.stammberger.starcitizeninformer.models.CommLinkModel;
 
 /**
  * A fragment representing a list of Items.
@@ -25,7 +24,7 @@ import me.stammberger.starcitizeninformer.R;
 public class CommLinkListFragment extends Fragment {
 
     private static final String ARG_COLUMN_COUNT = "column-count";
-    private static final String ARG_ARTICLES = "articles";
+    private static final String ARG_COMM_LINKS = "comm_links";
 
     private int mColumnCount = 2;
     private OnListFragmentInteractionListener mListener;
@@ -39,12 +38,12 @@ public class CommLinkListFragment extends Fragment {
     }
 
     @SuppressWarnings("unused")
-    public static CommLinkListFragment newInstance(int columnCount, ArrayList<Article> commLinks) {
+    public static CommLinkListFragment newInstance(int columnCount, ArrayList<CommLinkModel> commLinks) {
         CommLinkListFragment fragment = new CommLinkListFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         if (commLinks != null) {
-            args.putParcelableArrayList(ARG_ARTICLES, commLinks);
+            args.putParcelableArrayList(ARG_COMM_LINKS, commLinks);
         }
         fragment.setArguments(args);
         return fragment;
@@ -74,15 +73,15 @@ public class CommLinkListFragment extends Fragment {
                 mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 
-            if (getArguments() != null && getArguments().containsKey(ARG_ARTICLES)) {
-                ArrayList<Article> list = getArguments().getParcelableArrayList(ARG_ARTICLES);
+            if (getArguments() != null && getArguments().containsKey(ARG_COMM_LINKS)) {
+                ArrayList<CommLinkModel> list = getArguments().getParcelableArrayList(ARG_COMM_LINKS);
                 mRecyclerView.setAdapter(new CommLinkRecyclerViewAdapter(list, mListener));
             }
         }
         return view;
     }
 
-    public void setCommLinks(ArrayList<Article> commLinks) {
+    public void setCommLinks(ArrayList<CommLinkModel> commLinks) {
         if (commLinks == null) {
             throw new NullPointerException("Comm links are null");
         }
@@ -97,6 +96,6 @@ public class CommLinkListFragment extends Fragment {
     }
 
     public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(Article item);
+        void onListFragmentInteraction(CommLinkModel item);
     }
 }

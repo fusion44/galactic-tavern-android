@@ -6,22 +6,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.pkmmte.pkrss.Article;
-
 import java.util.ArrayList;
 
 import me.stammberger.starcitizeninformer.R;
+import me.stammberger.starcitizeninformer.models.CommLinkModel;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link Article} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link CommLinkModel} and makes a call to the
  * specified {@link CommLinkListFragment.OnListFragmentInteractionListener}.
  */
 public class CommLinkRecyclerViewAdapter extends RecyclerView.Adapter<CommLinkRecyclerViewAdapter.ViewHolder> {
 
-    private final ArrayList<Article> mValues;
+    private final ArrayList<CommLinkModel> mValues;
     private final CommLinkListFragment.OnListFragmentInteractionListener mListener;
 
-    public CommLinkRecyclerViewAdapter(ArrayList<Article> items, CommLinkListFragment.OnListFragmentInteractionListener listener) {
+    public CommLinkRecyclerViewAdapter(ArrayList<CommLinkModel> items, CommLinkListFragment.OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -36,7 +35,7 @@ public class CommLinkRecyclerViewAdapter extends RecyclerView.Adapter<CommLinkRe
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).getSource().toString());
+        holder.mIdView.setText(mValues.get(position).sourceUri.toString());
         /*holder.mContentView.setText(mValues.get(position).content);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -60,7 +59,7 @@ public class CommLinkRecyclerViewAdapter extends RecyclerView.Adapter<CommLinkRe
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
-        public Article mItem;
+        public CommLinkModel mItem;
 
         public ViewHolder(View view) {
             super(view);

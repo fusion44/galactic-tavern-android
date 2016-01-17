@@ -4,12 +4,12 @@ import com.hardsoftstudio.rxflux.action.RxAction;
 import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
 import com.hardsoftstudio.rxflux.store.RxStore;
 import com.hardsoftstudio.rxflux.store.RxStoreChange;
-import com.pkmmte.pkrss.Article;
 
 import java.util.ArrayList;
 
 import me.stammberger.starcitizeninformer.actions.Actions;
 import me.stammberger.starcitizeninformer.actions.Keys;
+import me.stammberger.starcitizeninformer.models.CommLinkModel;
 
 /**
  * Stores all comm links once they've been loaded by an action
@@ -24,7 +24,7 @@ import me.stammberger.starcitizeninformer.actions.Keys;
 public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
     public static final String ID = "CommLinkStore";
     private static CommLinkStore mInstance;
-    private ArrayList<Article> mArticles;
+    private ArrayList<CommLinkModel> mCommLinks;
 
     /**
      * Private constructor. Use @CommLinkStore.get to retrieve an instance
@@ -53,8 +53,8 @@ public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
      * {@inheritDoc}
      */
     @Override
-    public ArrayList<Article> getCommLinks() {
-        return mArticles == null ? new ArrayList<Article>() : mArticles;
+    public ArrayList<CommLinkModel> getCommLinks() {
+        return mCommLinks == null ? new ArrayList<CommLinkModel>() : mCommLinks;
     }
 
     /**
@@ -67,7 +67,7 @@ public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
     public void onRxAction(RxAction action) {
         switch (action.getType()) {
             case Actions.GET_COMM_LINKS:
-                this.mArticles = (ArrayList<Article>) action.getData().get(Keys.COMM_LINKS);
+                this.mCommLinks = (ArrayList<CommLinkModel>) action.getData().get(Keys.COMM_LINKS);
                 break;
             default:
                 // return without posting a change to the store.
