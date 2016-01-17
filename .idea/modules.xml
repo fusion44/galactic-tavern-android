@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/StarCitizenInformer.iml" filepath="$PROJECT_DIR$/StarCitizenInformer.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pkrss-debug/pkrss-debug.iml" filepath="$PROJECT_DIR$/pkrss-debug/pkrss-debug.iml" />
     </modules>
   </component>
 </project>
