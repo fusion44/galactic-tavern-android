@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.malinskiy.superrecyclerview.SuperRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/list"
@@ -9,5 +9,7 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
+    app:layout_empty="@layout/fragment_comm_link_adapter_empty"
+    app:mainLayoutId="@layout/layout_recyclerview_horizontalscroll"
     tools:context="me.stammberger.starcitizeninformer.ui.CommLinkListFragment"
     tools:listitem="@layout/fragment_comm_link" />
