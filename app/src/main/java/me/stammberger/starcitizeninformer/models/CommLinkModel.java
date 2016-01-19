@@ -47,6 +47,10 @@ public class CommLinkModel extends BaseModel implements Parcelable {
      * Associated tags for the comm links
      */
     public ArrayList<String> tags;
+    /**
+     * Url for the backdrop image.
+     */
+    public String backdropUrl;
 
     public CommLinkModel() {
     }
@@ -65,6 +69,7 @@ public class CommLinkModel extends BaseModel implements Parcelable {
         }
         layout = in.readInt();
         spanCount = in.readInt();
+        backdropUrl = in.readString();
     }
 
     @Override
@@ -87,5 +92,6 @@ public class CommLinkModel extends BaseModel implements Parcelable {
         }
         dest.writeInt(layout);
         dest.writeInt(spanCount);
+        dest.writeString(backdropUrl);
     }
 }

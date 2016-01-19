@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/comm_link_item_height">
+
+    <ImageView
+        android:id="@+id/backdropImageView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/content_desc_comm_link_backdrop_image"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/titleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/text_margin"
+        android:textAppearance="@style/AppTheme.CommLinkTitle"
+        tools:text="This is a title!!!" />
+
+    <TextView
+        android:id="@+id/dateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/text_margin"
+        android:textAppearance="@style/AppTheme.CommLinkDate"
+        tools:text="2 weeks ago" />
+</FrameLayout>

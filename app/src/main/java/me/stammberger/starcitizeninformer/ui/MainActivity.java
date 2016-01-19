@@ -24,6 +24,7 @@ import me.stammberger.starcitizeninformer.SciApplication;
 import me.stammberger.starcitizeninformer.actions.Actions;
 import me.stammberger.starcitizeninformer.models.CommLinkModel;
 import me.stammberger.starcitizeninformer.stores.CommLinkStore;
+import me.stammberger.starcitizeninformer.ui.fragments.CommLinkListFragment;
 import timber.log.Timber;
 
 

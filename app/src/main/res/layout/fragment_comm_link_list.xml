@@ -6,10 +6,8 @@
     android:name="me.stammberger.starcitizeninformer.ui.CommLinkListFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
     app:layout_empty="@layout/fragment_comm_link_adapter_empty"
     app:mainLayoutId="@layout/layout_recyclerview_horizontalscroll"
-    tools:context="me.stammberger.starcitizeninformer.ui.CommLinkListFragment"
-    tools:listitem="@layout/fragment_comm_link" />
+    tools:context=".ui.fragments.CommLinkListFragment"
+    tools:listitem="@layout/fragment_comm_link_item" />

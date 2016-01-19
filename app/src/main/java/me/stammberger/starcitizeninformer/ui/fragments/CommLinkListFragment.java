@@ -1,26 +1,27 @@
-package me.stammberger.starcitizeninformer.ui;
+package me.stammberger.starcitizeninformer.ui.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 
 import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
 import java.util.ArrayList;
 
+import jp.wasabeef.recyclerview.animators.adapters.SlideInBottomAnimationAdapter;
 import me.stammberger.starcitizeninformer.R;
 import me.stammberger.starcitizeninformer.models.CommLinkModel;
+import me.stammberger.starcitizeninformer.ui.adapters.CommLinkRecyclerViewAdapter;
 import timber.log.Timber;
 
 /**
  * A fragment representing a list of Items.
- * <p/>
+ * <p>
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
@@ -68,29 +69,40 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
 
         // Set the adapter
         if (view instanceof SuperRecyclerView) {
-            Context context = view.getContext();
             mRecyclerView = (SuperRecyclerView) view;
             mRecyclerView.setRefreshListener(this);
-            if (mColumnCount <= 1) {
-                mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-
             if (getArguments() != null && getArguments().containsKey(ARG_COMM_LINKS)) {
                 ArrayList<CommLinkModel> list = getArguments().getParcelableArrayList(ARG_COMM_LINKS);
-                mRecyclerView.setAdapter(new CommLinkRecyclerViewAdapter(list, mListener));
+                setupRecyclerView(list);
             }
         }
         return view;
     }
 
-    public void setCommLinks(ArrayList<CommLinkModel> commLinks) {
+    /**
+     * Setup the RecyclerView's Adapter and animations
+     *
+     * @param commLinks Comm link list for the Adapter
+     */
+    private void setupRecyclerView(ArrayList<CommLinkModel> commLinks) {
         if (commLinks == null) {
             throw new NullPointerException("Comm links are null");
         }
 
-        mRecyclerView.setAdapter(new CommLinkRecyclerViewAdapter(commLinks, mListener));
+        CommLinkRecyclerViewAdapter commLinksAdapter
+                = new CommLinkRecyclerViewAdapter(getContext(), commLinks, mListener);
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), mColumnCount);
+        gridLayoutManager.setSpanSizeLookup(commLinksAdapter.getSpanSizeLookup());
+        mRecyclerView.setLayoutManager(gridLayoutManager);
+
+        SlideInBottomAnimationAdapter slideInAdapter
+                = new SlideInBottomAnimationAdapter(commLinksAdapter);
+
+        slideInAdapter.setDuration(500);
+        slideInAdapter.setInterpolator(new DecelerateInterpolator());
+
+        mRecyclerView.setAdapter(slideInAdapter);
     }
 
     @Override
@@ -106,6 +118,15 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
     public void onRefresh() {
         Timber.d("Refreshing comm links.");
         mRecyclerView.getSwipeToRefresh().setRefreshing(false);
+    }
+
+    /**
+     * Set comm links after construction of the fragment
+     *
+     * @param commLinks The comm links for the Adapter
+     */
+    public void setCommLinks(ArrayList<CommLinkModel> commLinks) {
+        setupRecyclerView(commLinks);
     }
 
     public interface OnListFragmentInteractionListener {

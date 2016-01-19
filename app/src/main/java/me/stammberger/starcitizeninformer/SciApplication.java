@@ -6,6 +6,8 @@ import android.util.Log;
 
 import com.hardsoftstudio.rxflux.RxFlux;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 import me.stammberger.starcitizeninformer.actions.SciActionCreator;
 import timber.log.Timber;
 
@@ -50,6 +52,8 @@ public class SciApplication extends Application {
 
         mRxFlux = RxFlux.init(this);
         mActionCreator = new SciActionCreator(mRxFlux.getDispatcher(), mRxFlux.getSubscriptionManager());
+
+        JodaTimeAndroid.init(this);
 
         mInstance = this;
     }
