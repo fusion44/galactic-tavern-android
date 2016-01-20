@@ -1,8 +1,10 @@
 package me.stammberger.starcitizeninformer.ui.fragments;
 
 import android.os.Bundle;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,23 +17,22 @@ import java.util.ArrayList;
 
 import jp.wasabeef.recyclerview.animators.adapters.SlideInBottomAnimationAdapter;
 import me.stammberger.starcitizeninformer.R;
+import me.stammberger.starcitizeninformer.core.chrome.CustomTabActivityHelper;
+import me.stammberger.starcitizeninformer.core.chrome.WebviewFallback;
 import me.stammberger.starcitizeninformer.models.CommLinkModel;
 import me.stammberger.starcitizeninformer.ui.adapters.CommLinkRecyclerViewAdapter;
 import timber.log.Timber;
 
 /**
- * A fragment representing a list of Items.
- * <p>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
+ * Container fragment for the comm link RecyclerView
  */
-public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,
+        CommLinkRecyclerViewAdapter.OnListFragmentInteractionListener {
 
     private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String ARG_COMM_LINKS = "comm_links";
 
     private int mColumnCount = 2;
-    private OnListFragmentInteractionListener mListener;
     private SuperRecyclerView mRecyclerView;
 
     /**
@@ -90,7 +91,7 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
         }
 
         CommLinkRecyclerViewAdapter commLinksAdapter
-                = new CommLinkRecyclerViewAdapter(getContext(), commLinks, mListener);
+                = new CommLinkRecyclerViewAdapter(getContext(), commLinks, this);
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), mColumnCount);
         gridLayoutManager.setSpanSizeLookup(commLinksAdapter.getSpanSizeLookup());
@@ -103,12 +104,6 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
         slideInAdapter.setInterpolator(new DecelerateInterpolator());
 
         mRecyclerView.setAdapter(slideInAdapter);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     /**
@@ -129,7 +124,19 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
         setupRecyclerView(commLinks);
     }
 
-    public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(CommLinkModel item);
+    /**
+     * Implementation of the {@link CommLinkRecyclerViewAdapter.OnListFragmentInteractionListener}
+     * for reacting to clicks to the RecyclerView
+     *
+     * @param item The clicked item
+     */
+    @Override
+    public void onListFragmentInteraction(CommLinkModel item) {
+        // Simply open a custom chrome tab. Using the source from the RSS mostly looks bad.
+        // Need to find another solution.
+        // TODO: Write a backend app which fetches comm links from RSI.com and makes them available through an API
+        CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+        CustomTabActivityHelper.openCustomTab(
+                (AppCompatActivity) this.getActivity(), customTabsIntent, item.sourceUri, new WebviewFallback());
     }
 }

@@ -22,22 +22,21 @@ import java.util.ArrayList;
 
 import me.stammberger.starcitizeninformer.R;
 import me.stammberger.starcitizeninformer.models.CommLinkModel;
-import me.stammberger.starcitizeninformer.ui.fragments.CommLinkListFragment;
 import timber.log.Timber;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link CommLinkModel} and makes a call to the
- * specified {@link CommLinkListFragment.OnListFragmentInteractionListener}.
+ * specified {@link OnListFragmentInteractionListener}.
  */
 public class CommLinkRecyclerViewAdapter extends RecyclerView.Adapter<CommLinkRecyclerViewAdapter.ViewHolder> implements RequestListener<String, GlideDrawable> {
 
     private final SpanSizeLookup mSpanSizeLookup = new SpanSizeLookup();
     private final ArrayList<CommLinkModel> mValues;
-    private final CommLinkListFragment.OnListFragmentInteractionListener mListener;
+    private final OnListFragmentInteractionListener mListener;
     private Context mContext;
 
     public CommLinkRecyclerViewAdapter(Context c, ArrayList<CommLinkModel> items,
-                                       CommLinkListFragment.OnListFragmentInteractionListener listener) {
+                                       OnListFragmentInteractionListener listener) {
         mContext = c;
         mValues = items;
         mListener = listener;
@@ -99,6 +98,13 @@ public class CommLinkRecyclerViewAdapter extends RecyclerView.Adapter<CommLinkRe
     @Override
     public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
         return false;
+    }
+
+    /**
+     * Interface for communication between list items and the host fragment
+     */
+    public interface OnListFragmentInteractionListener {
+        void onListFragmentInteraction(CommLinkModel item);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
