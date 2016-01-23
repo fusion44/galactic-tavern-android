@@ -12,6 +12,7 @@ import java.util.List;
 import me.stammberger.starcitizeninformer.R;
 import me.stammberger.starcitizeninformer.SciApplication;
 import me.stammberger.starcitizeninformer.models.CommLinkModel;
+import me.stammberger.starcitizeninformer.models.CommLinkModel.CommLinkContentPart;
 import rx.Observable;
 import rx.subjects.AsyncSubject;
 import timber.log.Timber;
@@ -63,7 +64,7 @@ public class CommLinkFetcher implements Callback {
             CommLinkModel cl = new CommLinkModel();
             cl.sourceUri = article.getSource();
             cl.title = article.getTitle();
-            cl.content = article.getContent();
+            cl.content = processContent(article.getContent());
             cl.date = article.getDate();
             cl.description = article.getDescription();
             cl.tags = (ArrayList<String>) article.getTags();
@@ -75,9 +76,58 @@ public class CommLinkFetcher implements Callback {
             aList.add(cl);
         }
 
-
         mSubject.onNext(calculateSpanCount(aList));
         mSubject.onCompleted();
+    }
+
+    /**
+     * Splits the RSS content into several parts to make it easier to work with and
+     * display in a visually pleasing way within a RecyclerView.
+     *
+     * @param content Content string directly from the RSS feed
+     * @return {@link CommLinkContentPart} {@link ArrayList} Holding all parsed data
+     */
+    private ArrayList<CommLinkContentPart> processContent(String content) {
+        ArrayList<CommLinkContentPart> parts = new ArrayList<>();
+
+        if (content == null) {
+            return parts;
+        }
+
+        String splitDelimiter = "<a class=\"image  js-open-in-slideshow\" data-source_url=\"";
+        String[] split = content.split(splitDelimiter);
+
+        ArrayList<String> slideShowLinks = new ArrayList<>();
+
+        for (int i = 0; i < split.length; i++) {
+            String s = split[i];
+            if (s.startsWith("https:")) {
+                slideShowLinks.add(s.split("\" rel=")[0]);
+
+                /**
+                 * Peek on the next item. If it doesn't start with https: we are finished with the slideshow.
+                 * Flush the slideshow and continue with text content.
+                 */
+                if (split.length == i + 1 || split.length > i + 1 && !split[i + 1].startsWith("https:")) {
+                    CommLinkContentPart clcp = new CommLinkContentPart(
+                            CommLinkContentPart.CONTENT_TYPE_SLIDESHOW,
+                            "",
+                            slideShowLinks
+                    );
+                    parts.add(clcp);
+                    slideShowLinks = new ArrayList<>();
+                }
+            } else {
+                CommLinkContentPart clcp = new CommLinkContentPart(
+                        CommLinkContentPart.CONTENT_TYPE_TEXT_BLOCK,
+                        s,
+                        null
+                );
+                parts.add(clcp);
+            }
+        }
+
+        return parts;
     }
 
     /**

@@ -41,5 +41,13 @@ Retrofit integrates nicely with RxJava. This will be used fetch data from http:/
 Optional:
 [Dagger2](http://google.github.io/dagger/) - A dependency injection framework for managing dependencies in a maintainable way. This needs serious research which might cause the project to take much longer.
 
+#### Lessons learned during development
+Here I keep a loose log of problems and weird stuff I came across during development for future reference.
 
+* Never put a RecyclerView inside a ScrollingView. Bad things will happen like RecyclerView not showing anything.
+Doing this makes no sense anyway, because nested scrolling views will lead to confusing interaction for users.
+At least when the scroll direction is the same.
+* Intents and Bundles are not indented to handle large data sets like comm links.
+For the Bundle receiver, the data will be incomplete and/or muddled -> Basically I knew this beforehand but hoped it'll work out.
+Well, it didn't. *Solution:* Store comm links in database and retrieve data from database on demand.
 

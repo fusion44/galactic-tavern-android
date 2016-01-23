@@ -3,6 +3,7 @@
     package="me.stammberger.starcitizeninformer">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".SciApplication"
         android:allowBackup="true"
@@ -19,6 +20,15 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.commlinks.CommLinkReaderActivity"
+            android:label="@string/title_activity_comm_link_reader"
+            android:parentActivityName=".ui.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.MainActivity" />
         </activity>
     </application>
 

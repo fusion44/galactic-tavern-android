@@ -1,4 +1,4 @@
-package me.stammberger.starcitizeninformer.ui.adapters;
+package me.stammberger.starcitizeninformer.ui.commlinks;
 
 import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
@@ -28,15 +28,15 @@ import timber.log.Timber;
  * {@link RecyclerView.Adapter} that can display a {@link CommLinkModel} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  */
-public class CommLinkRecyclerViewAdapter extends RecyclerView.Adapter<CommLinkRecyclerViewAdapter.ViewHolder> implements RequestListener<String, GlideDrawable> {
+public class CommLinkListRecyclerViewAdapter extends RecyclerView.Adapter<CommLinkListRecyclerViewAdapter.ViewHolder> implements RequestListener<String, GlideDrawable> {
 
     private final SpanSizeLookup mSpanSizeLookup = new SpanSizeLookup();
     private final ArrayList<CommLinkModel> mValues;
     private final OnListFragmentInteractionListener mListener;
     private Context mContext;
 
-    public CommLinkRecyclerViewAdapter(Context c, ArrayList<CommLinkModel> items,
-                                       OnListFragmentInteractionListener listener) {
+    public CommLinkListRecyclerViewAdapter(Context c, ArrayList<CommLinkModel> items,
+                                           OnListFragmentInteractionListener listener) {
         mContext = c;
         mValues = items;
         mListener = listener;
