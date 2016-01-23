@@ -19,7 +19,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_comm_link_reader" />
+    <include layout="@layout/content_comm_link_reader_chrome" />
 
 
 </android.support.design.widget.CoordinatorLayout>

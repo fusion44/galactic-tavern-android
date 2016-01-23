@@ -37,7 +37,7 @@ public class WebviewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_comm_link_reader);
+        setContentView(R.layout.activity_comm_link_reader_chrome);
         String url = getIntent().getStringExtra(EXTRA_URL);
         WebView webView = (WebView) findViewById(R.id.commLinkReaderContentWebView);
         webView.setWebViewClient(new WebViewClient());
