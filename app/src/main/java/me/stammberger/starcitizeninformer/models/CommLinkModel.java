@@ -4,14 +4,22 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteColumn;
+import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteType;
+
 import java.util.ArrayList;
 
+import me.stammberger.starcitizeninformer.stores.db.tables.CommLinkTable;
 import me.stammberger.starcitizeninformer.ui.commlinks.CommLinkReaderSlideshowAdapter;
 
 /**
- * Stores all the data necessary for displaying a comm-link
+ * Stores data necessary for displaying a comm link in a list
+ *
+ * @StorIOSQLiteType Triggers annotation processor to generate type mapping at compile time
  */
+@StorIOSQLiteType(table = CommLinkTable.TABLE)
 public class CommLinkModel extends BaseModel implements Parcelable {
+    public static final String DATA_SEPARATOR = "#";
 
     @SuppressWarnings("unused")
     public static final Parcelable.Creator<CommLinkModel> CREATOR = new Parcelable.Creator<CommLinkModel>() {
@@ -25,13 +33,17 @@ public class CommLinkModel extends BaseModel implements Parcelable {
             return new CommLinkModel[size];
         }
     };
+
     /**
      * Permanent {@link Uri} to robertsspaceindustries.com
      */
-    public Uri sourceUri;
+    @StorIOSQLiteColumn(name = CommLinkTable.COLUMN_SOURCE_URI, key = true)
+    public String sourceUri;
     /**
      * Title of the comm link
      */
+
+    @StorIOSQLiteColumn(name = CommLinkTable.COLUMN_TITLE)
     public String title;
     /**
      * RSS slideshowLinks parts of the comm link.
@@ -40,36 +52,41 @@ public class CommLinkModel extends BaseModel implements Parcelable {
     /**
      * Release date of the comm link
      */
+    @StorIOSQLiteColumn(name = CommLinkTable.COLUMN_DATE)
     public long date;
+
     /**
      * Short slideshowLinks description of the comm link
      */
+    @StorIOSQLiteColumn(name = CommLinkTable.COLUMN_DESCRIPTION)
     public String description;
+
     /**
-     * Associated tags for the comm links
+     * Associated tags for the comm links.
+     * Separated by {@link #DATA_SEPARATOR}
      */
-    public ArrayList<String> tags;
+    @StorIOSQLiteColumn(name = CommLinkTable.COLUMN_TAGS)
+    public String tags;
+
     /**
      * Url for the backdrop image.
      */
+    @StorIOSQLiteColumn(name = CommLinkTable.COLUMN_BACKDROP_URL)
     public String backdropUrl;
 
+    /**
+     * Empty constructor necessary for StorIO generated code
+     */
     public CommLinkModel() {
     }
 
     @SuppressWarnings("unchecked")
     protected CommLinkModel(Parcel in) {
-        sourceUri = (Uri) in.readValue(Uri.class.getClassLoader());
+        sourceUri = in.readString();
         title = in.readString();
-        content = in.readArrayList(CommLinkContentPart.class.getClassLoader());
         date = in.readLong();
         description = in.readString();
-        if (in.readByte() == 0x01) {
-            tags = new ArrayList<>();
-            in.readList(tags, String.class.getClassLoader());
-        } else {
-            tags = null;
-        }
+        tags = in.readString();
         layout = in.readInt();
         spanCount = in.readInt();
         backdropUrl = in.readString();
@@ -82,17 +99,11 @@ public class CommLinkModel extends BaseModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeValue(sourceUri);
+        dest.writeString(sourceUri);
         dest.writeString(title);
-        dest.writeList(content);
         dest.writeLong(date);
         dest.writeString(description);
-        if (tags == null) {
-            dest.writeByte((byte) (0x00));
-        } else {
-            dest.writeByte((byte) (0x01));
-            dest.writeList(tags);
-        }
+        dest.writeString(tags);
         dest.writeInt(layout);
         dest.writeInt(spanCount);
         dest.writeString(backdropUrl);

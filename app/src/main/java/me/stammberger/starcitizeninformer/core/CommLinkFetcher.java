@@ -1,10 +1,13 @@
 package me.stammberger.starcitizeninformer.core;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.pkmmte.pkrss.Article;
 import com.pkmmte.pkrss.Callback;
 import com.pkmmte.pkrss.PkRSS;
+import com.pushtorefresh.storio.sqlite.operations.put.PutResults;
+import com.pushtorefresh.storio.sqlite.queries.Query;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +16,12 @@ import me.stammberger.starcitizeninformer.R;
 import me.stammberger.starcitizeninformer.SciApplication;
 import me.stammberger.starcitizeninformer.models.CommLinkModel;
 import me.stammberger.starcitizeninformer.models.CommLinkModel.CommLinkContentPart;
+import me.stammberger.starcitizeninformer.stores.db.tables.CommLinkTable;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 import rx.subjects.AsyncSubject;
 import timber.log.Timber;
 
@@ -25,18 +33,61 @@ public class CommLinkFetcher implements Callback {
     final AsyncSubject<ArrayList<CommLinkModel>> mSubject;
     private final Context mContext;
     private int mColumnCount;
+    private long mNewestCommLinkDateInDb = 0;
 
     public CommLinkFetcher() {
         mContext = SciApplication.getContext();
         mColumnCount = mContext.getResources().getInteger(R.integer.list_column_count);
 
+        // get the latest from Database to check whether we have new comm links
+        getNewestFromDb()
+                .subscribe(new Action1<CommLinkModel>() {
+                    @Override
+                    public void call(CommLinkModel commLinkModel) {
+                        mNewestCommLinkDateInDb = commLinkModel.date;
+                        fetchRSSFeed();
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        Timber.d("Error retrieving newest comm link from database. Error: %s", throwable.toString());
+                        fetchRSSFeed();
+                    }
+                });
+
+        mSubject = AsyncSubject.create();
+    }
+
+    /**
+     * Start loading of the rss feed
+     */
+    private void fetchRSSFeed() {
+        Timber.d("fetchRSSFeed");
         PkRSS.with(mContext)
                 .load("https://robertsspaceindustries.com/comm-link/rss")
                         //.load("http://192.168.178.95:8000/sci_rss.xml")
                 .callback(this)
                 .async();
+    }
 
-        mSubject = AsyncSubject.create();
+    /**
+     * Fetches latest comm link from local database
+     *
+     * @return Observable with the comm link
+     */
+    private Observable<CommLinkModel> getNewestFromDb() {
+        Query q = Query.builder()
+                .table(CommLinkTable.TABLE)
+                .orderBy(CommLinkTable.COLUMN_DATE + " DESC")
+                .limit(1)
+                .build();
+
+        return SciApplication.getInstance().getStorIOSQLite()
+                .get()
+                .object(CommLinkModel.class)
+                .withQuery(q)
+                .prepare()
+                .asRxObservable();
     }
 
     /**
@@ -55,29 +106,91 @@ public class CommLinkFetcher implements Callback {
      */
     @Override
     public void onLoaded(List<Article> newArticles) {
-        Timber.d("Finished loading comm links");
-
-        ArrayList<CommLinkModel> aList = new ArrayList<>();
-
-        for (int i = 0; i < newArticles.size(); i++) {
-            Article article = newArticles.get(i);
-            CommLinkModel cl = new CommLinkModel();
-            cl.sourceUri = article.getSource();
-            cl.title = article.getTitle();
-            cl.content = processContent(article.getContent());
-            cl.date = article.getDate();
-            cl.description = article.getDescription();
-            cl.tags = (ArrayList<String>) article.getTags();
-
-            if (article.getMediaContent().size() > 0) {
-                cl.backdropUrl = article.getMediaContent().get(0).getUrl();
-            }
-
-            aList.add(cl);
+        if (newArticles.get(0).getDate() <= mNewestCommLinkDateInDb) {
+            Timber.d("No new articles. Skip update.");
+            return;
         }
 
-        mSubject.onNext(calculateSpanCount(aList));
-        mSubject.onCompleted();
+        Observable.from(newArticles)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .takeWhile(new Func1<Article, Boolean>() {
+                    @Override
+                    public Boolean call(Article article) {
+                        // emits the observable received if its newer than the latest one received from database
+                        return article.getDate() > mNewestCommLinkDateInDb;
+                    }
+                })
+                .map(new Func1<Article, CommLinkModel>() {
+                    @Override
+                    public CommLinkModel call(Article a) {
+                        // translate Article to CommLinkModel
+                        return getCommLinkModel(a);
+                    }
+                })
+                .toList() // this will replace also the onCompleted call
+                .subscribe(new Action1<List<CommLinkModel>>() {
+                    @Override
+                    public void call(List<CommLinkModel> commLinkModels) {
+                        SciApplication.getInstance().getStorIOSQLite()
+                                .put()
+                                .objects(commLinkModels)
+                                .prepare()
+                                .asRxObservable()
+                                .subscribe(new Action1<PutResults<CommLinkModel>>() {
+                                    @Override
+                                    public void call(PutResults<CommLinkModel> commLinkModelPutResults) {
+                                        Timber.d("New comm links. Inserts: %s; Updates: %s",
+                                                commLinkModelPutResults.numberOfInserts(),
+                                                commLinkModelPutResults.numberOfUpdates());
+                                    }
+                                });
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        Timber.d("onError: ", throwable.toString());
+                    }
+                });
+    }
+
+    /**
+     * Creates a {@link CommLinkModel} from an PkRSS Article
+     *
+     * @param a Article to create the CommLinkModel from
+     * @return Article's CommlinkModel
+     */
+    @NonNull
+    private CommLinkModel getCommLinkModel(Article a) {
+        CommLinkModel m = new CommLinkModel();
+        m.sourceUri = a.getSource().toString();
+        m.title = a.getTitle();
+        m.content = processContent(a.getContent());
+        m.date = a.getDate();
+        m.description = a.getDescription();
+
+        List<String> tags = a.getTags();
+        for (int i1 = 0; i1 < tags.size(); i1++) {
+            String s = tags.get(i1);
+            if (i1 + 1 < tags.size()) {
+                if (m.tags == null) {
+                    m.tags = s + CommLinkModel.DATA_SEPARATOR;
+                } else {
+                    m.tags += s + CommLinkModel.DATA_SEPARATOR;
+                }
+            } else {
+                if (m.tags == null) {
+                    m.tags = s;
+                } else {
+                    m.tags += s;
+                }
+            }
+        }
+
+        if (a.getMediaContent().size() > 0) {
+            m.backdropUrl = a.getMediaContent().get(0).getUrl();
+        }
+        return m;
     }
 
     /**

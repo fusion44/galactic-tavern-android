@@ -5,10 +5,14 @@ import android.content.Context;
 import android.util.Log;
 
 import com.hardsoftstudio.rxflux.RxFlux;
+import com.pushtorefresh.storio.sqlite.impl.DefaultStorIOSQLite;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
 import me.stammberger.starcitizeninformer.actions.SciActionCreator;
+import me.stammberger.starcitizeninformer.models.CommLinkModel;
+import me.stammberger.starcitizeninformer.models.CommLinkModelSQLiteTypeMapping;
+import me.stammberger.starcitizeninformer.stores.db.DbOpenHelper;
 import timber.log.Timber;
 
 
@@ -33,6 +37,11 @@ public class SciApplication extends Application {
      */
     private SciActionCreator mActionCreator;
 
+    /**
+     * Instance of StorIO SQLite provider
+     */
+    private DefaultStorIOSQLite mStorIOSQLite;
+
     public static SciApplication getInstance() {
         return mInstance;
     }
@@ -53,9 +62,21 @@ public class SciApplication extends Application {
         mRxFlux = RxFlux.init(this);
         mActionCreator = new SciActionCreator(mRxFlux.getDispatcher(), mRxFlux.getSubscriptionManager());
 
+        initStorIO();
+
         JodaTimeAndroid.init(this);
 
         mInstance = this;
+    }
+
+    /**
+     * Initializes StorIO with all necessary resolvers
+     */
+    private void initStorIO() {
+        mStorIOSQLite = DefaultStorIOSQLite.builder()
+                .sqliteOpenHelper(new DbOpenHelper(this))
+                .addTypeMapping(CommLinkModel.class, new CommLinkModelSQLiteTypeMapping())
+                .build();
     }
 
     public RxFlux getRxFlux() {
@@ -64,6 +85,10 @@ public class SciApplication extends Application {
 
     public SciActionCreator getActionCreator() {
         return mActionCreator;
+    }
+
+    public DefaultStorIOSQLite getStorIOSQLite() {
+        return mStorIOSQLite;
     }
 
     /**
