@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 
+import me.stammberger.starcitizeninformer.stores.db.tables.CommLinkContentPartTable;
 import me.stammberger.starcitizeninformer.stores.db.tables.CommLinkTable;
 
 /**
@@ -19,10 +20,12 @@ public class DbOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(@NonNull SQLiteDatabase db) {
         db.execSQL(CommLinkTable.getCreateTableQuery());
+        db.execSQL(CommLinkContentPartTable.getCreateTableQuery());
     }
 
     @Override
     public void onUpgrade(@NonNull SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + CommLinkTable.TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + CommLinkContentPartTable.TABLE);
     }
 }

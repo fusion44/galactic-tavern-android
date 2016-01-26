@@ -15,7 +15,7 @@ import java.util.List;
 import me.stammberger.starcitizeninformer.R;
 import me.stammberger.starcitizeninformer.SciApplication;
 import me.stammberger.starcitizeninformer.models.CommLinkModel;
-import me.stammberger.starcitizeninformer.models.CommLinkModel.CommLinkContentPart;
+import me.stammberger.starcitizeninformer.models.CommLinkModelContentPart;
 import me.stammberger.starcitizeninformer.stores.db.tables.CommLinkTable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -44,7 +44,9 @@ public class CommLinkFetcher implements Callback {
                 .subscribe(new Action1<CommLinkModel>() {
                     @Override
                     public void call(CommLinkModel commLinkModel) {
-                        mNewestCommLinkDateInDb = commLinkModel.date;
+                        if (commLinkModel != null) {
+                            mNewestCommLinkDateInDb = commLinkModel.date;
+                        }
                         fetchRSSFeed();
                     }
                 }, new Action1<Throwable>() {
@@ -66,6 +68,8 @@ public class CommLinkFetcher implements Callback {
         PkRSS.with(mContext)
                 .load("https://robertsspaceindustries.com/comm-link/rss")
                         //.load("http://192.168.178.95:8000/sci_rss.xml")
+                        //.load("http://192.168.178.95:8000/sci_rss_two_items.xml") // LAN
+                        //.load("http://192.168.178.52:8000/sci_rss_two_items.xml") // wireless
                 .callback(this)
                 .async();
     }
@@ -106,6 +110,7 @@ public class CommLinkFetcher implements Callback {
      */
     @Override
     public void onLoaded(List<Article> newArticles) {
+        Timber.d("PkRSS articles loaded");
         if (newArticles.get(0).getDate() <= mNewestCommLinkDateInDb) {
             Timber.d("No new articles. Skip update.");
             return;
@@ -144,12 +149,19 @@ public class CommLinkFetcher implements Callback {
                                                 commLinkModelPutResults.numberOfInserts(),
                                                 commLinkModelPutResults.numberOfUpdates());
                                     }
+                                }, new Action1<Throwable>() {
+                                    @Override
+                                    public void call(Throwable throwable) {
+                                        Timber.d("Error putting CommLinkModels into database: \n %s", throwable.getCause().toString());
+                                    }
                                 });
                     }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        Timber.d("onError: ", throwable.toString());
+                        Timber.d("Error1: %s", throwable.getCause());
+                        Timber.d("Stacktrace %s", throwable.getStackTrace());
+                        Timber.d("onError: %s", throwable.toString());
                     }
                 });
     }
@@ -165,7 +177,7 @@ public class CommLinkFetcher implements Callback {
         CommLinkModel m = new CommLinkModel();
         m.sourceUri = a.getSource().toString();
         m.title = a.getTitle();
-        m.content = processContent(a.getContent());
+        m.setContentIds(processContent(a.getSource().toString(), a.getContent()));
         m.date = a.getDate();
         m.description = a.getDescription();
 
@@ -197,46 +209,83 @@ public class CommLinkFetcher implements Callback {
      * Splits the RSS content into several parts to make it easier to work with and
      * display in a visually pleasing way within a RecyclerView.
      *
-     * @param content Content string directly from the RSS feed
-     * @return {@link CommLinkContentPart} {@link ArrayList} Holding all parsed data
+     * @param sourceUrl The comm link url these parts belong to
+     * @param content   Content string directly from the RSS feed
+     * @return {@link CommLinkModelContentPart} {@link ArrayList} Holding all parsed data
      */
-    private ArrayList<CommLinkContentPart> processContent(String content) {
-        ArrayList<CommLinkContentPart> parts = new ArrayList<>();
-
+    private ArrayList<CommLinkModelContentPart> processContent(String sourceUrl, String content) {
+        ArrayList<CommLinkModelContentPart> parts = new ArrayList<>();
         if (content == null) {
+            Timber.d("Content null at: %s", sourceUrl);
             return parts;
         }
 
+
+        ArrayList<String> currentSlideShowLinks = new ArrayList<>();
         String splitDelimiter = "<a class=\"image  js-open-in-slideshow\" data-source_url=\"";
+
         String[] split = content.split(splitDelimiter);
+        for (String s : split) {
+            if (s.startsWith("https://")) {
+                String[] linkSplit = s.split("\" rel=\"post\"><img src=\"");
 
-        ArrayList<String> slideShowLinks = new ArrayList<>();
+                if (linkSplit.length > 2) {
+                    // In theory this should never happen. But as I don't have control over the source
+                    // it's better to check.
+                    Timber.d("Split size > 2: %s", sourceUrl);
+                }
 
-        for (int i = 0; i < split.length; i++) {
-            String s = split[i];
-            if (s.startsWith("https:")) {
-                slideShowLinks.add(s.split("\" rel=")[0]);
 
-                /**
-                 * Peek on the next item. If it doesn't start with https: we are finished with the slideshow.
-                 * Flush the slideshow and continue with text content.
-                 */
-                if (split.length == i + 1 || split.length > i + 1 && !split[i + 1].startsWith("https:")) {
-                    CommLinkContentPart clcp = new CommLinkContentPart(
-                            CommLinkContentPart.CONTENT_TYPE_SLIDESHOW,
-                            "",
-                            slideShowLinks
-                    );
+                String img = linkSplit[0];
+                currentSlideShowLinks.add(img);
+
+                String[] a = null;
+
+                if (linkSplit.length > 1) {
+                    String remainder = linkSplit[1];
+                    a = remainder.trim().split("\" alt=\"\" /></a>");
+                }
+
+                if (a != null && a.length > 1) {
+                    if (currentSlideShowLinks.size() > 0) {
+                        CommLinkModelContentPart clcp = new CommLinkModelContentPart(sourceUrl);
+                        clcp.setSlideShowLinks(currentSlideShowLinks);
+                        parts.add(clcp);
+                        currentSlideShowLinks = new ArrayList<>();
+                    }
+                    CommLinkModelContentPart clcp = new CommLinkModelContentPart(sourceUrl);
+                    clcp.setTextContent(a[1]);
                     parts.add(clcp);
-                    slideShowLinks = new ArrayList<>();
                 }
             } else {
-                CommLinkContentPart clcp = new CommLinkContentPart(
-                        CommLinkContentPart.CONTENT_TYPE_TEXT_BLOCK,
-                        s,
-                        null
-                );
+                if (currentSlideShowLinks.size() > 0) {
+                    CommLinkModelContentPart clcp = new CommLinkModelContentPart(sourceUrl);
+                    clcp.setSlideShowLinks(currentSlideShowLinks);
+                    parts.add(clcp);
+                    currentSlideShowLinks = new ArrayList<>();
+                }
+                CommLinkModelContentPart clcp = new CommLinkModelContentPart(sourceUrl);
+                clcp.setTextContent(s);
                 parts.add(clcp);
+            }
+        }
+
+
+        PutResults<CommLinkModelContentPart> commLinkModelContentPartPutResults = SciApplication.getInstance().getStorIOSQLite()
+                .put()
+                .objects(parts)
+                .prepare()
+                .executeAsBlocking();
+
+        Timber.d("Added ContentParts. Inserts: %s Updates: %s link: %s",
+                commLinkModelContentPartPutResults.numberOfInserts(),
+                commLinkModelContentPartPutResults.numberOfUpdates(),
+                sourceUrl);
+
+        for (CommLinkModelContentPart p : commLinkModelContentPartPutResults.results().keySet()) {
+            p.id = commLinkModelContentPartPutResults.results().get(p).insertedId();
+            if (p.id == null) {
+                Timber.d("break here");
             }
         }
 

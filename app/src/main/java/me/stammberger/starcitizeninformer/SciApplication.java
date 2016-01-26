@@ -11,6 +11,8 @@ import net.danlew.android.joda.JodaTimeAndroid;
 
 import me.stammberger.starcitizeninformer.actions.SciActionCreator;
 import me.stammberger.starcitizeninformer.models.CommLinkModel;
+import me.stammberger.starcitizeninformer.models.CommLinkModelContentPart;
+import me.stammberger.starcitizeninformer.models.CommLinkModelContentPartSQLiteTypeMapping;
 import me.stammberger.starcitizeninformer.models.CommLinkModelSQLiteTypeMapping;
 import me.stammberger.starcitizeninformer.stores.db.DbOpenHelper;
 import timber.log.Timber;
@@ -76,6 +78,7 @@ public class SciApplication extends Application {
         mStorIOSQLite = DefaultStorIOSQLite.builder()
                 .sqliteOpenHelper(new DbOpenHelper(this))
                 .addTypeMapping(CommLinkModel.class, new CommLinkModelSQLiteTypeMapping())
+                .addTypeMapping(CommLinkModelContentPart.class, new CommLinkModelContentPartSQLiteTypeMapping())
                 .build();
     }
 

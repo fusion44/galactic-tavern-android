@@ -3,14 +3,15 @@ package me.stammberger.starcitizeninformer.models;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteColumn;
 import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteType;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import me.stammberger.starcitizeninformer.stores.db.tables.CommLinkTable;
-import me.stammberger.starcitizeninformer.ui.commlinks.CommLinkReaderSlideshowAdapter;
 
 /**
  * Stores data necessary for displaying a comm link in a list
@@ -39,35 +40,39 @@ public class CommLinkModel extends BaseModel implements Parcelable {
      */
     @StorIOSQLiteColumn(name = CommLinkTable.COLUMN_SOURCE_URI, key = true)
     public String sourceUri;
+
     /**
      * Title of the comm link
      */
-
     @StorIOSQLiteColumn(name = CommLinkTable.COLUMN_TITLE)
     public String title;
+
     /**
-     * RSS slideshowLinks parts of the comm link.
+     * Row ids of the belonging content parts encoded to a string.
+     * Separated by {@link #DATA_SEPARATOR}
      */
-    public ArrayList<CommLinkContentPart> content;
+    @StorIOSQLiteColumn(name = CommLinkTable.COLUMN_CONTENT_IDS)
+    public String contentIds;
+    /**
+     * RSS Content parts of the comm link.
+     */
+    public ArrayList<CommLinkModelContentPart> content;
     /**
      * Release date of the comm link
      */
     @StorIOSQLiteColumn(name = CommLinkTable.COLUMN_DATE)
     public long date;
-
     /**
      * Short slideshowLinks description of the comm link
      */
     @StorIOSQLiteColumn(name = CommLinkTable.COLUMN_DESCRIPTION)
     public String description;
-
     /**
      * Associated tags for the comm links.
      * Separated by {@link #DATA_SEPARATOR}
      */
     @StorIOSQLiteColumn(name = CommLinkTable.COLUMN_TAGS)
     public String tags;
-
     /**
      * Url for the backdrop image.
      */
@@ -92,6 +97,50 @@ public class CommLinkModel extends BaseModel implements Parcelable {
         backdropUrl = in.readString();
     }
 
+    public ArrayList<CommLinkModelContentPart> getContent() {
+        return content;
+    }
+
+    /**
+     * Sets the content parts objects only. Will not update the Ids field.
+     *
+     * @param content ArrayList with {@link CommLinkModelContentPart}
+     */
+    public void setContent(@NonNull ArrayList<CommLinkModelContentPart> content) {
+        this.content = content;
+    }
+
+    /**
+     * Sets the content parts and the belonging row Ids
+     *
+     * @param content ArrayList with {@link CommLinkModelContentPart}
+     */
+    public void setContentAndIds(@NonNull ArrayList<CommLinkModelContentPart> content) {
+        generateContentIdString(content);
+        this.content = content;
+    }
+
+    public List<Long> getContentIds() {
+        ArrayList<Long> list = new ArrayList<>();
+        if (contentIds != null && !contentIds.equals("")) {
+            String[] split = contentIds.split(DATA_SEPARATOR);
+            for (String s : split) {
+                Long id = Long.valueOf(s);
+                list.add(id);
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Sets content Ids only without keeping a reference to the objects
+     *
+     * @param content ArrayList<CommLinkModelContentPart> content
+     */
+    public void setContentIds(@NonNull ArrayList<CommLinkModelContentPart> content) {
+        generateContentIdString(content);
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -110,77 +159,28 @@ public class CommLinkModel extends BaseModel implements Parcelable {
     }
 
     /**
-     * Holds all information about the main content of the comm link
-     * Depending on {@link CommLinkContentPart#type} different fields will be filled with data.
+     * Provides shortcut method to generate the content part id's string
+     *
+     * @param content ArrayList<CommLinkModelContentPart> content
      */
-    public static class CommLinkContentPart implements Parcelable {
-        /**
-         * Establishes the part as an text block. Use for {@link #type}
-         */
-        public static final int CONTENT_TYPE_TEXT_BLOCK = 0;
-
-        /**
-         * Establishes the part as a slideshow. Use for {@link #type}
-         */
-        public static final int CONTENT_TYPE_SLIDESHOW = 1;
-        @SuppressWarnings("unused")
-        public static final Parcelable.Creator<CommLinkContentPart> CREATOR = new Parcelable.Creator<CommLinkContentPart>() {
-            @Override
-            public CommLinkContentPart createFromParcel(Parcel in) {
-                return new CommLinkContentPart(in);
-            }
-
-            @Override
-            public CommLinkContentPart[] newArray(int size) {
-                return new CommLinkContentPart[size];
-            }
-        };
-        /**
-         * Defines the type of data present.
-         * Must be one of {@link #CONTENT_TYPE_TEXT_BLOCK} or {@link #CONTENT_TYPE_SLIDESHOW}
-         */
-        public int type;
-        /**
-         * A {@link String} with RSS formatting.
-         * Use {@link android.text.Html#fromHtml(String)} to pass the text to an {@link android.widget.TextView} to get proper formatting
-         */
-        public String textContent;
-        /**
-         * Simply holds String of links to images which will be displayed by {@link CommLinkReaderSlideshowAdapter}
-         */
-        public ArrayList<String> slideshowLinks;
-
-        public CommLinkContentPart(int type, String textContent, ArrayList<String> slideshowLinks) {
-            this.type = type;
-            this.textContent = textContent;
-            this.slideshowLinks = slideshowLinks;
-        }
-
-        public CommLinkContentPart(Parcel in) {
-            type = in.readInt();
-            textContent = in.readString();
-            if (in.readByte() == 0x01) {
-                slideshowLinks = new ArrayList<>();
-                in.readList(slideshowLinks, String.class.getClassLoader());
-            } else {
-                slideshowLinks = null;
-            }
-        }
-
-        @Override
-        public int describeContents() {
-            return type;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeInt(type);
-            dest.writeString(textContent);
-            if (slideshowLinks == null) {
-                dest.writeByte((byte) (0x00));
-            } else {
-                dest.writeByte((byte) (0x01));
-                dest.writeList(slideshowLinks);
+    private void generateContentIdString(ArrayList<CommLinkModelContentPart> content) {
+        if (contentIds == null || contentIds.equals("")) {
+            contentIds = "";
+            for (int i = 0; i < content.size(); i++) {
+                CommLinkModelContentPart cp = content.get(i);
+                if (i + 1 < content.size()) {
+                    if (contentIds == null) {
+                        contentIds = cp.id + CommLinkModel.DATA_SEPARATOR;
+                    } else {
+                        contentIds += cp.id + CommLinkModel.DATA_SEPARATOR;
+                    }
+                } else {
+                    if (contentIds == null) {
+                        contentIds = String.valueOf(cp.id);
+                    } else {
+                        contentIds += cp.id;
+                    }
+                }
             }
         }
     }

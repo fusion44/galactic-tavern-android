@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import me.stammberger.starcitizeninformer.R;
 import me.stammberger.starcitizeninformer.models.CommLinkModel;
-import me.stammberger.starcitizeninformer.models.CommLinkModel.CommLinkContentPart;
+import me.stammberger.starcitizeninformer.models.CommLinkModelContentPart;
 import timber.log.Timber;
 
 
@@ -31,11 +31,11 @@ public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
         switch (viewType) {
-            case CommLinkContentPart.CONTENT_TYPE_TEXT_BLOCK:
+            case CommLinkModelContentPart.CONTENT_TYPE_TEXT_BLOCK:
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.activity_comm_link_reader_native_text_content, parent, false);
                 return new TextBlockViewHolder(view);
-            case CommLinkContentPart.CONTENT_TYPE_SLIDESHOW:
+            case CommLinkModelContentPart.CONTENT_TYPE_SLIDESHOW:
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.activity_comm_link_reader_native_slideshow, parent, false);
                 return new SlideshowViewHolder(view);
@@ -73,7 +73,7 @@ public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public class TextBlockViewHolder extends RecyclerView.ViewHolder {
         public final View view;
         public final TextView contentTextView;
-        public CommLinkContentPart contentPart;
+        public CommLinkModelContentPart contentPart;
 
         public TextBlockViewHolder(View view) {
             super(view);
@@ -85,16 +85,16 @@ public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         /**
          * Binds the ViewHolder
          *
-         * @param contentPart The {@link CommLinkContentPart} to display. Must be of type {@link CommLinkContentPart#CONTENT_TYPE_TEXT_BLOCK }
+         * @param contentPart The {@link CommLinkModelContentPart} to display. Must be of type {@link CommLinkModelContentPart#CONTENT_TYPE_TEXT_BLOCK }
          */
-        public void bindTextBlock(CommLinkContentPart contentPart) {
+        public void bindTextBlock(CommLinkModelContentPart contentPart) {
             if (contentPart == null
-                    || contentPart.type != CommLinkContentPart.CONTENT_TYPE_TEXT_BLOCK) {
+                    || contentPart.type != CommLinkModelContentPart.CONTENT_TYPE_TEXT_BLOCK) {
                 throw new IllegalArgumentException("CommLinkContentPart must be of type CONTENT_TYPE_TEXT_BLOCK");
             }
 
             this.contentPart = contentPart;
-            this.contentTextView.setText(Html.fromHtml(contentPart.textContent));
+            this.contentTextView.setText(Html.fromHtml(contentPart.content));
         }
     }
 
@@ -105,7 +105,7 @@ public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         public final View view;
         public final RecyclerView slideshowRecyclerView;
         private final CommLinkReaderSlideshowAdapter mAdapter;
-        public CommLinkContentPart contentPart;
+        public CommLinkModelContentPart contentPart;
 
         public SlideshowViewHolder(View view) {
             super(view);
@@ -120,15 +120,15 @@ public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         /**
          * Shortcut to binding the ViewHolder by itself.
          *
-         * @param part The {@link CommLinkContentPart} to display. Must be of type {@link CommLinkContentPart#CONTENT_TYPE_SLIDESHOW }
+         * @param part The {@link CommLinkModelContentPart} to display. Must be of type {@link CommLinkModelContentPart#CONTENT_TYPE_SLIDESHOW }
          */
-        public void bindSlideShow(CommLinkContentPart part) {
-            if (part.type != CommLinkContentPart.CONTENT_TYPE_SLIDESHOW) {
+        public void bindSlideShow(CommLinkModelContentPart part) {
+            if (part.type != CommLinkModelContentPart.CONTENT_TYPE_SLIDESHOW) {
                 throw new IllegalArgumentException("CommLinkContentPart must be of type CONTENT_TYPE_SLIDESHOW");
             }
 
             contentPart = part;
-            mAdapter.setLinks(part.slideshowLinks);
+            mAdapter.setLinks(part.getSlideshowLinks());
         }
     }
 }

@@ -18,6 +18,9 @@ public class CommLinkTable {
     public static final String COLUMN_SOURCE_URI = "source_uri";
 
     @NonNull
+    public static final String COLUMN_CONTENT_IDS = "content_ids";
+
+    @NonNull
     public static final String COLUMN_TITLE = "title";
 
     @NonNull
@@ -36,6 +39,7 @@ public class CommLinkTable {
         return "CREATE TABLE " + TABLE + "("
                 + COLUMN_ID + " INTEGER NOT NULL PRIMARY KEY, "
                 + COLUMN_SOURCE_URI + " TEXT NOT NULL UNIQUE, "
+                + COLUMN_CONTENT_IDS + " TEXT NOT NULL, "
                 + COLUMN_TITLE + " TEXT NOT NULL, "
                 + COLUMN_DATE + " UNSIGNED BIG INTEGER NOT NULL, "
                 + COLUMN_DESCRIPTION + " TEXT NOT NULL, "
