@@ -44,6 +44,7 @@ Optional:
 #### Lessons learned during development
 Here I keep a loose log of problems and weird stuff I came across during development for future reference.
 
+##### Android
 * Never put a RecyclerView inside a ScrollingView. Bad things will happen like RecyclerView not showing anything.
 Doing this makes no sense anyway, because nested scrolling views will lead to confusing interaction for users.
 At least when the scroll direction is the same.
@@ -51,3 +52,5 @@ At least when the scroll direction is the same.
 For the Bundle receiver, the data will be incomplete and/or muddled -> Basically I knew this beforehand but hoped it'll work out.
 Well, it didn't. *Solution:* Store comm links in database and retrieve data from database on demand.
 
+##### RxJava
+* Always implement onError and actually log the error message

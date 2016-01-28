@@ -11,4 +11,9 @@ public interface Keys {
      * Key for comm link data in {@link RxAction#getData()}
      */
     String COMM_LINKS = "comm_links";
+
+    /**
+     * Key for comm link data in {@link RxAction#getData()}
+     */
+    String COMM_LINK_PARTS = "comm_link_parts";
 }

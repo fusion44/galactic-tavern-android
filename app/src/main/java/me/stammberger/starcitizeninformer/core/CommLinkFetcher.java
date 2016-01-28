@@ -16,6 +16,7 @@ import me.stammberger.starcitizeninformer.R;
 import me.stammberger.starcitizeninformer.SciApplication;
 import me.stammberger.starcitizeninformer.models.CommLinkModel;
 import me.stammberger.starcitizeninformer.models.CommLinkModelContentPart;
+import me.stammberger.starcitizeninformer.stores.db.tables.CommLinkContentPartTable;
 import me.stammberger.starcitizeninformer.stores.db.tables.CommLinkTable;
 import rx.Observable;
 import rx.functions.Action1;
@@ -28,34 +29,32 @@ import timber.log.Timber;
  * This basically serves as a proxy class to turn PkRSS's output to an observable
  */
 public class CommLinkFetcher implements Callback {
-    final AsyncSubject<ArrayList<CommLinkModel>> mSubject;
+    final AsyncSubject<ArrayList<CommLinkModel>> mCommLinkSubject;
     private final Context mContext;
-    private int mColumnCount;
-    private long mNewestCommLinkDateInDb = 0;
+    private long mLatestCommLinkDateInDb = 0;
 
     public CommLinkFetcher() {
         mContext = SciApplication.getContext();
-        mColumnCount = mContext.getResources().getInteger(R.integer.list_column_count);
 
         // get the latest from Database to check whether we have new comm links
-        getNewestFromDb()
+        getLatestCommLinkFromDb()
                 .subscribe(new Action1<CommLinkModel>() {
                     @Override
                     public void call(CommLinkModel commLinkModel) {
                         if (commLinkModel != null) {
-                            mNewestCommLinkDateInDb = commLinkModel.date;
+                            mLatestCommLinkDateInDb = commLinkModel.date;
                         }
                         fetchRSSFeed();
                     }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        Timber.d("Error retrieving newest comm link from database. Error: %s", throwable.toString());
+                        Timber.d("Error retrieving latest comm link from database. Error: %s", throwable.toString());
                         fetchRSSFeed();
                     }
                 });
 
-        mSubject = AsyncSubject.create();
+        mCommLinkSubject = AsyncSubject.create();
     }
 
     /**
@@ -77,7 +76,7 @@ public class CommLinkFetcher implements Callback {
      *
      * @return Observable with the comm link
      */
-    private Observable<CommLinkModel> getNewestFromDb() {
+    private Observable<CommLinkModel> getLatestCommLinkFromDb() {
         Query q = Query.builder()
                 .table(CommLinkTable.TABLE)
                 .orderBy(CommLinkTable.COLUMN_DATE + " DESC")
@@ -96,7 +95,7 @@ public class CommLinkFetcher implements Callback {
      * Fetches all comm links from local database and calls the subject once completed.
      * This is a blocking call.
      */
-    private void getAllFromDb() {
+    private void getAllCommLinksFromDb() {
         Query q = Query.builder()
                 .table(CommLinkTable.TABLE)
                 .orderBy(CommLinkTable.COLUMN_DATE + " DESC")
@@ -109,8 +108,8 @@ public class CommLinkFetcher implements Callback {
                 .prepare()
                 .executeAsBlocking();
 
-        mSubject.onNext(new ArrayList<>(commLinkModel));
-        mSubject.onCompleted();
+        mCommLinkSubject.onNext(new ArrayList<>(commLinkModel));
+        mCommLinkSubject.onCompleted();
     }
 
     /**
@@ -130,9 +129,9 @@ public class CommLinkFetcher implements Callback {
     @Override
     public void onLoaded(List<Article> newArticles) {
         Timber.d("PkRSS articles loaded");
-        if (newArticles.get(0).getDate() <= mNewestCommLinkDateInDb) {
+        if (newArticles.get(0).getDate() <= mLatestCommLinkDateInDb) {
             Timber.d("No new articles. Skip update and fetch from DB");
-            getAllFromDb();
+            getAllCommLinksFromDb();
             return;
         }
 
@@ -141,7 +140,7 @@ public class CommLinkFetcher implements Callback {
                     @Override
                     public Boolean call(Article article) {
                         // emits the observable received if its newer than the latest one received from database
-                        return article.getDate() > mNewestCommLinkDateInDb;
+                        return article.getDate() > mLatestCommLinkDateInDb;
                     }
                 })
                 .map(new Func1<Article, CommLinkModel>() {
@@ -164,7 +163,7 @@ public class CommLinkFetcher implements Callback {
                                     @Override
                                     public void call(PutResults<CommLinkModel> commLinkModelPutResults) {
                                         Timber.d("Saved %s new comm links to DB.", commLinkModelPutResults.numberOfInserts());
-                                        getAllFromDb();
+                                        getAllCommLinksFromDb();
                                     }
                                 }, new Action1<Throwable>() {
                                     @Override
@@ -314,16 +313,31 @@ public class CommLinkFetcher implements Callback {
      */
     @Override
     public void onLoadFailed() {
-        mSubject.onError(new Throwable(mContext.getString(R.string.error_failed_to_load_comm_link_rss)));
+        mCommLinkSubject.onError(new Throwable(mContext.getString(R.string.error_failed_to_load_comm_link_rss)));
     }
 
 
     /**
      * @return An RxJava observable for which will be called once all articles are loaded
      */
-    public Observable<ArrayList<CommLinkModel>> observable() {
+    public Observable<ArrayList<CommLinkModel>> getCommLinks() {
         Timber.d("Observer subscribed for comm links");
 
-        return mSubject.asObservable();
+        return mCommLinkSubject.asObservable();
+    }
+
+    public Observable<List<CommLinkModelContentPart>> getCommLinkContentParts(String sourceUrl) {
+        Query q = Query.builder()
+                .table(CommLinkContentPartTable.TABLE)
+                .where(CommLinkContentPartTable.COLUMN_SOURCE_URI + " = ?")
+                .whereArgs(sourceUrl)
+                .build();
+
+        return SciApplication.getInstance().getStorIOSQLite()
+                .get()
+                .listOfObjects(CommLinkModelContentPart.class)
+                .withQuery(q)
+                .prepare()
+                .asRxObservable();
     }
 }

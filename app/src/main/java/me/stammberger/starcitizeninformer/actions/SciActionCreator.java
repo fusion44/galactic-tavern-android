@@ -6,9 +6,11 @@ import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
 import com.hardsoftstudio.rxflux.util.SubscriptionManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import me.stammberger.starcitizeninformer.core.CommLinkFetcher;
 import me.stammberger.starcitizeninformer.models.CommLinkModel;
+import me.stammberger.starcitizeninformer.models.CommLinkModelContentPart;
 import me.stammberger.starcitizeninformer.stores.CommLinkStore;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -47,7 +49,7 @@ public class SciActionCreator extends RxActionCreator implements Actions {
             mCommLinkFetcher = new CommLinkFetcher();
         }
 
-        addRxAction(action, mCommLinkFetcher.observable()
+        addRxAction(action, mCommLinkFetcher.getCommLinks()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<ArrayList<CommLinkModel>>() {
@@ -60,6 +62,36 @@ public class SciActionCreator extends RxActionCreator implements Actions {
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
+                        postError(action, throwable);
+                    }
+                }));
+    }
+
+    @Override
+    public void getCommLinkParts(String sourceUrl) {
+        Timber.d("Getting comm link parts for %s from DB.", sourceUrl);
+
+        final RxAction action = newRxAction(GET_COMM_LINK_PARTS);
+        if (hasRxAction(action)) return;
+
+        if (mCommLinkFetcher == null) {
+            mCommLinkFetcher = new CommLinkFetcher();
+        }
+
+        addRxAction(action, mCommLinkFetcher.getCommLinkContentParts(sourceUrl)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<CommLinkModelContentPart>>() {
+                    @Override
+                    public void call(List<CommLinkModelContentPart> parts) {
+                        Timber.d("Got comm %s link parts.", parts.size());
+                        action.getData().put(Keys.COMM_LINK_PARTS, parts);
+                        postRxAction(action);
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        Timber.d("error %s \n %s", throwable.toString(), throwable.getCause());
                         postError(action, throwable);
                     }
                 }));

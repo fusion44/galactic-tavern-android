@@ -6,10 +6,13 @@ import com.hardsoftstudio.rxflux.store.RxStore;
 import com.hardsoftstudio.rxflux.store.RxStoreChange;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import me.stammberger.starcitizeninformer.actions.Actions;
 import me.stammberger.starcitizeninformer.actions.Keys;
 import me.stammberger.starcitizeninformer.models.CommLinkModel;
+import me.stammberger.starcitizeninformer.models.CommLinkModelContentPart;
 
 /**
  * Stores all comm links once they've been loaded by an action
@@ -25,6 +28,7 @@ public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
     public static final String ID = "CommLinkStore";
     private static CommLinkStore mInstance;
     private ArrayList<CommLinkModel> mCommLinks;
+    private HashMap<String, List<CommLinkModelContentPart>> mCommLinkParts;
 
     /**
      * Private constructor. Use @CommLinkStore.get to retrieve an instance
@@ -33,6 +37,7 @@ public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
      */
     private CommLinkStore(Dispatcher dispatcher) {
         super(dispatcher);
+        mCommLinkParts = new HashMap<>();
     }
 
     /**
@@ -58,6 +63,16 @@ public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<CommLinkModelContentPart> getCommLinkModelParts(String sourceUrl) {
+        return mCommLinkParts.get(sourceUrl) == null
+                ? new ArrayList<CommLinkModelContentPart>() : mCommLinkParts.get(sourceUrl);
+
+    }
+
+    /**
      * Method is called when the loading action has finished running.
      *
      * @param action RxAction that has finished loading. Must contain the comm link data.
@@ -68,6 +83,15 @@ public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
         switch (action.getType()) {
             case Actions.GET_COMM_LINKS:
                 this.mCommLinks = (ArrayList<CommLinkModel>) action.getData().get(Keys.COMM_LINKS);
+                break;
+            case Actions.GET_COMM_LINK_PARTS:
+                List<CommLinkModelContentPart> parts
+                        = (List<CommLinkModelContentPart>) action.getData().get(Keys.COMM_LINK_PARTS);
+
+                if (parts.size() > 0) {
+                    this.mCommLinkParts.put(parts.get(0).sourceUrl, parts);
+                }
+
                 break;
             default:
                 // return without posting a change to the store.
