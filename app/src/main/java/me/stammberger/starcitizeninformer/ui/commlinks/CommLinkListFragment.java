@@ -16,7 +16,9 @@ import java.util.ArrayList;
 
 import jp.wasabeef.recyclerview.animators.adapters.SlideInBottomAnimationAdapter;
 import me.stammberger.starcitizeninformer.R;
+import me.stammberger.starcitizeninformer.SciApplication;
 import me.stammberger.starcitizeninformer.models.CommLinkModel;
+import me.stammberger.starcitizeninformer.stores.CommLinkStore;
 import timber.log.Timber;
 
 /**
@@ -39,13 +41,10 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
     }
 
     @SuppressWarnings("unused")
-    public static CommLinkListFragment newInstance(int columnCount, ArrayList<CommLinkModel> commLinks) {
+    public static CommLinkListFragment newInstance(int columnCount) {
         CommLinkListFragment fragment = new CommLinkListFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
-        if (commLinks != null) {
-            args.putParcelableArrayList(ARG_COMM_LINKS, commLinks);
-        }
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,6 +56,20 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+
+        CommLinkStore commLinkStore = CommLinkStore.get(SciApplication.getInstance().getRxFlux().getDispatcher());
+        // Check if the store has the articles already loaded
+        ArrayList<CommLinkModel> commLinks = commLinkStore.getCommLinks();
+        if (commLinks.size() == 0) {
+            // if not, instruct the action creator to start the fetch  comm links process
+            // The ActionCreator will create an action which will get the rss articles
+            // and put them in the CommLinkStore which will post a change which will trigger
+            // MainActivity.onRxStoreChanged with the data
+            // The articles will then be RxStoreChange argument of onRxStoreChange
+            // https://raw.githubusercontent.com/lgvalle/lgvalle.github.io/master/public/images/flux-graph-complete.png
+            SciApplication.getInstance().getActionCreator().getCommLinks();
+        }
+
     }
 
     @Override
@@ -117,7 +130,7 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
      * @param commLinks The comm links for the Adapter
      */
     public void setCommLinks(ArrayList<CommLinkModel> commLinks) {
-        setupRecyclerView(commLinks);
+        setupRecyclerView(calculateSpanCount(commLinks));
     }
 
     /**
@@ -138,5 +151,59 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
         Intent i = new Intent(this.getContext(), CommLinkReaderActivity.class);
         i.putExtra(CommLinkReaderActivity.COMM_LINK_ITEM, item);
         startActivity(i);
+    }
+
+
+    /**
+     * Calculates the span count comm links. Takes several keywords into account like
+     * "around the verse" or "released" to guess which item might be more interesting
+     * to the user. This will basically sort the list.
+     *
+     * @param aList List of comm links
+     * @return The sorted list
+     */
+    private ArrayList<CommLinkModel> calculateSpanCount(ArrayList<CommLinkModel> aList) {
+        int currentColumn = 0;
+
+        for (int i = 0; i < aList.size(); i++) {
+            CommLinkModel current = aList.get(i);
+            int spanSize = 1;
+
+            if (i == 0 || mColumnCount == 2 && currentColumn == 0) {
+                // if we are in two column mode, check whether this item is displayed in first column
+                // if yes, check whether it will be displayed with two columns
+                int rand = (int) (Math.random() * 3);
+                if (rand == 2) {
+                    spanSize = 2;
+
+                    // count one up as one additional column is used up.
+                    // This basically leads to resetting at the end of this for loop on case of two columns
+                    currentColumn++;
+                }
+            } else if (mColumnCount == 3) {
+                if (currentColumn == 0 || currentColumn == 1) {
+                    int rand = (int) (Math.random() * 3);
+                    if (rand == 2) {
+                        spanSize = 2;
+                        currentColumn++; // count one up as one additional column is used up
+                    }
+                }
+            }
+
+            if (i + 1 == aList.size() && currentColumn == 0) {
+                // if the last item is in the left column force it to span all columns
+                spanSize = mColumnCount;
+            }
+
+            currentColumn++;
+            // reset column counter.
+            if (currentColumn >= mColumnCount) {
+                currentColumn = 0;
+            }
+
+            current.spanCount = spanSize;
+        }
+
+        return aList;
     }
 }

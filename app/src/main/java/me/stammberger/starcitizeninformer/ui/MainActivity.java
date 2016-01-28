@@ -17,12 +17,9 @@ import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
 import com.hardsoftstudio.rxflux.dispatcher.RxViewDispatch;
 import com.hardsoftstudio.rxflux.store.RxStoreChange;
 
-import java.util.ArrayList;
-
 import me.stammberger.starcitizeninformer.R;
 import me.stammberger.starcitizeninformer.SciApplication;
 import me.stammberger.starcitizeninformer.actions.Actions;
-import me.stammberger.starcitizeninformer.models.CommLinkModel;
 import me.stammberger.starcitizeninformer.stores.CommLinkStore;
 import me.stammberger.starcitizeninformer.ui.commlinks.CommLinkListFragment;
 import timber.log.Timber;
@@ -106,19 +103,7 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         if (id == R.id.nav_comm_link) {
-            // Check if the store has the articles already loaded
-            ArrayList<CommLinkModel> commLinks = mCommLinkStore.getCommLinks();
-            if (commLinks.size() == 0) {
-                // if not, instruct the action creator to start the fetch  comm links process
-                // The ActionCreator will create an action which will get the rss articles
-                // and put them in the CommLinkStore which will post a change which will trigger
-                // MainActivity.onRxStoreChanged with the data
-                // The articles will then be RxStoreChange argument of onRxStoreChange
-                // https://raw.githubusercontent.com/lgvalle/lgvalle.github.io/master/public/images/flux-graph-complete.png
-                SciApplication.getInstance().getActionCreator().getCommLinks();
-            }
-
-            mCurrentFragment = CommLinkListFragment.newInstance(2, commLinks);
+            mCurrentFragment = CommLinkListFragment.newInstance(2);
             fragmentTransaction.replace(R.id.fragment_container, mCurrentFragment);
             fragmentTransaction.commit();
         } else if (id == R.id.nav_ships) {

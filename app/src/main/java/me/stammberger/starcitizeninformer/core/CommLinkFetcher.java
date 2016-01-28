@@ -18,10 +18,8 @@ import me.stammberger.starcitizeninformer.models.CommLinkModel;
 import me.stammberger.starcitizeninformer.models.CommLinkModelContentPart;
 import me.stammberger.starcitizeninformer.stores.db.tables.CommLinkTable;
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 import rx.subjects.AsyncSubject;
 import timber.log.Timber;
 
@@ -95,6 +93,27 @@ public class CommLinkFetcher implements Callback {
     }
 
     /**
+     * Fetches all comm links from local database and calls the subject once completed.
+     * This is a blocking call.
+     */
+    private void getAllFromDb() {
+        Query q = Query.builder()
+                .table(CommLinkTable.TABLE)
+                .orderBy(CommLinkTable.COLUMN_DATE + " DESC")
+                .build();
+
+        List<CommLinkModel> commLinkModel = SciApplication.getInstance().getStorIOSQLite()
+                .get()
+                .listOfObjects(CommLinkModel.class)
+                .withQuery(q)
+                .prepare()
+                .executeAsBlocking();
+
+        mSubject.onNext(new ArrayList<>(commLinkModel));
+        mSubject.onCompleted();
+    }
+
+    /**
      * Called before PkRSS starts loading
      */
     @Override
@@ -112,13 +131,12 @@ public class CommLinkFetcher implements Callback {
     public void onLoaded(List<Article> newArticles) {
         Timber.d("PkRSS articles loaded");
         if (newArticles.get(0).getDate() <= mNewestCommLinkDateInDb) {
-            Timber.d("No new articles. Skip update.");
+            Timber.d("No new articles. Skip update and fetch from DB");
+            getAllFromDb();
             return;
         }
 
         Observable.from(newArticles)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .takeWhile(new Func1<Article, Boolean>() {
                     @Override
                     public Boolean call(Article article) {
@@ -145,9 +163,8 @@ public class CommLinkFetcher implements Callback {
                                 .subscribe(new Action1<PutResults<CommLinkModel>>() {
                                     @Override
                                     public void call(PutResults<CommLinkModel> commLinkModelPutResults) {
-                                        Timber.d("New comm links. Inserts: %s; Updates: %s",
-                                                commLinkModelPutResults.numberOfInserts(),
-                                                commLinkModelPutResults.numberOfUpdates());
+                                        Timber.d("Saved %s new comm links to DB.", commLinkModelPutResults.numberOfInserts());
+                                        getAllFromDb();
                                     }
                                 }, new Action1<Throwable>() {
                                     @Override
@@ -290,59 +307,6 @@ public class CommLinkFetcher implements Callback {
         }
 
         return parts;
-    }
-
-    /**
-     * Calculates the span count comm links. Takes several keywords into account like
-     * "around the verse" or "released" to guess which item might be more interesting
-     * to the user. This will basically sort the list.
-     *
-     * @param aList List of comm links
-     * @return The sorted list
-     */
-    private ArrayList<CommLinkModel> calculateSpanCount(ArrayList<CommLinkModel> aList) {
-        int currentColumn = 0;
-
-        for (int i = 0; i < aList.size(); i++) {
-            CommLinkModel current = aList.get(i);
-            int spanSize = 1;
-
-            if (i == 0 || mColumnCount == 2 && currentColumn == 0) {
-                // if we are in two column mode, check whether this item is displayed in first column
-                // if yes, check whether it will be displayed with two columns
-                int rand = (int) (Math.random() * 3);
-                if (rand == 2) {
-                    spanSize = 2;
-
-                    // count one up as one additional column is used up.
-                    // This basically leads to resetting at the end of this for loop on case of two columns
-                    currentColumn++;
-                }
-            } else if (mColumnCount == 3) {
-                if (currentColumn == 0 || currentColumn == 1) {
-                    int rand = (int) (Math.random() * 3);
-                    if (rand == 2) {
-                        spanSize = 2;
-                        currentColumn++; // count one up as one additional column is used up
-                    }
-                }
-            }
-
-            if (i + 1 == aList.size() && currentColumn == 0) {
-                // if the last item is in the left column force it to span all columns
-                spanSize = mColumnCount;
-            }
-
-            currentColumn++;
-            // reset column counter.
-            if (currentColumn >= mColumnCount) {
-                currentColumn = 0;
-            }
-
-            current.spanCount = spanSize;
-        }
-
-        return aList;
     }
 
     /**
