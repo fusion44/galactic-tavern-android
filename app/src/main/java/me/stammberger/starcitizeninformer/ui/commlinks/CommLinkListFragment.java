@@ -56,20 +56,6 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
-
-        CommLinkStore commLinkStore = CommLinkStore.get(SciApplication.getInstance().getRxFlux().getDispatcher());
-        // Check if the store has the articles already loaded
-        ArrayList<CommLinkModel> commLinks = commLinkStore.getCommLinks();
-        if (commLinks.size() == 0) {
-            // if not, instruct the action creator to start the fetch  comm links process
-            // The ActionCreator will create an action which will get the rss articles
-            // and put them in the CommLinkStore which will post a change which will trigger
-            // MainActivity.onRxStoreChanged with the data
-            // The articles will then be RxStoreChange argument of onRxStoreChange
-            // https://raw.githubusercontent.com/lgvalle/lgvalle.github.io/master/public/images/flux-graph-complete.png
-            SciApplication.getInstance().getActionCreator().getCommLinks();
-        }
-
     }
 
     @Override
@@ -84,6 +70,21 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
             if (getArguments() != null && getArguments().containsKey(ARG_COMM_LINKS)) {
                 ArrayList<CommLinkModel> list = getArguments().getParcelableArrayList(ARG_COMM_LINKS);
                 setupRecyclerView(list);
+            }
+
+            CommLinkStore commLinkStore = CommLinkStore.get(SciApplication.getInstance().getRxFlux().getDispatcher());
+            // Check if the store has the articles already loaded
+            ArrayList<CommLinkModel> commLinks = commLinkStore.getCommLinks();
+            if (commLinks.size() == 0) {
+                // if not, instruct the action creator to start the fetch  comm links process
+                // The ActionCreator will create an action which will get the rss articles
+                // and put them in the CommLinkStore which will post a change which will trigger
+                // MainActivity.onRxStoreChanged with the data
+                // The articles will then be RxStoreChange argument of onRxStoreChange
+                // https://raw.githubusercontent.com/lgvalle/lgvalle.github.io/master/public/images/flux-graph-complete.png
+                SciApplication.getInstance().getActionCreator().getCommLinks();
+            } else {
+                setCommLinks(commLinks);
             }
         }
         return view;

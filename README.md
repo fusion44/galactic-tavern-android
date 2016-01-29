@@ -54,3 +54,5 @@ Well, it didn't. *Solution:* Store comm links in database and retrieve data from
 
 ##### RxJava
 * Always implement onError and actually log the error message
+* Make sure to add arguments to the RxActions in [RxActionCreator#newRxAction](https://github.com/skimarxall/RxFlux/wiki/Actions)
+to avoid the newly created action being mistaken to an existing one

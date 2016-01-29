@@ -71,7 +71,7 @@ public class SciActionCreator extends RxActionCreator implements Actions {
     public void getCommLinkParts(String sourceUrl) {
         Timber.d("Getting comm link parts for %s from DB.", sourceUrl);
 
-        final RxAction action = newRxAction(GET_COMM_LINK_PARTS);
+        final RxAction action = newRxAction(GET_COMM_LINK_PARTS, Keys.COMM_LINK_PARTS, sourceUrl);
         if (hasRxAction(action)) return;
 
         if (mCommLinkFetcher == null) {
