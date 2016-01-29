@@ -51,6 +51,7 @@ At least when the scroll direction is the same.
 * Intents and Bundles are not indented to handle large data sets like comm links.
 For the Bundle receiver, the data will be incomplete and/or muddled -> Basically I knew this beforehand but hoped it'll work out.
 Well, it didn't. *Solution:* Store comm links in database and retrieve data from database on demand.
+* Convert Url String to Android Uri by using [Uri#parse](http://developer.android.com/reference/android/net/Uri.html#parse(java.lang.String))
 
 ##### RxJava
 * Always implement onError and actually log the error message

@@ -1,10 +1,13 @@
 package me.stammberger.starcitizeninformer.ui.commlinks;
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.hardsoftstudio.rxflux.action.RxError;
@@ -17,6 +20,8 @@ import java.util.ArrayList;
 import me.stammberger.starcitizeninformer.R;
 import me.stammberger.starcitizeninformer.SciApplication;
 import me.stammberger.starcitizeninformer.actions.Actions;
+import me.stammberger.starcitizeninformer.core.chrome.CustomTabActivityHelper;
+import me.stammberger.starcitizeninformer.core.chrome.WebviewFallback;
 import me.stammberger.starcitizeninformer.models.CommLinkModel;
 import me.stammberger.starcitizeninformer.stores.CommLinkStore;
 import timber.log.Timber;
@@ -74,11 +79,25 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_comm_link_reader, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
         if (id == android.R.id.home) {
             super.onBackPressed();
+            return true;
+        } else if (id == R.id.action_open_browser) {
+            CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+            CustomTabActivityHelper.openCustomTab(
+                    this,
+                    customTabsIntent,
+                    Uri.parse(mCommLink.sourceUri),
+                    new WebviewFallback());
             return true;
         }
 
