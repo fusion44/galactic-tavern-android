@@ -59,7 +59,7 @@ public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
      */
     @Override
     public ArrayList<CommLinkModel> getCommLinks() {
-        return mCommLinks == null ? new ArrayList<CommLinkModel>() : mCommLinks;
+        return mCommLinks == null ? new ArrayList<>() : mCommLinks;
     }
 
     /**
@@ -68,7 +68,7 @@ public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
     @Override
     public List<CommLinkModelContentPart> getCommLinkModelParts(String sourceUrl) {
         return mCommLinkParts.get(sourceUrl) == null
-                ? new ArrayList<CommLinkModelContentPart>() : mCommLinkParts.get(sourceUrl);
+                ? new ArrayList<>() : mCommLinkParts.get(sourceUrl);
 
     }
 

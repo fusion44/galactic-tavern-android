@@ -19,8 +19,6 @@ import me.stammberger.starcitizeninformer.models.CommLinkModelContentPart;
 import me.stammberger.starcitizeninformer.stores.db.tables.CommLinkContentPartTable;
 import me.stammberger.starcitizeninformer.stores.db.tables.CommLinkTable;
 import rx.Observable;
-import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.subjects.AsyncSubject;
 import timber.log.Timber;
 
@@ -29,7 +27,7 @@ import timber.log.Timber;
  * This basically serves as a proxy class to turn PkRSS's output to an observable
  */
 public class CommLinkFetcher implements Callback {
-    final AsyncSubject<ArrayList<CommLinkModel>> mCommLinkSubject;
+    private final AsyncSubject<ArrayList<CommLinkModel>> mCommLinkSubject;
     private final Context mContext;
     private long mLatestCommLinkDateInDb = 0;
 
@@ -38,20 +36,14 @@ public class CommLinkFetcher implements Callback {
 
         // get the latest from Database to check whether we have new comm links
         getLatestCommLinkFromDb()
-                .subscribe(new Action1<CommLinkModel>() {
-                    @Override
-                    public void call(CommLinkModel commLinkModel) {
-                        if (commLinkModel != null) {
-                            mLatestCommLinkDateInDb = commLinkModel.date;
-                        }
-                        fetchRSSFeed();
+                .subscribe(commLinkModel -> {
+                    if (commLinkModel != null) {
+                        mLatestCommLinkDateInDb = commLinkModel.date;
                     }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        Timber.d("Error retrieving latest comm link from database. Error: %s", throwable.toString());
-                        fetchRSSFeed();
-                    }
+                    fetchRSSFeed();
+                }, throwable -> {
+                    Timber.d("Error retrieving latest comm link from database. Error: %s", throwable.toString());
+                    fetchRSSFeed();
                 });
 
         mCommLinkSubject = AsyncSubject.create();
@@ -136,49 +128,28 @@ public class CommLinkFetcher implements Callback {
         }
 
         Observable.from(newArticles)
-                .takeWhile(new Func1<Article, Boolean>() {
-                    @Override
-                    public Boolean call(Article article) {
-                        // emits the observable received if its newer than the latest one received from database
-                        return article.getDate() > mLatestCommLinkDateInDb;
-                    }
+                .takeWhile(article -> {
+                    // emits the observable received if its newer than the latest one received from database
+                    return article.getDate() > mLatestCommLinkDateInDb;
                 })
-                .map(new Func1<Article, CommLinkModel>() {
-                    @Override
-                    public CommLinkModel call(Article a) {
-                        // translate Article to CommLinkModel
-                        return getCommLinkModel(a);
-                    }
-                })
+                .map(this::getCommLinkModel)
                 .toList() // this will replace also the onCompleted call
-                .subscribe(new Action1<List<CommLinkModel>>() {
-                    @Override
-                    public void call(List<CommLinkModel> commLinkModels) {
-                        SciApplication.getInstance().getStorIOSQLite()
-                                .put()
-                                .objects(commLinkModels)
-                                .prepare()
-                                .asRxObservable()
-                                .subscribe(new Action1<PutResults<CommLinkModel>>() {
-                                    @Override
-                                    public void call(PutResults<CommLinkModel> commLinkModelPutResults) {
-                                        Timber.d("Saved %s new comm links to DB.", commLinkModelPutResults.numberOfInserts());
-                                        getAllCommLinksFromDb();
-                                    }
-                                }, new Action1<Throwable>() {
-                                    @Override
-                                    public void call(Throwable throwable) {
-                                        Timber.d("Error putting CommLinkModels into database: \n %s", throwable.getCause().toString());
-                                    }
-                                });
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        Timber.d("Error1: %s", throwable.getCause());
-                        Timber.d("Stacktrace %s", throwable.getStackTrace());
-                        Timber.d("onError: %s", throwable.toString());
-                    }
+                .subscribe(commLinkModels -> {
+                    SciApplication.getInstance().getStorIOSQLite()
+                            .put()
+                            .objects(commLinkModels)
+                            .prepare()
+                            .asRxObservable()
+                            .subscribe(commLinkModelPutResults -> {
+                                Timber.d("Saved %s new comm links to DB.", commLinkModelPutResults.numberOfInserts());
+                                getAllCommLinksFromDb();
+                            }, throwable -> {
+                                Timber.d("Error putting CommLinkModels into database: \n %s", throwable.getCause().toString());
+                            });
+                }, throwable -> {
+                    Timber.d("Error1: %s", throwable.getCause());
+                    Timber.d("Stacktrace %s", throwable.getStackTrace());
+                    Timber.d("onError: %s", throwable.toString());
                 });
     }
 

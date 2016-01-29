@@ -5,15 +5,9 @@ import com.hardsoftstudio.rxflux.action.RxActionCreator;
 import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
 import com.hardsoftstudio.rxflux.util.SubscriptionManager;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import me.stammberger.starcitizeninformer.core.CommLinkFetcher;
-import me.stammberger.starcitizeninformer.models.CommLinkModel;
-import me.stammberger.starcitizeninformer.models.CommLinkModelContentPart;
 import me.stammberger.starcitizeninformer.stores.CommLinkStore;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
@@ -52,18 +46,11 @@ public class SciActionCreator extends RxActionCreator implements Actions {
         addRxAction(action, mCommLinkFetcher.getCommLinks()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<ArrayList<CommLinkModel>>() {
-                    @Override
-                    public void call(ArrayList<CommLinkModel> comm_links) {
-                        Timber.d("Got the comm links");
-                        action.getData().put(Keys.COMM_LINKS, comm_links);
-                        postRxAction(action);
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        postError(action, throwable);
-                    }
+                .subscribe(comm_links -> {
+                    action.getData().put(Keys.COMM_LINKS, comm_links);
+                    postRxAction(action);
+                }, throwable -> {
+                    postError(action, throwable);
                 }));
     }
 
@@ -81,19 +68,12 @@ public class SciActionCreator extends RxActionCreator implements Actions {
         addRxAction(action, mCommLinkFetcher.getCommLinkContentParts(sourceUrl)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<List<CommLinkModelContentPart>>() {
-                    @Override
-                    public void call(List<CommLinkModelContentPart> parts) {
-                        Timber.d("Got comm %s link parts.", parts.size());
-                        action.getData().put(Keys.COMM_LINK_PARTS, parts);
-                        postRxAction(action);
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        Timber.d("error %s \n %s", throwable.toString(), throwable.getCause());
-                        postError(action, throwable);
-                    }
+                .subscribe(parts -> {
+                    action.getData().put(Keys.COMM_LINK_PARTS, parts);
+                    postRxAction(action);
+                }, throwable -> {
+                    Timber.d("error %s \n %s", throwable.toString(), throwable.getCause());
+                    postError(action, throwable);
                 }));
     }
 }

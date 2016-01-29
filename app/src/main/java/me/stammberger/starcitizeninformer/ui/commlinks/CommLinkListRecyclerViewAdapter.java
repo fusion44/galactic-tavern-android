@@ -68,14 +68,11 @@ public class CommLinkListRecyclerViewAdapter extends RecyclerView.Adapter<CommLi
                 .listener(this)
                 .into(h.backdropImageView);
 
-        h.view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(h.item);
-                }
+        h.view.setOnClickListener(v -> {
+            if (null != mListener) {
+                // Notify the active callbacks interface (the activity, if the
+                // fragment is attached to one) that an item has been selected.
+                mListener.onListFragmentInteraction(h.item);
             }
         });
     }
@@ -128,7 +125,7 @@ public class CommLinkListRecyclerViewAdapter extends RecyclerView.Adapter<CommLi
         }
     }
 
-    protected class SpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
+    private class SpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
         @Override
         public int getSpanSize(int position) {
             return mValues.get(position).spanCount;
