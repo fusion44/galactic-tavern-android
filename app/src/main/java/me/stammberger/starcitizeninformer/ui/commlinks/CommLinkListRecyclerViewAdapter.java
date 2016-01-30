@@ -1,6 +1,7 @@
 package me.stammberger.starcitizeninformer.ui.commlinks;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -68,11 +69,15 @@ public class CommLinkListRecyclerViewAdapter extends RecyclerView.Adapter<CommLi
                 .listener(this)
                 .into(h.backdropImageView);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            h.backdropImageView.setTransitionName(h.item.backdropUrl);
+        }
+
         h.view.setOnClickListener(v -> {
             if (null != mListener) {
                 // Notify the active callbacks interface (the activity, if the
                 // fragment is attached to one) that an item has been selected.
-                mListener.onListFragmentInteraction(h.item);
+                mListener.onListFragmentInteraction(h.item, h.backdropImageView);
             }
         });
     }
@@ -101,7 +106,15 @@ public class CommLinkListRecyclerViewAdapter extends RecyclerView.Adapter<CommLi
      * Interface for communication between list items and the host fragment
      */
     public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(CommLinkModel item);
+        /**
+         * The ImageView is passed for making Activity transitions possible.
+         * The ImageView tag and transitionName has been set to its image source url
+         * which can be retrieved by the parent Activity/Fragment for use with ActivityOptionsCompat.makeSceneTransitionAnimation
+         *
+         * @param item that has been clicked on
+         * @param view that has been clicked on
+         */
+        void onListFragmentInteraction(CommLinkModel item, ImageView view);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

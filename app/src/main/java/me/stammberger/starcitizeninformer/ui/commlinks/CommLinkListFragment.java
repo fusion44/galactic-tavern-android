@@ -2,6 +2,7 @@ package me.stammberger.starcitizeninformer.ui.commlinks;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageView;
 
 import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
@@ -29,6 +31,7 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
 
     private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String ARG_COMM_LINKS = "comm_links";
+    private static final int READER_ACTIVITY_RESULT = 0;
 
     private int mColumnCount = 2;
     private SuperRecyclerView mRecyclerView;
@@ -141,7 +144,7 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
      * @param item The clicked item
      */
     @Override
-    public void onListFragmentInteraction(CommLinkModel item) {
+    public void onListFragmentInteraction(CommLinkModel item, ImageView view) {
         // Simply open a custom chrome tab. Using the source from the RSS mostly looks bad.
         // Need to find another solution.
         // TODO: Write a backend app which fetches comm links from RSI.com and makes them available through an API
@@ -149,9 +152,11 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
         CustomTabActivityHelper.openCustomTab(
                 (AppCompatActivity) this.getActivity(), customTabsIntent, item.sourceUri, new WebviewFallback());*/
 
+        ActivityOptionsCompat options = ActivityOptionsCompat.
+                makeSceneTransitionAnimation(this.getActivity(), view, item.backdropUrl);
         Intent i = new Intent(this.getContext(), CommLinkReaderActivity.class);
         i.putExtra(CommLinkReaderActivity.COMM_LINK_ITEM, item);
-        startActivity(i);
+        getActivity().startActivityForResult(i, READER_ACTIVITY_RESULT, options.toBundle());
     }
 
 

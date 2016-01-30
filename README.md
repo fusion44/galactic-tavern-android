@@ -53,6 +53,7 @@ Embedding a RecyclerView inside another RecyclerView is OK when scroll direction
 For the Bundle receiver, the data will be incomplete and/or muddled -> Basically I knew this beforehand but hoped it'll work out.
 Well, it didn't. *Solution:* Store comm links in database and retrieve data from database on demand.
 * Convert Url String to Android Uri by using [Uri#parse](http://developer.android.com/reference/android/net/Uri.html#parse(java.lang.String))
+* When adding activity transitions, don't forget to enable them in your style when using a non material theme: *<item name="android:windowActivityTransitions"\>true</item\>*
 
 ##### RxJava
 * Always implement onError and actually log the error message

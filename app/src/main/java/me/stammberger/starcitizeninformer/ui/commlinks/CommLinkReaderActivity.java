@@ -1,6 +1,7 @@
 package me.stammberger.starcitizeninformer.ui.commlinks;
 
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,9 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.hardsoftstudio.rxflux.action.RxError;
 import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
 import com.hardsoftstudio.rxflux.dispatcher.RxViewDispatch;
@@ -32,7 +36,7 @@ import timber.log.Timber;
  * This Activity will display {@link .models.CommLinkModelContentPart} in an RecyclerView
  * with appropriate styling to make it visually pleasing and easy to read
  */
-public class CommLinkReaderActivity extends AppCompatActivity implements RxViewDispatch {
+public class CommLinkReaderActivity extends AppCompatActivity implements RxViewDispatch, RequestListener<String, GlideDrawable> {
     public static final String COMM_LINK_ITEM = "comm_link_item";
     private CommLinkModel mCommLink;
 
@@ -53,7 +57,18 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
         ImageView backdropView = (ImageView) findViewById(R.id.comm_link_backdrop);
         Glide.with(this)
                 .load(mCommLink.backdropUrl)
+                .listener(this)
                 .into(backdropView);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            /**
+             * Wait until the image is fully loaded and start again in Glides {@link #onResourceReady(GlideDrawable, String, Target, boolean, boolean)}
+             * This is to make sure the transition is started only after the target image is loaded.
+             * The animation will always look correct this way.
+             */
+            supportPostponeEnterTransition();
+            backdropView.setTransitionName(mCommLink.backdropUrl);
+        }
 
         if (mCommLink.content == null) {
             SciApplication.getInstance().getActionCreator().getCommLinkParts(mCommLink.sourceUri);
@@ -141,5 +156,20 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
     @Override
     public void onRxStoresRegister() {
 
+    }
+
+    @Override
+    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+        return false;
+    }
+
+    @Override
+    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            supportStartPostponedEnterTransition();
+        }
+
+        // we did not manually update the ImageView target, thus return false
+        return false;
     }
 }
