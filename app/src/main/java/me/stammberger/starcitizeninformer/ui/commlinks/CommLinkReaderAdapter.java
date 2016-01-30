@@ -111,6 +111,7 @@ public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             super(view);
             this.view = view;
             slideshowRecyclerView = (RecyclerView) view.findViewById(R.id.slideshowRecyclerView);
+            slideshowRecyclerView.setNestedScrollingEnabled(false);
             slideshowRecyclerView.setLayoutManager(
                     new LinearLayoutManager(view.getContext(), LinearLayoutManager.HORIZONTAL, false));
             mAdapter = new CommLinkReaderSlideshowAdapter(view.getContext());

@@ -46,8 +46,9 @@ Here I keep a loose log of problems and weird stuff I came across during develop
 
 ##### Android
 * Never put a RecyclerView inside a ScrollingView. Bad things will happen like RecyclerView not showing anything.
-Doing this makes no sense anyway, because nested scrolling views will lead to confusing interaction for users.
-At least when the scroll direction is the same.
+Doing this makes no sense anyway, because nested scrolling views will lead to confusing interaction for users when the scroll direction is the same.
+Embedding a RecyclerView inside another RecyclerView is OK when scroll direction is different. When nesting RecyclerView's and using [AppBarLayout](http://developer.android.com/reference/android/support/design/widget/AppBarLayout.html)
+ then make sure to set [RecyclerView#setNestedScrollingEnabled(boolean)](http://developer.android.com/reference/android/support/v7/widget/RecyclerView.html#setNestedScrollingEnabled(boolean)) to false on the nested view. Failing to do so will [break the AppBarLayout](https://goo.gl/photos/LN23TKQiwR7gMhF36).
 * Intents and Bundles are not indented to handle large data sets like comm links.
 For the Bundle receiver, the data will be incomplete and/or muddled -> Basically I knew this beforehand but hoped it'll work out.
 Well, it didn't. *Solution:* Store comm links in database and retrieve data from database on demand.

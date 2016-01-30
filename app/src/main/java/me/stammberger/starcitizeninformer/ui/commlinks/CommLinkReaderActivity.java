@@ -9,7 +9,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.hardsoftstudio.rxflux.action.RxError;
 import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
 import com.hardsoftstudio.rxflux.dispatcher.RxViewDispatch;
@@ -47,6 +49,11 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
         }
 
         mCommLink = getIntent().getParcelableExtra(COMM_LINK_ITEM);
+
+        ImageView backdropView = (ImageView) findViewById(R.id.comm_link_backdrop);
+        Glide.with(this)
+                .load(mCommLink.backdropUrl)
+                .into(backdropView);
 
         if (mCommLink.content == null) {
             SciApplication.getInstance().getActionCreator().getCommLinkParts(mCommLink.sourceUri);
