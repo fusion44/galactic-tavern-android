@@ -1,0 +1,5 @@
+<resources>
+    <dimen name="comm_link_item_height">240dp</dimen>
+    <fraction name="comm_link_reader_column_width_percent">75%</fraction>
+    <dimen name="slideshow_total_height">400dp</dimen>
+</resources>
