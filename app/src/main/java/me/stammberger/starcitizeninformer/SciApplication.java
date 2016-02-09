@@ -5,22 +5,31 @@ import android.content.Context;
 import android.util.Log;
 
 import com.hardsoftstudio.rxflux.RxFlux;
+import com.pushtorefresh.storio.sqlite.SQLiteTypeMapping;
 import com.pushtorefresh.storio.sqlite.impl.DefaultStorIOSQLite;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
 import me.stammberger.starcitizeninformer.actions.SciActionCreator;
-import me.stammberger.starcitizeninformer.models.CommLinkModel;
-import me.stammberger.starcitizeninformer.models.CommLinkModelContentPart;
-import me.stammberger.starcitizeninformer.models.CommLinkModelContentPartSQLiteTypeMapping;
-import me.stammberger.starcitizeninformer.models.CommLinkModelSQLiteTypeMapping;
+import me.stammberger.starcitizeninformer.models.commlink.CommLinkModel;
+import me.stammberger.starcitizeninformer.models.commlink.CommLinkModelSQLiteTypeMapping;
+import me.stammberger.starcitizeninformer.models.commlink.ContentBlock1;
+import me.stammberger.starcitizeninformer.models.commlink.ContentBlock1SQLiteTypeMapping;
+import me.stammberger.starcitizeninformer.models.commlink.ContentBlock2;
+import me.stammberger.starcitizeninformer.models.commlink.ContentBlock2SQLiteTypeMapping;
+import me.stammberger.starcitizeninformer.models.commlink.ContentBlock4;
+import me.stammberger.starcitizeninformer.models.commlink.ContentBlock4SQLiteTypeMapping;
+import me.stammberger.starcitizeninformer.models.commlink.Wrapper;
+import me.stammberger.starcitizeninformer.models.commlink.WrapperStorIOSQLiteDeleteResolver;
+import me.stammberger.starcitizeninformer.models.commlink.WrapperStorIOSQLitePutResolver;
 import me.stammberger.starcitizeninformer.stores.db.DbOpenHelper;
+import me.stammberger.starcitizeninformer.stores.db.resolvers.ContentWrapperGetResolver;
 import timber.log.Timber;
 
 
 /**
  * Base Android Application
- * <p/>
+ * <p>
  * This is a Singleton class
  */
 public class SciApplication extends Application {
@@ -78,7 +87,14 @@ public class SciApplication extends Application {
         mStorIOSQLite = DefaultStorIOSQLite.builder()
                 .sqliteOpenHelper(new DbOpenHelper(this))
                 .addTypeMapping(CommLinkModel.class, new CommLinkModelSQLiteTypeMapping())
-                .addTypeMapping(CommLinkModelContentPart.class, new CommLinkModelContentPartSQLiteTypeMapping())
+                .addTypeMapping(ContentBlock1.class, new ContentBlock1SQLiteTypeMapping())
+                .addTypeMapping(ContentBlock2.class, new ContentBlock2SQLiteTypeMapping())
+                .addTypeMapping(ContentBlock4.class, new ContentBlock4SQLiteTypeMapping())
+                .addTypeMapping(Wrapper.class, SQLiteTypeMapping.<Wrapper>builder()
+                        .putResolver(new WrapperStorIOSQLitePutResolver())
+                        .getResolver(new ContentWrapperGetResolver())
+                        .deleteResolver(new WrapperStorIOSQLiteDeleteResolver())
+                        .build())
                 .build();
     }
 

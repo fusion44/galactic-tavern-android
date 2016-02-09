@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import jp.wasabeef.recyclerview.animators.adapters.SlideInBottomAnimationAdapter;
 import me.stammberger.starcitizeninformer.R;
 import me.stammberger.starcitizeninformer.SciApplication;
-import me.stammberger.starcitizeninformer.models.CommLinkModel;
+import me.stammberger.starcitizeninformer.models.commlink.CommLinkModel;
 import me.stammberger.starcitizeninformer.stores.CommLinkStore;
 import timber.log.Timber;
 
@@ -30,7 +30,6 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
         CommLinkListRecyclerViewAdapter.OnListFragmentInteractionListener {
 
     private static final String ARG_COLUMN_COUNT = "column-count";
-    private static final String ARG_COMM_LINKS = "comm_links";
     private static final int READER_ACTIVITY_RESULT = 0;
 
     private int mColumnCount = 2;
@@ -69,13 +68,8 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
         // Set the adapter
         if (view instanceof SuperRecyclerView) {
             mRecyclerView = (SuperRecyclerView) view;
-            mRecyclerView.setRefreshListener(this);
-            if (getArguments() != null && getArguments().containsKey(ARG_COMM_LINKS)) {
-                ArrayList<CommLinkModel> list = getArguments().getParcelableArrayList(ARG_COMM_LINKS);
-                setupRecyclerView(list);
-            }
-
             CommLinkStore commLinkStore = CommLinkStore.get(SciApplication.getInstance().getRxFlux().getDispatcher());
+
             // Check if the store has the articles already loaded
             ArrayList<CommLinkModel> commLinks = commLinkStore.getCommLinks();
             if (commLinks.size() == 0) {
@@ -145,17 +139,10 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
      */
     @Override
     public void onListFragmentInteraction(CommLinkModel item, ImageView view) {
-        // Simply open a custom chrome tab. Using the source from the RSS mostly looks bad.
-        // Need to find another solution.
-        // TODO: Write a backend app which fetches comm links from RSI.com and makes them available through an API
-        /*CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
-        CustomTabActivityHelper.openCustomTab(
-                (AppCompatActivity) this.getActivity(), customTabsIntent, item.sourceUri, new WebviewFallback());*/
-
         ActivityOptionsCompat options = ActivityOptionsCompat.
-                makeSceneTransitionAnimation(this.getActivity(), view, item.backdropUrl);
+                makeSceneTransitionAnimation(this.getActivity(), view, item.getMainBackdrop());
         Intent i = new Intent(this.getContext(), CommLinkReaderActivity.class);
-        i.putExtra(CommLinkReaderActivity.COMM_LINK_ITEM, item);
+        i.putExtra(CommLinkReaderActivity.COMM_LINK_ITEM, item.commLinkId);
         getActivity().startActivityForResult(i, READER_ACTIVITY_RESULT, options.toBundle());
     }
 

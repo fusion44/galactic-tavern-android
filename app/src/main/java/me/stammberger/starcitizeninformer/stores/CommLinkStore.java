@@ -11,24 +11,24 @@ import java.util.List;
 
 import me.stammberger.starcitizeninformer.actions.Actions;
 import me.stammberger.starcitizeninformer.actions.Keys;
-import me.stammberger.starcitizeninformer.models.CommLinkModel;
-import me.stammberger.starcitizeninformer.models.CommLinkModelContentPart;
+import me.stammberger.starcitizeninformer.models.commlink.CommLinkModel;
+import me.stammberger.starcitizeninformer.models.commlink.Wrapper;
 
 /**
  * Stores all comm links once they've been loaded by an action
  * This will NOT trigger the loading process if comm links are requested
  * To adhere to the Flux contract loading must be triggered by the view:
  * https://raw.githubusercontent.com/lgvalle/lgvalle.github.io/master/public/images/flux-graph-complete.png
- * <p/>
+ * <p>
  * {@link RxStore#postChange(RxStoreChange)} will update the listener classes. Called in {@link CommLinkStore#onRxAction(RxAction)}
- * <p/>
+ * <p>
  * This is a Singleton class
  */
 public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
     public static final String ID = "CommLinkStore";
     private static CommLinkStore mInstance;
-    private ArrayList<CommLinkModel> mCommLinks;
-    private HashMap<String, List<CommLinkModelContentPart>> mCommLinkParts;
+    private HashMap<Long, CommLinkModel> mCommLinks;
+    private HashMap<Long, List<Wrapper>> mCommLinkContentWrappers;
 
     /**
      * Private constructor. Use @CommLinkStore.get to retrieve an instance
@@ -37,7 +37,8 @@ public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
      */
     private CommLinkStore(Dispatcher dispatcher) {
         super(dispatcher);
-        mCommLinkParts = new HashMap<>();
+        mCommLinks = new HashMap<>();
+        mCommLinkContentWrappers = new HashMap<>();
     }
 
     /**
@@ -58,18 +59,27 @@ public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
      * {@inheritDoc}
      */
     @Override
-    public ArrayList<CommLinkModel> getCommLinks() {
-        return mCommLinks == null ? new ArrayList<>() : mCommLinks;
+    public CommLinkModel getCommLink(Long id) {
+        return mCommLinks.get(id) == null ? new CommLinkModel() : mCommLinks.get(id);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<CommLinkModelContentPart> getCommLinkModelParts(String sourceUrl) {
-        return mCommLinkParts.get(sourceUrl) == null
-                ? new ArrayList<>() : mCommLinkParts.get(sourceUrl);
+    public ArrayList<CommLinkModel> getCommLinks() {
+        return mCommLinks == null ? new ArrayList<>() : new ArrayList<>(mCommLinks.values());
+    }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param commLinkId
+     */
+    @Override
+    public List<Wrapper> getCommLinkContentWrappers(Long commLinkId) {
+        return mCommLinkContentWrappers.get(commLinkId) == null ? new ArrayList<>()
+                : mCommLinkContentWrappers.get(commLinkId);
     }
 
     /**
@@ -82,14 +92,18 @@ public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
     public void onRxAction(RxAction action) {
         switch (action.getType()) {
             case Actions.GET_COMM_LINKS:
-                this.mCommLinks = (ArrayList<CommLinkModel>) action.getData().get(Keys.COMM_LINKS);
+                ArrayList<CommLinkModel> m = (ArrayList<CommLinkModel>) action.getData().get(Keys.COMM_LINKS);
+                for (int i = 0; i < m.size(); i++) {
+                    mCommLinks.put(m.get(i).commLinkId, m.get(i));
+                }
                 break;
-            case Actions.GET_COMM_LINK_PARTS:
-                List<CommLinkModelContentPart> parts
-                        = (List<CommLinkModelContentPart>) action.getData().get(Keys.COMM_LINK_PARTS);
+            case Actions.GET_COMM_LINK_CONTENT_WRAPPERS:
+                ArrayList<Wrapper> wrappers
+                        = (ArrayList<Wrapper>) action.getData().get(Keys.COMM_LINK_CONTENT_WRAPPERS);
+                Long commLinkId = action.get(Keys.COMM_LINK_ID);
 
-                if (parts.size() > 0) {
-                    this.mCommLinkParts.put(parts.get(0).sourceUrl, parts);
+                if (wrappers.size() != 0) {
+                    this.mCommLinkContentWrappers.put(commLinkId, wrappers);
                 }
 
                 break;

@@ -5,6 +5,8 @@ import com.hardsoftstudio.rxflux.action.RxActionCreator;
 import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
 import com.hardsoftstudio.rxflux.util.SubscriptionManager;
 
+import java.util.ArrayList;
+
 import me.stammberger.starcitizeninformer.core.CommLinkFetcher;
 import me.stammberger.starcitizeninformer.stores.CommLinkStore;
 import rx.android.schedulers.AndroidSchedulers;
@@ -26,6 +28,30 @@ public class SciActionCreator extends RxActionCreator implements Actions {
         super(dispatcher, manager);
     }
 
+    /**
+     * Gets a single comm link
+     *
+     * @param id the comm link id. Note this is not the SQLite id
+     */
+    @Override
+    public void getCommLink(Long id) {
+        final RxAction action = newRxAction(GET_COMM_LINK, id);
+        if (hasRxAction(action)) return;
+
+        if (mCommLinkFetcher == null) {
+            mCommLinkFetcher = new CommLinkFetcher();
+        }
+
+        addRxAction(action, mCommLinkFetcher.getCommLink(id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(comm_link -> {
+                    action.getData().put(Keys.COMM_LINK, comm_link);
+                    postRxAction(action);
+                }, throwable -> {
+                    postError(action, throwable);
+                }));
+    }
 
     /**
      * Initiates the get comm link retrieval through {@link SciActionCreator#mCommLinkFetcher}
@@ -54,23 +80,27 @@ public class SciActionCreator extends RxActionCreator implements Actions {
                 }));
     }
 
+    /**
+     * Initiates the process to get the content wrappers for a specific comm link from the using
+     * {@link CommLinkFetcher#getCommLinkContentWrappers(Long)}.
+     *
+     * @param id The comm link id
+     */
     @Override
-    public void getCommLinkParts(String sourceUrl) {
-        Timber.d("Getting comm link parts for %s from DB.", sourceUrl);
-
-        final RxAction action = newRxAction(GET_COMM_LINK_PARTS, Keys.COMM_LINK_PARTS, sourceUrl);
+    public void getCommLinkContentWrappers(Long id) {
+        final RxAction action = newRxAction(GET_COMM_LINK_CONTENT_WRAPPERS, Keys.COMM_LINK_ID, id);
         if (hasRxAction(action)) return;
 
         if (mCommLinkFetcher == null) {
             mCommLinkFetcher = new CommLinkFetcher();
         }
 
-        addRxAction(action, mCommLinkFetcher.getCommLinkContentParts(sourceUrl)
+        addRxAction(action, mCommLinkFetcher.getCommLinkContentWrappers(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(parts -> {
-                    action.getData().put(Keys.COMM_LINK_PARTS, parts);
-                    postRxAction(action);
+                    action.getData().put(Keys.COMM_LINK_CONTENT_WRAPPERS, new ArrayList<>(parts));
+                    SciActionCreator.this.postRxAction(action);
                 }, throwable -> {
                     Timber.d("error %s \n %s", throwable.toString(), throwable.getCause());
                     postError(action, throwable);

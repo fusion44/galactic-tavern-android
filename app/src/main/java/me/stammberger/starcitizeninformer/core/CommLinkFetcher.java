@@ -6,7 +6,8 @@ import android.support.annotation.NonNull;
 import com.pkmmte.pkrss.Article;
 import com.pkmmte.pkrss.Callback;
 import com.pkmmte.pkrss.PkRSS;
-import com.pushtorefresh.storio.sqlite.operations.put.PutResults;
+import com.pushtorefresh.storio.sqlite.impl.DefaultStorIOSQLite;
+import com.pushtorefresh.storio.sqlite.operations.put.PutResult;
 import com.pushtorefresh.storio.sqlite.queries.Query;
 
 import java.util.ArrayList;
@@ -14,11 +15,14 @@ import java.util.List;
 
 import me.stammberger.starcitizeninformer.R;
 import me.stammberger.starcitizeninformer.SciApplication;
-import me.stammberger.starcitizeninformer.models.CommLinkModel;
-import me.stammberger.starcitizeninformer.models.CommLinkModelContentPart;
-import me.stammberger.starcitizeninformer.stores.db.tables.CommLinkContentPartTable;
-import me.stammberger.starcitizeninformer.stores.db.tables.CommLinkTable;
+import me.stammberger.starcitizeninformer.core.retrofit.CommLinkApiService;
+import me.stammberger.starcitizeninformer.models.commlink.CommLinkModel;
+import me.stammberger.starcitizeninformer.models.commlink.Wrapper;
+import me.stammberger.starcitizeninformer.stores.db.resolvers.ContentWrapperGetResolver;
+import me.stammberger.starcitizeninformer.stores.db.tables.commlink.CommLinkModelTable;
+import me.stammberger.starcitizeninformer.stores.db.tables.commlink.ContentWrapperTable;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 import rx.subjects.AsyncSubject;
 import timber.log.Timber;
 
@@ -32,13 +36,16 @@ public class CommLinkFetcher implements Callback {
     private long mLatestCommLinkDateInDb = 0;
 
     public CommLinkFetcher() {
+        Timber.d("New CommLinkFetcher");
         mContext = SciApplication.getContext();
 
         // get the latest from Database to check whether we have new comm links
         getLatestCommLinkFromDb()
+                .take(1)
                 .subscribe(commLinkModel -> {
+                    Timber.d("calling fetch");
                     if (commLinkModel != null) {
-                        mLatestCommLinkDateInDb = commLinkModel.date;
+                        mLatestCommLinkDateInDb = commLinkModel.getPublished();
                     }
                     fetchRSSFeed();
                 }, throwable -> {
@@ -56,9 +63,9 @@ public class CommLinkFetcher implements Callback {
         Timber.d("fetchRSSFeed");
         PkRSS.with(mContext)
                 .load("https://robertsspaceindustries.com/comm-link/rss")
-                        //.load("http://192.168.178.95:8000/sci_rss.xml")
-                        //.load("http://192.168.178.95:8000/sci_rss_two_items.xml") // LAN
-                        //.load("http://192.168.178.52:8000/sci_rss_two_items.xml") // wireless
+                //.load("http://192.168.178.95:8000/sci_rss.xml")
+                //.load("http://192.168.178.95:8000/sci_rss_two_items.xml") // LAN
+                //.load("http://192.168.178.52:8000/sci_rss_two_items.xml") // wireless
                 .callback(this)
                 .async();
     }
@@ -70,8 +77,8 @@ public class CommLinkFetcher implements Callback {
      */
     private Observable<CommLinkModel> getLatestCommLinkFromDb() {
         Query q = Query.builder()
-                .table(CommLinkTable.TABLE)
-                .orderBy(CommLinkTable.COLUMN_DATE + " DESC")
+                .table(CommLinkModelTable.TABLE)
+                .orderBy(CommLinkModelTable.COLUMN_PUBLISHED_DATE + " DESC")
                 .limit(1)
                 .build();
 
@@ -89,8 +96,8 @@ public class CommLinkFetcher implements Callback {
      */
     private void getAllCommLinksFromDb() {
         Query q = Query.builder()
-                .table(CommLinkTable.TABLE)
-                .orderBy(CommLinkTable.COLUMN_DATE + " DESC")
+                .table(CommLinkModelTable.TABLE)
+                .orderBy(CommLinkModelTable.COLUMN_PUBLISHED_DATE + " DESC")
                 .build();
 
         List<CommLinkModel> commLinkModel = SciApplication.getInstance().getStorIOSQLite()
@@ -128,6 +135,7 @@ public class CommLinkFetcher implements Callback {
         }
 
         Observable.from(newArticles)
+                .observeOn(Schedulers.io())
                 .takeWhile(article -> {
                     // emits the observable received if its newer than the latest one received from database
                     return article.getDate() > mLatestCommLinkDateInDb;
@@ -141,14 +149,12 @@ public class CommLinkFetcher implements Callback {
                             .prepare()
                             .asRxObservable()
                             .subscribe(commLinkModelPutResults -> {
-                                Timber.d("Saved %s new comm links to DB.", commLinkModelPutResults.numberOfInserts());
                                 getAllCommLinksFromDb();
                             }, throwable -> {
                                 Timber.d("Error putting CommLinkModels into database: \n %s", throwable.getCause().toString());
                             });
                 }, throwable -> {
                     Timber.d("Error1: %s", throwable.getCause());
-                    Timber.d("Stacktrace %s", throwable.getStackTrace());
                     Timber.d("onError: %s", throwable.toString());
                 });
     }
@@ -161,122 +167,62 @@ public class CommLinkFetcher implements Callback {
      */
     @NonNull
     private CommLinkModel getCommLinkModel(Article a) {
-        CommLinkModel m = new CommLinkModel();
-        m.sourceUri = a.getSource().toString();
-        m.title = a.getTitle();
-        m.setContentIds(processContent(a.getSource().toString(), a.getContent()));
-        m.date = a.getDate();
-        m.description = a.getDescription();
+        int id = Utility.getId(a.getSource().toString());
+        Timber.d("Getting model for comm link id %s from API", id);
 
-        List<String> tags = a.getTags();
-        for (int i1 = 0; i1 < tags.size(); i1++) {
-            String s = tags.get(i1);
-            if (i1 + 1 < tags.size()) {
-                if (m.tags == null) {
-                    m.tags = s + CommLinkModel.DATA_SEPARATOR;
-                } else {
-                    m.tags += s + CommLinkModel.DATA_SEPARATOR;
-                }
-            } else {
-                if (m.tags == null) {
-                    m.tags = s;
-                } else {
-                    m.tags += s;
-                }
+        CommLinkModel cm = CommLinkApiService.Factory.getInstance()
+                .getCommLink(id)
+                .toBlocking()
+                .first();
+
+        DefaultStorIOSQLite storio = SciApplication.getInstance().getStorIOSQLite();
+
+        for (Wrapper wrapper : cm.getWrappers()) {
+            wrapper.commLinkId = cm.commLinkId;
+            if (wrapper.getContentBlock1() != null) {
+                wrapper.getContentBlock1().genDbData();
+                PutResult putResult = storio.put()
+                        .object(wrapper.getContentBlock1())
+                        .prepare()
+                        .executeAsBlocking();
+                wrapper.contentBlock1DbId = putResult.insertedId();
+            }
+            if (wrapper.getContentBlock2() != null) {
+                wrapper.getContentBlock2().genDbData();
+                PutResult putResult = storio.put()
+                        .object(wrapper.getContentBlock2())
+                        .prepare()
+                        .executeAsBlocking();
+                wrapper.contentBlock2DbId = putResult.insertedId();
+            }
+            if (wrapper.getContentBlock4() != null) {
+                PutResult putResult = storio.put()
+                        .object(wrapper.getContentBlock4())
+                        .prepare()
+                        .executeAsBlocking();
+                wrapper.contentBlock4DbId = putResult.insertedId();
             }
         }
 
-        if (a.getMediaContent().size() > 0) {
-            m.backdropUrl = a.getMediaContent().get(0).getUrl();
-        }
-        return m;
-    }
-
-    /**
-     * Splits the RSS content into several parts to make it easier to work with and
-     * display in a visually pleasing way within a RecyclerView.
-     *
-     * @param sourceUrl The comm link url these parts belong to
-     * @param content   Content string directly from the RSS feed
-     * @return {@link CommLinkModelContentPart} {@link ArrayList} Holding all parsed data
-     */
-    private ArrayList<CommLinkModelContentPart> processContent(String sourceUrl, String content) {
-        ArrayList<CommLinkModelContentPart> parts = new ArrayList<>();
-        if (content == null) {
-            Timber.d("Content null at: %s", sourceUrl);
-            return parts;
-        }
-
-
-        ArrayList<String> currentSlideShowLinks = new ArrayList<>();
-        String splitDelimiter = "<a class=\"image  js-open-in-slideshow\" data-source_url=\"";
-
-        String[] split = content.split(splitDelimiter);
-        for (String s : split) {
-            if (s.startsWith("https://")) {
-                String[] linkSplit = s.split("\" rel=\"post\"><img src=\"");
-
-                if (linkSplit.length > 2) {
-                    // In theory this should never happen. But as I don't have control over the source
-                    // it's better to check.
-                    Timber.d("Split size > 2: %s", sourceUrl);
-                }
-
-
-                String img = linkSplit[0];
-                currentSlideShowLinks.add(img);
-
-                String[] a = null;
-
-                if (linkSplit.length > 1) {
-                    String remainder = linkSplit[1];
-                    a = remainder.trim().split("\" alt=\"\" /></a>");
-                }
-
-                if (a != null && a.length > 1) {
-                    if (currentSlideShowLinks.size() > 0) {
-                        CommLinkModelContentPart clcp = new CommLinkModelContentPart(sourceUrl);
-                        clcp.setSlideShowLinks(currentSlideShowLinks);
-                        parts.add(clcp);
-                        currentSlideShowLinks = new ArrayList<>();
-                    }
-                    CommLinkModelContentPart clcp = new CommLinkModelContentPart(sourceUrl);
-                    clcp.setTextContent(a[1]);
-                    parts.add(clcp);
-                }
-            } else {
-                if (currentSlideShowLinks.size() > 0) {
-                    CommLinkModelContentPart clcp = new CommLinkModelContentPart(sourceUrl);
-                    clcp.setSlideShowLinks(currentSlideShowLinks);
-                    parts.add(clcp);
-                    currentSlideShowLinks = new ArrayList<>();
-                }
-                CommLinkModelContentPart clcp = new CommLinkModelContentPart(sourceUrl);
-                clcp.setTextContent(s);
-                parts.add(clcp);
-            }
-        }
-
-
-        PutResults<CommLinkModelContentPart> commLinkModelContentPartPutResults = SciApplication.getInstance().getStorIOSQLite()
-                .put()
-                .objects(parts)
+        /**
+         * Optimization potential:
+         * Save the wrappers to a list and put them to DB all at once after every comm link has been parsed
+         * Not sure its worth the extra hassle, since it'll only have huge chunk of data on first run anyway
+         */
+        storio.put()
+                .objects(cm.getWrappers())
                 .prepare()
-                .executeAsBlocking();
+                .asRxObservable()
+                .subscribeOn(Schedulers.io())
+                .subscribe(wrapperPutResults -> {
+                    // do nothing
+                }, throwable -> {
+                    Timber.d("Error putting %s wrapper to DB", cm.commLinkId);
+                    Timber.d(throwable.getCause().toString());
+                    Timber.d(throwable.toString());
+                });
 
-        Timber.d("Added ContentParts. Inserts: %s Updates: %s link: %s",
-                commLinkModelContentPartPutResults.numberOfInserts(),
-                commLinkModelContentPartPutResults.numberOfUpdates(),
-                sourceUrl);
-
-        for (CommLinkModelContentPart p : commLinkModelContentPartPutResults.results().keySet()) {
-            p.id = commLinkModelContentPartPutResults.results().get(p).insertedId();
-            if (p.id == null) {
-                Timber.d("break here");
-            }
-        }
-
-        return parts;
+        return cm;
     }
 
     /**
@@ -297,17 +243,45 @@ public class CommLinkFetcher implements Callback {
         return mCommLinkSubject.asObservable();
     }
 
-    public Observable<List<CommLinkModelContentPart>> getCommLinkContentParts(String sourceUrl) {
+    /**
+     * Retrieves a single comm link
+     *
+     * @param id The comm link id
+     * @return Observable for the content
+     */
+    public Observable<CommLinkModel> getCommLink(Long id) {
         Query q = Query.builder()
-                .table(CommLinkContentPartTable.TABLE)
-                .where(CommLinkContentPartTable.COLUMN_SOURCE_URI + " = ?")
-                .whereArgs(sourceUrl)
+                .table(CommLinkModelTable.TABLE)
+                .where(CommLinkModelTable.COLUMN_COMM_LINK_ID + " = ?")
+                .whereArgs(id)
                 .build();
 
         return SciApplication.getInstance().getStorIOSQLite()
                 .get()
-                .listOfObjects(CommLinkModelContentPart.class)
+                .object(CommLinkModel.class)
                 .withQuery(q)
+                .prepare()
+                .asRxObservable();
+    }
+
+    /**
+     * Get all content wrappers for a specific comm link ID
+     *
+     * @param id The comm link id
+     * @return an observable for the wrapper list
+     */
+    public Observable<List<Wrapper>> getCommLinkContentWrappers(Long id) {
+        Query q = Query.builder()
+                .table(ContentWrapperTable.TABLE)
+                .where(CommLinkModelTable.COLUMN_COMM_LINK_ID + " = ?")
+                .whereArgs(id)
+                .build();
+
+        return SciApplication.getInstance().getStorIOSQLite()
+                .get()
+                .listOfObjects(Wrapper.class)
+                .withQuery(q)
+                .withGetResolver(new ContentWrapperGetResolver())
                 .prepare()
                 .asRxObservable();
     }

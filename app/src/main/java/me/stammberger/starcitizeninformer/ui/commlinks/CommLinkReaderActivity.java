@@ -21,16 +21,16 @@ import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
 import com.hardsoftstudio.rxflux.dispatcher.RxViewDispatch;
 import com.hardsoftstudio.rxflux.store.RxStoreChange;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import me.stammberger.starcitizeninformer.R;
 import me.stammberger.starcitizeninformer.SciApplication;
 import me.stammberger.starcitizeninformer.actions.Actions;
 import me.stammberger.starcitizeninformer.core.chrome.CustomTabActivityHelper;
 import me.stammberger.starcitizeninformer.core.chrome.WebviewFallback;
-import me.stammberger.starcitizeninformer.models.CommLinkModel;
+import me.stammberger.starcitizeninformer.models.commlink.CommLinkModel;
+import me.stammberger.starcitizeninformer.models.commlink.Wrapper;
 import me.stammberger.starcitizeninformer.stores.CommLinkStore;
-import timber.log.Timber;
 
 /**
  * This Activity will display {@link .models.CommLinkModelContentPart} in an RecyclerView
@@ -39,6 +39,7 @@ import timber.log.Timber;
 public class CommLinkReaderActivity extends AppCompatActivity implements RxViewDispatch, RequestListener<String, GlideDrawable> {
     public static final String COMM_LINK_ITEM = "comm_link_item";
     private CommLinkModel mCommLink;
+    private CommLinkStore mCommLinkStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,11 +53,14 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        mCommLink = getIntent().getParcelableExtra(COMM_LINK_ITEM);
+        Dispatcher dispatcher = SciApplication.getInstance().getRxFlux().getDispatcher();
+        mCommLinkStore = CommLinkStore.get(dispatcher);
+        Long commLinkId = getIntent().getLongExtra(COMM_LINK_ITEM, -1);
+        mCommLink = mCommLinkStore.getCommLink(commLinkId);
 
         ImageView backdropView = (ImageView) findViewById(R.id.comm_link_backdrop);
         Glide.with(this)
-                .load(mCommLink.backdropUrl)
+                .load(mCommLink.getMainBackdrop())
                 .listener(this)
                 .into(backdropView);
 
@@ -67,11 +71,12 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
              * The animation will always look correct this way.
              */
             supportPostponeEnterTransition();
-            backdropView.setTransitionName(mCommLink.backdropUrl);
+            backdropView.setTransitionName(mCommLink.getMainBackdrop());
         }
 
-        if (mCommLink.content == null) {
-            SciApplication.getInstance().getActionCreator().getCommLinkParts(mCommLink.sourceUri);
+        if (mCommLink.getWrappers().size() == 0) {
+            SciApplication.getInstance().getActionCreator()
+                    .getCommLinkContentWrappers(mCommLink.getCommLinkId());
         } else {
             setupRecyclerView();
         }
@@ -87,12 +92,10 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
         switch (change.getStoreId()) {
             case CommLinkStore.ID:
                 switch (change.getRxAction().getType()) {
-                    case Actions.GET_COMM_LINK_PARTS:
-                        Timber.d("Got com link parts");
-                        Dispatcher dispatcher = SciApplication.getInstance().getRxFlux().getDispatcher();
-                        mCommLink.content =
-                                new ArrayList<>(CommLinkStore.get(dispatcher)
-                                        .getCommLinkModelParts(mCommLink.sourceUri));
+                    case Actions.GET_COMM_LINK_CONTENT_WRAPPERS:
+                        List<Wrapper> wrappers = mCommLinkStore
+                                .getCommLinkContentWrappers(mCommLink.getCommLinkId());
+                        mCommLink.setWrappers(wrappers);
                         setupRecyclerView();
                         break;
                 }
@@ -118,7 +121,7 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
             CustomTabActivityHelper.openCustomTab(
                     this,
                     customTabsIntent,
-                    Uri.parse(mCommLink.sourceUri),
+                    Uri.parse(mCommLink.getSourceUrl()),
                     new WebviewFallback());
             return true;
         }

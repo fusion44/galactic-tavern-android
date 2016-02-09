@@ -24,6 +24,7 @@
     <!-- Content descriptions -->
     <string name="content_desc_comm_link_backdrop_image">Comm link backdrop image</string>
     <string name="content_desc_comm_link_slide_show_item">Image slide show item</string>
+    <string name="content_desc_comm_link_wrapper_header_image">Content part backdrop image</string>
     <string name="content_desc_nav_header">Nav header image</string>
 
     <!-- General UI -->

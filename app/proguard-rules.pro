@@ -18,3 +18,9 @@
 
 # for retrolambda
 -dontwarn java.lang.invoke.*
+
+# for retrofit
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+-keepattributes Signature
+-keepattributes Exceptions

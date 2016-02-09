@@ -22,7 +22,7 @@ import org.joda.time.DateTime;
 import java.util.ArrayList;
 
 import me.stammberger.starcitizeninformer.R;
-import me.stammberger.starcitizeninformer.models.CommLinkModel;
+import me.stammberger.starcitizeninformer.models.commlink.CommLinkModel;
 import timber.log.Timber;
 
 /**
@@ -58,19 +58,21 @@ public class CommLinkListRecyclerViewAdapter extends RecyclerView.Adapter<CommLi
     @Override
     public void onBindViewHolder(final ViewHolder h, int position) {
         h.item = mValues.get(position);
-        h.titleTextView.setText(h.item.title);
+        h.titleTextView.setText(h.item.getTitle());
 
-        DateTime dt = new DateTime(h.item.date);
+        DateTime dt = new DateTime(h.item.getPublished());
         CharSequence formattedDate = DateUtils.getRelativeTimeSpanString(mContext, dt);
         h.dateTextView.setText(formattedDate);
 
-        Glide.with(mContext)
-                .load(h.item.backdropUrl)
-                .listener(this)
-                .into(h.backdropImageView);
+        if (h.item.getMainBackdrop() != null) {
+            Glide.with(mContext)
+                    .load(h.item.getMainBackdrop())
+                    .listener(this)
+                    .into(h.backdropImageView);
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            h.backdropImageView.setTransitionName(h.item.backdropUrl);
+            h.backdropImageView.setTransitionName(h.item.getMainBackdrop());
         }
 
         h.view.setOnClickListener(v -> {
@@ -134,7 +136,7 @@ public class CommLinkListRecyclerViewAdapter extends RecyclerView.Adapter<CommLi
 
         @Override
         public String toString() {
-            return super.toString() + "ViewHolder " + item.sourceUri;
+            return super.toString() + "ViewHolder " + item.getSourceUrl();
         }
     }
 

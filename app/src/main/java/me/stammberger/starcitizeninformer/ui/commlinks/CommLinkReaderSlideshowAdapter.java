@@ -12,6 +12,8 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
+import java.util.List;
+
 import me.stammberger.starcitizeninformer.R;
 import timber.log.Timber;
 
@@ -28,7 +30,7 @@ public class CommLinkReaderSlideshowAdapter extends RecyclerView.Adapter<CommLin
     /**
      * Array of URL's to images.
      */
-    private String[] links;
+    private List<String> links;
 
     public CommLinkReaderSlideshowAdapter(Context context) {
         super();
@@ -46,13 +48,13 @@ public class CommLinkReaderSlideshowAdapter extends RecyclerView.Adapter<CommLin
 
     @Override
     public void onBindViewHolder(ImageViewHolder holder, int position) {
-        holder.link = links[position];
+        holder.link = links.get(position);
         Glide.with(context)
                 .load(holder.link)
                 .listener(this)
                 .into(holder.imageView);
 
-        Timber.d("Binding " + links[position]);
+        Timber.d("Binding  %s", links.get(position));
     }
 
     @Override
@@ -61,7 +63,7 @@ public class CommLinkReaderSlideshowAdapter extends RecyclerView.Adapter<CommLin
             return 0;
         }
 
-        return links.length;
+        return links.size();
     }
 
     /**
@@ -69,7 +71,7 @@ public class CommLinkReaderSlideshowAdapter extends RecyclerView.Adapter<CommLin
      *
      * @param links Array of Url's as Strings
      */
-    public void setLinks(String[] links) {
+    public void setLinks(List<String> links) {
         this.links = links;
         notifyDataSetChanged();
     }
