@@ -64,10 +64,10 @@ public class ContentBlock1 {
      * @return The content
      */
     public List<String> getContent() {
-        if (content == null) {
+        if (content.size() == 0 && !contentDb.equals("")) {
             this.content = Utility.parseStringListFromDbString(contentDb, DATA_SEPARATOR);
-            return content;
         }
+
         return content;
     }
 

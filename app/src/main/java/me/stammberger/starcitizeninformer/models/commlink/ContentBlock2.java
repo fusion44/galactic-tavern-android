@@ -1,4 +1,3 @@
-
 package me.stammberger.starcitizeninformer.models.commlink;
 
 import com.google.gson.annotations.Expose;
@@ -18,15 +17,23 @@ import me.stammberger.starcitizeninformer.stores.db.tables.commlink.ContentBlock
  */
 @StorIOSQLiteType(table = ContentBlock2Table.TABLE)
 public class ContentBlock2 {
-    public static String DATA_SEPARATOR = "#";
+    /**
+     * This block only has a single image
+     */
+    public static final int TYPE_SINGLE = 0;
 
+    /**
+     * This block has multiple images and is handled as a slideshow
+     */
+    public static final int TYPE_SLIDESHOW = 1;
+
+    public static String DATA_SEPARATOR = "#";
     /**
      * SQLite ID of this clock. Null if not yet saved to SQLite
      * The {@link Wrapper} will store this id to this DB entry
      */
     @StorIOSQLiteColumn(name = ContentBlock1Table.COLUMN_ID, key = true)
     public Long id;
-
     /**
      * Stored the type of the image content block
      */
@@ -41,7 +48,7 @@ public class ContentBlock2 {
     public String headerImagesDb;
     /**
      * Stores a list of urls.
-     * There will only be 1 url contained if {@link #headerImageType} is {@link Wrapper#TYPE_SINGLE}
+     * There will only be 1 url contained if {@link #headerImageType} is {@link ContentBlock2#TYPE_SINGLE}
      * otherwise there will be multiple images
      */
     @SerializedName("header-images")
@@ -88,12 +95,11 @@ public class ContentBlock2 {
      * @return The image url's
      */
     public List<String> getHeaderImages() {
-        if (headerImages == null) {
+        if (headerImages.size() == 0 && !headerImagesDb.equals("")) {
             headerImages = Utility.parseStringListFromDbString(headerImagesDb, DATA_SEPARATOR);
-            return headerImages;
-        } else {
-            return headerImages;
         }
+
+        return headerImages;
     }
 
     /**

@@ -6,10 +6,16 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
+import me.stammberger.starcitizeninformer.BuildConfig;
 import me.stammberger.starcitizeninformer.R;
+import me.stammberger.starcitizeninformer.core.Utility;
 import me.stammberger.starcitizeninformer.models.commlink.CommLinkModel;
+import me.stammberger.starcitizeninformer.models.commlink.ContentBlock2;
 import me.stammberger.starcitizeninformer.models.commlink.Wrapper;
 import timber.log.Timber;
 
@@ -31,11 +37,11 @@ public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
         switch (viewType) {
-            case Wrapper.TYPE_SINGLE:
+            case ContentBlock2.TYPE_SINGLE:
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.activity_comm_link_reader_native_single, parent, false);
                 return new SingleViewHolder(view);
-            case Wrapper.TYPE_SLIDESHOW:
+            case ContentBlock2.TYPE_SLIDESHOW:
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.activity_comm_link_reader_native_slideshow, parent, false);
                 return new SlideshowViewHolder(view);
@@ -67,12 +73,17 @@ public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.Vie
      */
     public class SingleViewHolder extends RecyclerView.ViewHolder {
         public final View view;
+        public final TextView headerTextView;
+        public final ImageView backdropImageView;
         public final TextView contentTextView;
         public Wrapper model;
+        private boolean mHasBackdrop = true;
 
         public SingleViewHolder(View view) {
             super(view);
             this.view = view;
+            this.headerTextView = (TextView) view.findViewById(R.id.commLinkWrapperHeaderText);
+            this.backdropImageView = (ImageView) view.findViewById(R.id.commLinkWrapperBackdrop);
             this.contentTextView = (TextView) view.findViewById(R.id.commLinkWrapperTextBody);
         }
 
@@ -80,15 +91,48 @@ public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         /**
          * Binds the ViewHolder
          *
-         * @param wrapper The {@link CommLinkModel} to display. Must be of type {@link Wrapper#TYPE_SINGLE }
+         * @param wrapper The {@link CommLinkModel} to display. Must be of type {@link ContentBlock2#TYPE_SINGLE }
          */
         public void bindWrapper(Wrapper wrapper) {
-            if (wrapper == null || wrapper.getContentBlock2().getHeaderImageType() != Wrapper.TYPE_SINGLE) {
-                throw new IllegalArgumentException("Wrapper must be of type Wrapper#TYPE_SINGLE");
+            if (wrapper == null) {
+                throw new NullPointerException("Wrapper must not be null");
+            }
+            if (wrapper.getContentBlock2() == null) {
+                mHasBackdrop = false;
+                this.backdropImageView.setVisibility(View.GONE);
+            } else {
+                if (wrapper.getContentBlock2().headerImageType != ContentBlock2.TYPE_SINGLE) {
+                    throw new IllegalArgumentException("Content block 2 must be of type Single");
+                }
+                backdropImageView.setVisibility(View.VISIBLE);
             }
 
             this.model = wrapper;
-            this.contentTextView.setText(Html.fromHtml(wrapper.getContentBlock1().getContent().get(0)));
+            if (wrapper.getContentBlock4() != null &&
+                    !wrapper.getContentBlock4().getHeader().equals("")) {
+                this.headerTextView.setText(wrapper.getContentBlock4().getHeader());
+            } else {
+                if (BuildConfig.DEBUG) {
+                    this.headerTextView.setText(R.string.debug_comm_link_header_null);
+
+                }
+            }
+
+            if (mHasBackdrop) {
+                Glide.with(view.getContext())
+                        .load(Utility.RSI_BASE_URL + model.getContentBlock2().getHeaderImages().get(0))
+                        .into(backdropImageView);
+            }
+
+            if (wrapper.getContentBlock1() != null &&
+                    wrapper.getContentBlock1().getContent().size() > 0 &&
+                    !wrapper.getContentBlock1().getContent().get(0).equals("")) {
+                this.contentTextView.setText(Html.fromHtml(wrapper.getContentBlock1().getContent().get(0)));
+            } else {
+                if (BuildConfig.DEBUG) {
+                    this.contentTextView.setText(R.string.debug_comm_link_content_null);
+                }
+            }
         }
     }
 
@@ -115,10 +159,10 @@ public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         /**
          * Shortcut to binding the ViewHolder by itself.
          *
-         * @param wrapper The {@link Wrapper} to display. Must be of type {@link Wrapper#TYPE_SLIDESHOW }
+         * @param wrapper The {@link Wrapper} to display. Must be of type {@link ContentBlock2#TYPE_SLIDESHOW }
          */
         public void bindSlideShow(Wrapper wrapper) {
-            if (wrapper.getContentBlock2().getHeaderImageType() != Wrapper.TYPE_SLIDESHOW) {
+            if (wrapper.getContentBlock2().getHeaderImageType() != ContentBlock2.TYPE_SLIDESHOW) {
                 throw new IllegalArgumentException("CommLinkContentPart must be of type CONTENT_TYPE_SLIDESHOW");
             }
 

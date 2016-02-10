@@ -4,19 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
+        android:orientation="vertical"
         app:layout_widthPercent="@fraction/comm_link_reader_column_width_percent">
 
         <TextView
             android:id="@+id/commLinkWrapperHeaderText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginRight="@dimen/text_margin" />
 
         <ImageView
-            android:id="@+id/comm_link_wrapper_backdrop"
+            android:id="@+id/commLinkWrapperBackdrop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:contentDescription="@string/content_desc_comm_link_wrapper_header_image" />
@@ -24,7 +27,10 @@
         <TextView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/commLinkWrapperTextBody"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginRight="@dimen/text_margin"
             android:orientation="vertical" />
-    </FrameLayout>
+    </LinearLayout>
+
 </android.support.percent.PercentFrameLayout>

@@ -13,15 +13,6 @@ import me.stammberger.starcitizeninformer.stores.db.tables.commlink.ContentWrapp
  */
 @StorIOSQLiteType(table = ContentWrapperTable.TABLE)
 public class Wrapper {
-    /**
-     * This block only has a single image
-     */
-    public static final int TYPE_SINGLE = 0;
-
-    /**
-     * This block has multiple images and is handled as a slideshow
-     */
-    public static final int TYPE_SLIDESHOW = 1;
 
     /**
      * SQLite ID of this wrapper. Null if not yet saved to SQLite

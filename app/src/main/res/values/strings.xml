@@ -32,4 +32,8 @@
 
     <!-- Error messages -->
     <string name="error_failed_to_load_comm_link_rss">Failed to load RSS feed. Please check connection</string>
+
+    <!-- Stuff for debugging -->
+    <string name="debug_comm_link_header_null">Header null</string>
+    <string name="debug_comm_link_content_null">Content null</string>
 </resources>

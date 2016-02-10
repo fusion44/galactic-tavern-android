@@ -9,6 +9,11 @@ import java.util.List;
  */
 public class Utility {
     /**
+     * The URL to rsi.com
+     */
+    public static final String RSI_BASE_URL = "https://robertsspaceindustries.com/";
+
+    /**
      * Extracts the comm link id from an url
      *
      * @param source Comm link model to extract the id from
