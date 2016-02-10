@@ -7,6 +7,7 @@ import com.hardsoftstudio.rxflux.store.RxStoreChange;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import me.stammberger.starcitizeninformer.actions.Actions;
@@ -27,7 +28,7 @@ import me.stammberger.starcitizeninformer.models.commlink.Wrapper;
 public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
     public static final String ID = "CommLinkStore";
     private static CommLinkStore mInstance;
-    private HashMap<Long, CommLinkModel> mCommLinks;
+    private LinkedHashMap<Long, CommLinkModel> mCommLinks;
     private HashMap<Long, List<Wrapper>> mCommLinkContentWrappers;
 
     /**
@@ -37,7 +38,7 @@ public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
      */
     private CommLinkStore(Dispatcher dispatcher) {
         super(dispatcher);
-        mCommLinks = new HashMap<>();
+        mCommLinks = new LinkedHashMap<>();
         mCommLinkContentWrappers = new HashMap<>();
     }
 
