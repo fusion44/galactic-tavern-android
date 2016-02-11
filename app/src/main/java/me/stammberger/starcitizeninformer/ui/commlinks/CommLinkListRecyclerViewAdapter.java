@@ -41,6 +41,7 @@ public class CommLinkListRecyclerViewAdapter extends RecyclerView.Adapter<CommLi
         mContext = c;
         mValues = items;
         mListener = listener;
+        setHasStableIds(true);
     }
 
     @Override

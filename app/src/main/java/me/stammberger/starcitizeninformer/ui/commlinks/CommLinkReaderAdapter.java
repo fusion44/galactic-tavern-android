@@ -3,6 +3,7 @@ package me.stammberger.starcitizeninformer.ui.commlinks;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,12 +12,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import me.stammberger.starcitizeninformer.BuildConfig;
 import me.stammberger.starcitizeninformer.R;
 import me.stammberger.starcitizeninformer.core.Utility;
 import me.stammberger.starcitizeninformer.models.commlink.CommLinkModel;
 import me.stammberger.starcitizeninformer.models.commlink.ContentBlock2;
 import me.stammberger.starcitizeninformer.models.commlink.Wrapper;
+import me.stammberger.starcitizeninformer.ui.GlideImageGetter;
 import timber.log.Timber;
 
 
@@ -110,12 +111,10 @@ public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             this.model = wrapper;
             if (wrapper.getContentBlock4() != null &&
                     !wrapper.getContentBlock4().getHeader().equals("")) {
-                this.headerTextView.setText(wrapper.getContentBlock4().getHeader());
+                this.headerTextView.setVisibility(View.VISIBLE);
+                this.headerTextView.setText(Html.fromHtml("<h1>" + wrapper.getContentBlock4().getHeader() + "</h1>"));
             } else {
-                if (BuildConfig.DEBUG) {
-                    this.headerTextView.setText(R.string.debug_comm_link_header_null);
-
-                }
+                this.headerTextView.setVisibility(View.GONE);
             }
 
             if (mHasBackdrop) {
@@ -125,13 +124,24 @@ public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             }
 
             if (wrapper.getContentBlock1() != null &&
-                    wrapper.getContentBlock1().getContent().size() > 0 &&
-                    !wrapper.getContentBlock1().getContent().get(0).equals("")) {
-                this.contentTextView.setText(Html.fromHtml(wrapper.getContentBlock1().getContent().get(0)));
-            } else {
-                if (BuildConfig.DEBUG) {
-                    this.contentTextView.setText(R.string.debug_comm_link_content_null);
+                    wrapper.getContentBlock1().getContent().size() > 0) {
+                contentTextView.setVisibility(View.VISIBLE);
+                SpannableStringBuilder b = new SpannableStringBuilder();
+
+                for (String s : wrapper.getContentBlock1().getContent()) {
+                    if (s.contains("<img")) {
+                        b.append(Html.fromHtml(s,
+                                new GlideImageGetter(view.getContext(), contentTextView),
+                                null));
+                    } else {
+                        b.append(Html.fromHtml(s));
+                    }
                 }
+
+                this.contentTextView.setText(b);
+
+            } else {
+                contentTextView.setVisibility(View.GONE);
             }
         }
     }
