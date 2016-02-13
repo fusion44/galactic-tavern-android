@@ -15,7 +15,7 @@ import rx.Observable;
  * Retrofit interface for getting the custom comm link content
  */
 public interface CommLinkApiService {
-    String BASE_URL = "http://fusion44.bitbucket.org/sci/";
+    String BASE_URL = "http://fusion44.bitbucket.org/";
 
     /**
      * Gets the content from the repository
@@ -23,7 +23,7 @@ public interface CommLinkApiService {
      * @param id of the comm link
      * @return Observable which will be called once done loading
      */
-    @GET("/sci/{id}.json")
+    @GET("/sci/comm-links/{id}.json")
     Observable<CommLinkModel> getCommLink(@Path("id") int id);
 
     /**
