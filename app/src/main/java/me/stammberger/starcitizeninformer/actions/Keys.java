@@ -29,7 +29,7 @@ public interface Keys {
     String COMM_LINK_CONTENT_WRAPPERS = "comm_link_parts";
 
     /**
-     * Key for the {@link me.stammberger.starcitizeninformer.models.ships.ShipData} object
+     * Key for the {@link me.stammberger.starcitizeninformer.models.ship.ShipData} object
      */
     String SHIP_DATA_ALL = "ship_data_all";
 }

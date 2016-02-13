@@ -15,8 +15,8 @@ import com.malinskiy.superrecyclerview.SuperRecyclerView;
 import jp.wasabeef.recyclerview.animators.adapters.SlideInBottomAnimationAdapter;
 import me.stammberger.starcitizeninformer.R;
 import me.stammberger.starcitizeninformer.SciApplication;
-import me.stammberger.starcitizeninformer.models.ships.Ship;
-import me.stammberger.starcitizeninformer.models.ships.ShipData;
+import me.stammberger.starcitizeninformer.models.ship.Ship;
+import me.stammberger.starcitizeninformer.models.ship.ShipData;
 import me.stammberger.starcitizeninformer.stores.ShipStore;
 
 /**

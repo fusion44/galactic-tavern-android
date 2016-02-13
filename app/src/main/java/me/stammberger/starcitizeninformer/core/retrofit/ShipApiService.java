@@ -1,7 +1,7 @@
 package me.stammberger.starcitizeninformer.core.retrofit;
 
 import me.stammberger.starcitizeninformer.BuildConfig;
-import me.stammberger.starcitizeninformer.models.ships.ShipData;
+import me.stammberger.starcitizeninformer.models.ship.ShipData;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.GsonConverterFactory;
@@ -13,7 +13,7 @@ import rx.Observable;
 /**
  * Retrofit interface for getting ships from the API
  */
-public interface ShipsApiService {
+public interface ShipApiService {
     String BASE_URL = "http://fusion44.bitbucket.org/";
 
     /**
@@ -28,15 +28,15 @@ public interface ShipsApiService {
      * Factory class to create and store the singleton
      */
     class Factory {
-        private static ShipsApiService mService;
-        private static ShipsApiService mLoggingService;
+        private static ShipApiService mService;
+        private static ShipApiService mLoggingService;
 
         /**
          * Get the service instance without logging enabled
          *
          * @return the api service without logging
          */
-        public static synchronized ShipsApiService getInstance() {
+        public static synchronized ShipApiService getInstance() {
             if (mService == null) {
                 Retrofit retrofit =
                         new Retrofit.Builder()
@@ -44,7 +44,7 @@ public interface ShipsApiService {
                                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                                 .baseUrl(BASE_URL)
                                 .build();
-                mService = retrofit.create(ShipsApiService.class);
+                mService = retrofit.create(ShipApiService.class);
 
             }
             return mService;
@@ -56,7 +56,7 @@ public interface ShipsApiService {
          *
          * @return the api service with logging enabled if BuildConfig.DEBUG == true
          */
-        public static synchronized ShipsApiService getInstanceWithFullLogging() {
+        public static synchronized ShipApiService getInstanceWithFullLogging() {
             if (BuildConfig.DEBUG) {
                 if (mLoggingService == null) {
                     HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
@@ -70,7 +70,7 @@ public interface ShipsApiService {
                             .client(httpClient)
                             .build();
 
-                    mLoggingService = retrofit.create(ShipsApiService.class);
+                    mLoggingService = retrofit.create(ShipApiService.class);
                 }
             } else {
                 return getInstance();

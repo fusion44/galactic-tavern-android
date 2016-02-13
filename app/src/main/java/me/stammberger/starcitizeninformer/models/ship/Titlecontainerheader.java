@@ -1,4 +1,4 @@
-package me.stammberger.starcitizeninformer.models.ships;
+package me.stammberger.starcitizeninformer.models.ship;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

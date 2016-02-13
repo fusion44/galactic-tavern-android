@@ -16,8 +16,8 @@ import com.bumptech.glide.request.target.Target;
 
 import me.stammberger.starcitizeninformer.R;
 import me.stammberger.starcitizeninformer.core.Utility;
-import me.stammberger.starcitizeninformer.models.ships.Ship;
-import me.stammberger.starcitizeninformer.models.ships.ShipData;
+import me.stammberger.starcitizeninformer.models.ship.Ship;
+import me.stammberger.starcitizeninformer.models.ship.ShipData;
 import timber.log.Timber;
 
 /**

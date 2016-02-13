@@ -7,7 +7,7 @@ import com.hardsoftstudio.rxflux.store.RxStoreChange;
 
 import me.stammberger.starcitizeninformer.actions.Actions;
 import me.stammberger.starcitizeninformer.actions.Keys;
-import me.stammberger.starcitizeninformer.models.ships.ShipData;
+import me.stammberger.starcitizeninformer.models.ship.ShipData;
 
 /**
  * Stores the ship data once they've been loaded from the API
