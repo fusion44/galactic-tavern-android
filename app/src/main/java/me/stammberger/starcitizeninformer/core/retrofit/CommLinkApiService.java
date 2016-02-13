@@ -53,9 +53,10 @@ public interface CommLinkApiService {
         }
 
         /**
-         * Get the service instance with logging enables
+         * Get the service instance with logging enabled.
+         * Logging is enabled in DEBUG builds only
          *
-         * @return the api service with logging enabled
+         * @return the api service with logging enabled if BuildConfig.DEBUG == true
          */
         public static synchronized CommLinkApiService getInstanceWithFullLogging() {
             if (BuildConfig.DEBUG) {
