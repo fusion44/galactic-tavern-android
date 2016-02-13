@@ -27,6 +27,8 @@
     <string name="content_desc_comm_link_wrapper_header_image">Content part backdrop image</string>
     <string name="content_desc_nav_header">Nav header image</string>
 
+    <string name="content_desc_ship_backdrop">Ship store front image</string>
+
     <!-- General UI -->
     <string name="loading">Still loading!!!!</string>
 

@@ -27,4 +27,9 @@ public interface Keys {
      * Key for comm link data in {@link RxAction#getData()}
      */
     String COMM_LINK_CONTENT_WRAPPERS = "comm_link_parts";
+
+    /**
+     * Key for the {@link me.stammberger.starcitizeninformer.models.ships.ShipData} object
+     */
+    String SHIP_DATA_ALL = "ship_data_all";
 }

@@ -8,6 +8,7 @@ import com.hardsoftstudio.rxflux.util.SubscriptionManager;
 import java.util.ArrayList;
 
 import me.stammberger.starcitizeninformer.core.CommLinkFetcher;
+import me.stammberger.starcitizeninformer.core.retrofit.ShipsApiService;
 import me.stammberger.starcitizeninformer.stores.CommLinkStore;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -103,6 +104,25 @@ public class SciActionCreator extends RxActionCreator implements Actions {
                     SciActionCreator.this.postRxAction(action);
                 }, throwable -> {
                     Timber.d("error %s \n %s", throwable.toString(), throwable.getCause());
+                    postError(action, throwable);
+                }));
+    }
+
+    /**
+     * Initiates the process to fetch all ships from the API
+     */
+    @Override
+    public void getAllShips() {
+        RxAction action = newRxAction(GET_SHIP_DATA_ALL);
+        if (hasRxAction(action)) return;
+
+        addRxAction(action, ShipsApiService.Factory.getInstance().getShips()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(shipData -> {
+                    action.getData().put(Keys.SHIP_DATA_ALL, shipData);
+                    postRxAction(action);
+                }, throwable -> {
                     postError(action, throwable);
                 }));
     }

@@ -21,7 +21,9 @@ import me.stammberger.starcitizeninformer.R;
 import me.stammberger.starcitizeninformer.SciApplication;
 import me.stammberger.starcitizeninformer.actions.Actions;
 import me.stammberger.starcitizeninformer.stores.CommLinkStore;
+import me.stammberger.starcitizeninformer.stores.ShipStore;
 import me.stammberger.starcitizeninformer.ui.commlinks.CommLinkListFragment;
+import me.stammberger.starcitizeninformer.ui.ships.ShipListFragment;
 import timber.log.Timber;
 
 
@@ -37,6 +39,11 @@ public class MainActivity extends AppCompatActivity
      * Instance of {@link CommLinkStore} for retrieving comm links
      */
     private CommLinkStore mCommLinkStore;
+
+    /**
+     * instance of {@link ShipStore} for retrieving ship data
+     */
+    private ShipStore mShipStore;
 
     /**
      * Currently displayed {@link Fragment} for whenever {@link MainActivity#onRxStoreChanged(RxStoreChange)}
@@ -107,7 +114,9 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.replace(R.id.fragment_container, mCurrentFragment);
             fragmentTransaction.commit();
         } else if (id == R.id.nav_ships) {
-
+            mCurrentFragment = ShipListFragment.newInstance(1);
+            fragmentTransaction.replace(R.id.fragment_container, mCurrentFragment);
+            fragmentTransaction.commit();
         } else if (id == R.id.nav_users) {
 
         } else if (id == R.id.nav_forums) {
@@ -137,6 +146,14 @@ public class MainActivity extends AppCompatActivity
                         break;
                 }
                 break;
+            case ShipStore.ID:
+                switch (change.getRxAction().getType()) {
+                    case Actions.GET_SHIP_DATA_ALL:
+                        if (mCurrentFragment != null && mCurrentFragment instanceof ShipListFragment) {
+                            ShipListFragment f = (ShipListFragment) mCurrentFragment;
+                            f.setShipData(mShipStore.getAllShips());
+                        }
+                }
         }
     }
 
@@ -160,7 +177,11 @@ public class MainActivity extends AppCompatActivity
         Timber.d("Registering stores");
 
         Dispatcher dispatcher = SciApplication.getInstance().getRxFlux().getDispatcher();
+
         mCommLinkStore = CommLinkStore.get(dispatcher);
         mCommLinkStore.register();
+
+        mShipStore = ShipStore.get(dispatcher);
+        mShipStore.register();
     }
 }
