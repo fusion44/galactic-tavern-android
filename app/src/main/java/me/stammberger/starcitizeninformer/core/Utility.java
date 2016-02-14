@@ -1,11 +1,15 @@
 package me.stammberger.starcitizeninformer.core;
 
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import me.stammberger.starcitizeninformer.R;
+import timber.log.Timber;
 
 /**
  * Class for all global utility methods
@@ -65,25 +69,66 @@ public class Utility {
      * Finds all views with a specific tag.
      * Idea from: http://stackoverflow.com/questions/5062264/find-all-views-with-tag
      *
-     * @param root the root view
-     * @param tag  the tag to search for
+     * @param root     the root view
+     * @param tagId    id of the tag
+     * @param tagValue the tag to search for
      * @return a ArrayList with the found Views. Empty if no View has been found.
      */
-    public static List<View> getViewsByTag(ViewGroup root, String tag) {
+    public static List<View> getViewsByTag(ViewGroup root, int tagId, String tagValue) {
         ArrayList<View> views = new ArrayList<>();
         final int childCount = root.getChildCount();
         for (int i = 0; i < childCount; i++) {
             final View child = root.getChildAt(i);
             if (child instanceof ViewGroup) {
-                views.addAll(getViewsByTag((ViewGroup) child, tag));
+                views.addAll(getViewsByTag((ViewGroup) child, tagId, tagValue));
             }
 
-            final Object tagObj = child.getTag();
-            if (tagObj != null && tagObj.equals(tag)) {
+            final Object tagObj = child.getTag(tagId);
+            if (tagObj != null && tagObj.equals(tagValue)) {
                 views.add(child);
             }
-
         }
         return views;
+    }
+
+    /**
+     * Gets the long manufacturer name for the specified short manufacturer name.
+     *
+     * @param c         Android Context
+     * @param shortName Short name for the manufacturer
+     * @return long name for the manufacturer as a string. Empty string if not found.
+     */
+    public static String getFullManufacturerName(Context c, String shortName) {
+        switch (shortName) {
+            case "AEGS":
+                return c.getString(R.string.sc_manufacturer_aegs);
+            case "ANVL":
+                return c.getString(R.string.sc_manufacturer_anvl);
+            case "BANU":
+                return c.getString(R.string.sc_manufacturer_banu);
+            case "CNOU":
+                return c.getString(R.string.sc_manufacturer_cnou);
+            case "CRSD":
+                return c.getString(R.string.sc_manufacturer_crsd);
+            case "DRAK":
+                return c.getString(R.string.sc_manufacturer_drak);
+            case "ESPERIA":
+                return c.getString(R.string.sc_manufacturer_esperia);
+            case "KRGR":
+                return c.getString(R.string.sc_manufacturer_krgr);
+            case "MISC":
+                return c.getString(R.string.sc_manufacturer_misc);
+            case "ORIG":
+                return c.getString(R.string.sc_manufacturer_orig);
+            case "RSI":
+                return c.getString(R.string.sc_manufacturer_rsi);
+            case "VANDUUL":
+                return c.getString(R.string.sc_manufacturer_vanduul);
+            case "XIAN":
+                return c.getString(R.string.sc_manufacturer_xian);
+            default:
+                Timber.d("Unknown manufacturer: %s", shortName);
+                return "";
+        }
     }
 }

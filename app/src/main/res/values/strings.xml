@@ -43,4 +43,19 @@
     <!-- Error messages -->
     <string name="error_failed_to_load_comm_link_rss">Failed to load RSS feed. Please check connection</string>
 
+    <!-- Strings concerning Star Citizen -->
+    <string name="sc_manufacturer_aegs" translatable="false">Aegis Dynamics</string>
+    <string name="sc_manufacturer_anvl" translatable="false">Anvil Aerospace</string>
+    <string name="sc_manufacturer_xian" translatable="false">Xi\'an</string>
+    <string name="sc_manufacturer_cnou" translatable="false">Consolidated Outland</string>
+    <string name="sc_manufacturer_crsd" translatable="false">Crusader Industries</string>
+    <string name="sc_manufacturer_banu" translatable="false">Banu</string>
+    <string name="sc_manufacturer_drak" translatable="false">Drake Interplanetary</string>
+    <string name="sc_manufacturer_esperia" translatable="false">Esperia</string>
+    <string name="sc_manufacturer_krgr" translatable="false">Kruger Intergalactic</string>
+    <string name="sc_manufacturer_misc" translatable="false"><![CDATA[Musashi Industrial & Starflight Concern]]></string>
+    <string name="sc_manufacturer_orig" translatable="false">Origin Jumpworks GmbH</string>
+    <string name="sc_manufacturer_rsi" translatable="false">Roberts Space Industries</string>
+    <string name="sc_manufacturer_vanduul" translatable="false">Vanduul</string>
+
 </resources>

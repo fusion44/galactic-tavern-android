@@ -60,12 +60,7 @@ public class ShipListRecyclerViewAdapter extends RecyclerView.Adapter<ShipListRe
 
     @Override
     public void onBindViewHolder(final ViewHolder h, int position) {
-        h.item = mModels.get(position);
-        h.shipNameTextView.setText(h.item.titlecontainer.title);
-
-        Glide.with(mContext)
-                .load(Utility.RSI_BASE_URL + h.item.shipimgsmall)
-                .into(h.shipBackdropImageView);
+        h.bindView(mModels.get(position));
     }
 
     @Override
@@ -106,6 +101,7 @@ public class ShipListRecyclerViewAdapter extends RecyclerView.Adapter<ShipListRe
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View view;
         public final TextView shipNameTextView;
+        public final TextView shipManufacturerTextView;
         public final ImageView shipBackdropImageView;
         public Ship item;
 
@@ -113,12 +109,24 @@ public class ShipListRecyclerViewAdapter extends RecyclerView.Adapter<ShipListRe
             super(view);
             this.view = view;
             shipNameTextView = (TextView) view.findViewById(R.id.shipNameTextView);
+            shipManufacturerTextView = (TextView) view.findViewById(R.id.shipManufacturerTextView);
             shipBackdropImageView = (ImageView) view.findViewById(R.id.shipBackdropImageView);
         }
 
         @Override
         public String toString() {
             return super.toString() + "ViewHolder " + item.toString();
+        }
+
+        public void bindView(Ship ship) {
+            item = ship;
+            shipNameTextView.setText(item.titlecontainer.title);
+            shipManufacturerTextView.setText(
+                    Utility.getFullManufacturerName(mContext, item.titlecontainer.manufacturer));
+
+            Glide.with(mContext)
+                    .load(Utility.RSI_BASE_URL + item.shipimgsmall)
+                    .into(shipBackdropImageView);
         }
     }
 

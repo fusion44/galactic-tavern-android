@@ -70,15 +70,15 @@ public class ShipFilterDialog extends DialogFragment implements View.OnClickList
 
         for (String manufacturer : shipStore.getAllShips().manufacturers) {
             Button btn = (Button) inflater.inflate(R.layout.fragment_ship_list_filter_item, null);
-            btn.setTag(ITEM_AVAILABLE);
             btn.setText(manufacturer);
+            btn.setTag(R.id.ship_list_filter_manufacturer_tag, manufacturer);
             btn.setOnClickListener(this);
 
             if (currentFilter != null && currentFilter.contains(manufacturer)) {
-                btn.setTag(ITEM_FILTER);
+                btn.setTag(R.id.ship_list_filter_type_tag, ITEM_FILTER);
                 mFlowLayoutFilterItems.addView(btn);
             } else {
-                btn.setTag(ITEM_AVAILABLE);
+                btn.setTag(R.id.ship_list_filter_type_tag, ITEM_AVAILABLE);
                 mFlowLayoutAvailableItems.addView(btn);
             }
 
@@ -93,9 +93,11 @@ public class ShipFilterDialog extends DialogFragment implements View.OnClickList
                 .setPositiveButton(R.string.alert_dialog_ok,
                         (dialog, whichButton) -> {
                             ArrayList<String> list = new ArrayList<>();
-                            for (View v : Utility.getViewsByTag(mFlowLayoutFilterItems, ITEM_FILTER)) {
+                            for (View v : Utility.getViewsByTag(mFlowLayoutFilterItems,
+                                    R.id.ship_list_filter_type_tag,
+                                    ITEM_FILTER)) {
                                 Button button = (Button) v;
-                                list.add(button.getText().toString());
+                                list.add((String) button.getTag(R.id.ship_list_filter_manufacturer_tag));
                             }
                             mListener.doPositiveClick(list);
                         }
@@ -111,22 +113,22 @@ public class ShipFilterDialog extends DialogFragment implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        if (v.getTag().equals(ITEM_AVAILABLE)) {
+        if (v.getTag(R.id.ship_list_filter_type_tag).equals(ITEM_AVAILABLE)) {
             mFlowLayoutAvailableItems.removeView(v);
             mFlowLayoutFilterItems.addView(v);
-            v.setTag(ITEM_FILTER);
-
+            v.setTag(R.id.ship_list_filter_type_tag, ITEM_FILTER);
         } else {
             mFlowLayoutFilterItems.removeView(v);
             mFlowLayoutAvailableItems.addView(v);
-            v.setTag(ITEM_AVAILABLE);
+            v.setTag(R.id.ship_list_filter_type_tag, ITEM_AVAILABLE);
         }
 
         checkNoneView();
     }
 
     private void checkNoneView() {
-        if (mFlowLayoutAvailableItems.findViewWithTag(ITEM_AVAILABLE) == null) {
+        if (Utility.getViewsByTag(mFlowLayoutAvailableItems,
+                R.id.ship_list_filter_type_tag, ITEM_AVAILABLE).size() == 0) {
             mFlowLayoutAvailableItems.addView(mNoneView);
         } else {
             if (mNoneView.getParent() == mFlowLayoutAvailableItems) {
@@ -134,14 +136,14 @@ public class ShipFilterDialog extends DialogFragment implements View.OnClickList
             }
         }
 
-        if (mFlowLayoutFilterItems.findViewWithTag(ITEM_FILTER) == null) {
+        if (Utility.getViewsByTag(mFlowLayoutFilterItems,
+                R.id.ship_list_filter_type_tag, ITEM_FILTER).size() == 0) {
             mFlowLayoutFilterItems.addView(mNoneView);
         } else {
             if (mNoneView.getParent() == mFlowLayoutFilterItems) {
                 ((FlowLayout) mNoneView.getParent()).removeView(mNoneView);
             }
         }
-
     }
 
     public interface ShipFilterDialogClickListener {

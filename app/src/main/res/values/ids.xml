@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="drawable_callback_tag" type="id">tag_drawable_callback</item>
+    <item name="ship_list_filter_type_tag" type="id">tag_filter_type</item>
+    <item name="ship_list_filter_manufacturer_tag" type="id">tag_filter_manufacturer</item>
 </resources>
