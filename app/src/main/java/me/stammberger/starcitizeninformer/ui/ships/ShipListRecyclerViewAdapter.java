@@ -14,6 +14,9 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import me.stammberger.starcitizeninformer.R;
 import me.stammberger.starcitizeninformer.core.Utility;
 import me.stammberger.starcitizeninformer.models.ship.Ship;
@@ -27,16 +30,20 @@ import timber.log.Timber;
 public class ShipListRecyclerViewAdapter extends RecyclerView.Adapter<ShipListRecyclerViewAdapter.ViewHolder> implements RequestListener<String, GlideDrawable> {
 
     private final SpanSizeLookup mSpanSizeLookup = new SpanSizeLookup();
-    private final ShipData mShipData;
     private final OnListFragmentInteractionListener mListener;
+    private List<Ship> mModels;
     private Context mContext;
 
-    public ShipListRecyclerViewAdapter(Context c, ShipData data,
+    public ShipListRecyclerViewAdapter(Context c, List<Ship> ships,
                                        OnListFragmentInteractionListener listener) {
         mContext = c;
-        mShipData = data;
+        mModels = new ArrayList<>(ships);
         mListener = listener;
-        setHasStableIds(true);
+    }
+
+    public void setModels(List<Ship> ships) {
+        mModels = ships;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -53,7 +60,7 @@ public class ShipListRecyclerViewAdapter extends RecyclerView.Adapter<ShipListRe
 
     @Override
     public void onBindViewHolder(final ViewHolder h, int position) {
-        h.item = mShipData.ships.get(position);
+        h.item = mModels.get(position);
         h.shipNameTextView.setText(h.item.titlecontainer.title);
 
         Glide.with(mContext)
@@ -63,7 +70,7 @@ public class ShipListRecyclerViewAdapter extends RecyclerView.Adapter<ShipListRe
 
     @Override
     public int getItemCount() {
-        return mShipData.ships.size();
+        return mModels.size();
     }
 
     public GridLayoutManager.SpanSizeLookup getSpanSizeLookup() {
@@ -118,7 +125,7 @@ public class ShipListRecyclerViewAdapter extends RecyclerView.Adapter<ShipListRe
     private class SpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
         @Override
         public int getSpanSize(int position) {
-            return mShipData.ships.get(position).spanCount;
+            return mModels.get(position).spanCount;
         }
     }
 }

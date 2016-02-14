@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:f="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/dialog_padding_material">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/ship_filter_dialog_current_filter" />
+
+    <org.apmem.tools.layouts.FlowLayout
+        android:id="@+id/shipFilterFlowLayoutFilterItems"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="fill"
+        f:weightDefault="1.0" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/ship_filter_dialog_available_items" />
+
+    <org.apmem.tools.layouts.FlowLayout
+        android:id="@+id/shipFilterFlowLayoutAvailableItems"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="fill"
+        f:weightDefault="1.0" />
+</LinearLayout>

@@ -1,5 +1,8 @@
 package me.stammberger.starcitizeninformer.core;
 
+import android.view.View;
+import android.view.ViewGroup;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,5 +59,31 @@ public class Utility {
         ArrayList<String> content = new ArrayList<>();
         Collections.addAll(content, data.split(separator));
         return content;
+    }
+
+    /**
+     * Finds all views with a specific tag.
+     * Idea from: http://stackoverflow.com/questions/5062264/find-all-views-with-tag
+     *
+     * @param root the root view
+     * @param tag  the tag to search for
+     * @return a ArrayList with the found Views. Empty if no View has been found.
+     */
+    public static List<View> getViewsByTag(ViewGroup root, String tag) {
+        ArrayList<View> views = new ArrayList<>();
+        final int childCount = root.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            final View child = root.getChildAt(i);
+            if (child instanceof ViewGroup) {
+                views.addAll(getViewsByTag((ViewGroup) child, tag));
+            }
+
+            final Object tagObj = child.getTag();
+            if (tagObj != null && tagObj.equals(tag)) {
+                views.add(child);
+            }
+
+        }
+        return views;
     }
 }

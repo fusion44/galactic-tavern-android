@@ -15,4 +15,7 @@
     <fraction name="comm_link_reader_column_width_percent">100%</fraction>
 
     <dimen name="slideshow_total_height">300dp</dimen>
+
+    <!-- Standard material dimens -->
+    <dimen name="dialog_padding_material">24dp</dimen>
 </resources>

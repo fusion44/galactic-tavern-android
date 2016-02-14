@@ -19,7 +19,14 @@
 
     <!-- Actions -->
     <string name="action_open_in_browser">Open in browser</string>
+    <string name="action_ship_list_filter">Filter</string>
     <string name="action_settings">Settings</string>
+
+    <!-- Dialogs -->
+    <string name="alert_dialog_ok">OK</string>
+    <string name="alert_dialog_cancel">Cancel</string>
+    <string name="ship_filter_dialog_current_filter">Filtered Manufaturers</string>
+    <string name="ship_filter_dialog_available_items">Available Manufacturers</string>
 
     <!-- Content descriptions -->
     <string name="content_desc_comm_link_backdrop_image">Comm link backdrop image</string>
@@ -31,7 +38,9 @@
 
     <!-- General UI -->
     <string name="loading">Still loading!!!!</string>
+    <string name="none">None</string>
 
     <!-- Error messages -->
     <string name="error_failed_to_load_comm_link_rss">Failed to load RSS feed. Please check connection</string>
+
 </resources>

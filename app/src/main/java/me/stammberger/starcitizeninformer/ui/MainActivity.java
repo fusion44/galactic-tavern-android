@@ -3,6 +3,7 @@ package me.stammberger.starcitizeninformer.ui;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -66,6 +67,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        openShipsFragment();
     }
 
     @Override
@@ -106,17 +109,10 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
         if (id == R.id.nav_comm_link) {
-            mCurrentFragment = CommLinkListFragment.newInstance(2);
-            fragmentTransaction.replace(R.id.fragment_container, mCurrentFragment);
-            fragmentTransaction.commit();
+            openCommLinkFragment();
         } else if (id == R.id.nav_ships) {
-            mCurrentFragment = ShipListFragment.newInstance(1);
-            fragmentTransaction.replace(R.id.fragment_container, mCurrentFragment);
-            fragmentTransaction.commit();
+            openShipsFragment();
         } else if (id == R.id.nav_users) {
 
         } else if (id == R.id.nav_forums) {
@@ -131,6 +127,34 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    /**
+     * Creates and shows the {@link CommLinkListFragment}
+     */
+    private void openCommLinkFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        mCurrentFragment = CommLinkListFragment.newInstance(2);
+        fragmentTransaction.replace(R.id.fragment_container, mCurrentFragment);
+        fragmentTransaction.commit();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(R.string.navigation_drawer_comm_link);
+        }
+    }
+
+    /**
+     * Creates and shows the {@link ShipListFragment}
+     */
+    private void openShipsFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        mCurrentFragment = ShipListFragment.newInstance(1);
+        fragmentTransaction.replace(R.id.fragment_container, mCurrentFragment);
+        fragmentTransaction.commit();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(R.string.navigation_drawer_ships);
+        }
     }
 
     @Override

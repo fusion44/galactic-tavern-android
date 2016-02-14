@@ -14,6 +14,9 @@ public class ShipData {
     @SerializedName("lastupdated")
     @Expose
     public String lastupdated;
+    @SerializedName("manufacturers")
+    @Expose
+    public List<String> manufacturers = new ArrayList<>();
     @SerializedName("ships")
     @Expose
     public List<Ship> ships = new ArrayList<>();

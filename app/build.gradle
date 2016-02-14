@@ -51,6 +51,7 @@ dependencies {
     compile 'net.danlew:android.joda:2.9.1'
     compile 'com.pushtorefresh.storio:sqlite:1.8.0'
     compile 'com.pushtorefresh.storio:sqlite-annotations:1.8.0'
+    compile 'org.apmem.tools:layouts:1.10@aar'
     apt 'com.pushtorefresh.storio:sqlite-annotations-processor:1.8.0'
 
     debugCompile 'com.facebook.stetho:stetho:1.2.0'

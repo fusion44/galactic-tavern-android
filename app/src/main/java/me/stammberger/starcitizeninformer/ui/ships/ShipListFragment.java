@@ -5,12 +5,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 
 import com.malinskiy.superrecyclerview.SuperRecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import jp.wasabeef.recyclerview.animators.adapters.SlideInBottomAnimationAdapter;
 import me.stammberger.starcitizeninformer.R;
@@ -23,19 +29,23 @@ import me.stammberger.starcitizeninformer.stores.ShipStore;
  * Container fragment for the ship RecyclerView
  */
 public class ShipListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,
-        ShipListRecyclerViewAdapter.OnListFragmentInteractionListener {
+        ShipListRecyclerViewAdapter.OnListFragmentInteractionListener,
+        ShipFilterDialog.ShipFilterDialogClickListener {
 
     private static final String ARG_COLUMN_COUNT = "column-count";
-    private static final int READER_ACTIVITY_RESULT = 0;
 
     private int mColumnCount = 2;
     private SuperRecyclerView mRecyclerView;
+    private ShipStore mShipStore;
+    private ShipListRecyclerViewAdapter mShipListRecyclerViewAdapter;
+    private ArrayList<String> mCurrentFilterList = new ArrayList<>();
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
     public ShipListFragment() {
+        setHasOptionsMenu(true);
     }
 
     @SuppressWarnings("unused")
@@ -45,6 +55,12 @@ public class ShipListFragment extends Fragment implements SwipeRefreshLayout.OnR
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_ship_list, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -64,11 +80,11 @@ public class ShipListFragment extends Fragment implements SwipeRefreshLayout.OnR
         // Set the adapter
         if (view instanceof SuperRecyclerView) {
             mRecyclerView = (SuperRecyclerView) view;
-            ShipStore shipStore = ShipStore.get(SciApplication.getInstance().getRxFlux().getDispatcher());
+            mShipStore = ShipStore.get(SciApplication.getInstance().getRxFlux().getDispatcher());
 
 
             // Check if the store has the articles already loaded
-            ShipData shipData = shipStore.getAllShips();
+            ShipData shipData = mShipStore.getAllShips();
             if (shipData.ships.size() == 0) {
                 // See comm link fragment for explanation
                 SciApplication.getInstance().getActionCreator().getAllShips();
@@ -89,15 +105,15 @@ public class ShipListFragment extends Fragment implements SwipeRefreshLayout.OnR
             throw new NullPointerException("Ship data is null");
         }
 
-        ShipListRecyclerViewAdapter shipListRecyclerViewAdapter
-                = new ShipListRecyclerViewAdapter(getContext(), shipData, this);
+        mShipListRecyclerViewAdapter
+                = new ShipListRecyclerViewAdapter(getContext(), shipData.ships, this);
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), mColumnCount);
-        gridLayoutManager.setSpanSizeLookup(shipListRecyclerViewAdapter.getSpanSizeLookup());
+        gridLayoutManager.setSpanSizeLookup(mShipListRecyclerViewAdapter.getSpanSizeLookup());
         mRecyclerView.setLayoutManager(gridLayoutManager);
 
         SlideInBottomAnimationAdapter slideInAdapter
-                = new SlideInBottomAnimationAdapter(shipListRecyclerViewAdapter);
+                = new SlideInBottomAnimationAdapter(mShipListRecyclerViewAdapter);
 
         slideInAdapter.setDuration(500);
         slideInAdapter.setInterpolator(new DecelerateInterpolator());
@@ -135,6 +151,16 @@ public class ShipListFragment extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public void onListFragmentInteraction(ShipData item, ImageView view) {
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_ship_list_filter) {
+            ShipFilterDialog shipFilterDialog = ShipFilterDialog.newInstance(this, mCurrentFilterList);
+            shipFilterDialog.show(getActivity().getFragmentManager(), "TAG");
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -186,5 +212,32 @@ public class ShipListFragment extends Fragment implements SwipeRefreshLayout.OnR
         }
 
         return shipData;
+    }
+
+    @Override
+    public void doPositiveClick(List<String> filterList) {
+        mCurrentFilterList = new ArrayList<>(filterList);
+        if (filterList.size() == 0) {
+            mShipListRecyclerViewAdapter.setModels(mShipStore.getAllShips().ships);
+            return;
+        }
+
+        ArrayList<Ship> filteredList = new ArrayList<>();
+        for (Ship ship : mShipStore.getAllShips().ships) {
+            for (String filter : mCurrentFilterList) {
+                if (ship.titlecontainer.manufacturer.equals(filter)) {
+                    filteredList.add(ship);
+                    break;
+                }
+            }
+        }
+
+        mShipListRecyclerViewAdapter = new ShipListRecyclerViewAdapter(getContext(), filteredList, this);
+        mRecyclerView.setAdapter(mShipListRecyclerViewAdapter);
+    }
+
+    @Override
+    public void doNegativeClick() {
+        // change nothing
     }
 }
