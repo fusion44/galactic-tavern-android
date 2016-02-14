@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
-        android:textAppearance="@style/AppTheme.CommLinkTitle"
+        android:textAppearance="@style/AppTheme.CardViewTitle"
         tools:text="This is a title!!!" />
 
     <TextView

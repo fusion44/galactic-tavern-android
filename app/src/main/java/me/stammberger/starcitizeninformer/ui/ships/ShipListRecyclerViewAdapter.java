@@ -101,6 +101,7 @@ public class ShipListRecyclerViewAdapter extends RecyclerView.Adapter<ShipListRe
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View view;
         public final TextView shipNameTextView;
+        public final TextView shipNameSubTextView;
         public final TextView shipManufacturerTextView;
         public final ImageView shipBackdropImageView;
         public Ship item;
@@ -109,6 +110,7 @@ public class ShipListRecyclerViewAdapter extends RecyclerView.Adapter<ShipListRe
             super(view);
             this.view = view;
             shipNameTextView = (TextView) view.findViewById(R.id.shipNameTextView);
+            shipNameSubTextView = (TextView) view.findViewById(R.id.shipNameSubTextView);
             shipManufacturerTextView = (TextView) view.findViewById(R.id.shipManufacturerTextView);
             shipBackdropImageView = (ImageView) view.findViewById(R.id.shipBackdropImageView);
         }
@@ -121,8 +123,8 @@ public class ShipListRecyclerViewAdapter extends RecyclerView.Adapter<ShipListRe
         public void bindView(Ship ship) {
             item = ship;
             shipNameTextView.setText(item.titlecontainer.title);
-            shipManufacturerTextView.setText(
-                    Utility.getFullManufacturerName(mContext, item.titlecontainer.manufacturer));
+            shipNameSubTextView.setText(mContext.getString(R.string.subtitle_by_manufacturer,
+                    Utility.getFullManufacturerName(mContext, ship.titlecontainer.manufacturer)));
 
             Glide.with(mContext)
                     .load(Utility.RSI_BASE_URL + item.shipimgsmall)

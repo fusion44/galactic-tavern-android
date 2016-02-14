@@ -5,6 +5,8 @@
     <string name="title_activity_comm_link_reader">CommLinkReaderActivity</string>
     <string name="title_activity_comm_link_reader_webview">Chrome tab</string>
 
+    <string name="subtitle_by_manufacturer">by %1$s</string>
+
     <!-- Navigation drawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -25,7 +27,7 @@
     <!-- Dialogs -->
     <string name="alert_dialog_ok">OK</string>
     <string name="alert_dialog_cancel">Cancel</string>
-    <string name="ship_filter_dialog_current_filter">Filtered Manufaturers</string>
+    <string name="ship_filter_dialog_current_filter">Filtered Manufacturers</string>
     <string name="ship_filter_dialog_available_items">Available Manufacturers</string>
 
     <!-- Content descriptions -->

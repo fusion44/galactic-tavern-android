@@ -18,4 +18,13 @@
 
     <!-- Standard material dimens -->
     <dimen name="dialog_padding_material">24dp</dimen>
+
+    <dimen name="card_view_rested_elevation_state">2dp</dimen>
+    <dimen name="card_view_raised_elevation_state">8dp</dimen>
+    <dimen name="card_view_recycler_side_padding">8dp</dimen>
+    <dimen name="card_view_corner_radius">2dp</dimen>
+    <dimen name="card_view_margin_bottom">8dp</dimen>
+    <dimen name="card_view_title_text_size">24sp</dimen>
+    <dimen name="card_view_subtitle_text_size">14sp</dimen>
+    <dimen name="card_view_title_text_padding_sides">16dp</dimen>
 </resources>

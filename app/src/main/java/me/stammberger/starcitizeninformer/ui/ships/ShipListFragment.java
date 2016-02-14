@@ -75,7 +75,7 @@ public class ShipListFragment extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_comm_link_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_ship_list, container, false);
 
         // Set the adapter
         if (view instanceof SuperRecyclerView) {
