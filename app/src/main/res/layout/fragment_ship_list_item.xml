@@ -19,7 +19,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/shipBackdropImageView"
+                android:id="@+id/shipListItemBackdropImageView"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/ship_item_height"
                 android:contentDescription="@string/content_desc_ship_backdrop"
@@ -37,28 +37,79 @@
                 android:paddingStart="@dimen/card_view_title_text_padding_sides">
 
                 <TextView
-                    android:id="@+id/shipNameTextView"
+                    android:id="@+id/shipListNameTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/card_view_title_text_padding_top_bottom"
                     android:textAppearance="@style/AppTheme.CardViewTitle"
-                    tools:text="Text M50" />
+                    tools:text="Text M50"
+                    tools:textColor="@color/cardview_dark_background" />
 
                 <TextView
-                    android:id="@+id/shipNameSubTextView"
+                    android:id="@+id/shipListNameSubTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/card_view_subtitle_text_padding_bottom"
+                    android:paddingTop="@dimen/card_view_subtitle_text_padding_top"
                     android:textAppearance="@style/AppTheme.CardViewSubTitle"
-                    tools:text="by origin jumworks" />
+                    tools:text="by origin jumworks"
+                    tools:textColor="@color/cardview_dark_background" />
 
             </LinearLayout>
-
         </FrameLayout>
 
         <TextView
-            android:id="@+id/shipManufacturerTextView"
+            android:id="@+id/shipListItemDescriptionTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Small Text"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:padding="@dimen/card_view_supporting_text_padding"
+            android:textSize="@dimen/card_view_supporting_text_size"
+            tools:text="Often called the most common ship in the galaxy, the Hull C is the most-produced of the range and is considered by many to be the most versatile. Intended to hit the \u2018sweet spot\u2019 between the smaller single-person transports and the massive superfreighters that make up the rest of the range, the Hull C offers the expansive modularity of the larger ships while still retaining a modicum of the maneuverability allowed the low end of the range." />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/card_view_actions_padding"
+            android:paddingEnd="@dimen/card_view_content_padding_sides"
+            android:paddingLeft="@dimen/card_view_content_padding_sides"
+            android:paddingRight="@dimen/card_view_content_padding_sides"
+            android:paddingStart="@dimen/card_view_content_padding_sides">
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:alpha="30"
+                android:contentDescription="@string/content_desc_ship_max_crew_icon"
+                android:src="@drawable/ic_person_24dp" />
+
+            <TextView
+                android:id="@+id/shipListItemMaxCrewCountTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                tools:text="4" />
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@string/content_desc_ship_max_cargo_icon"
+                android:paddingLeft="@dimen/card_view_content_padding_sides"
+                android:paddingStart="@dimen/card_view_content_padding_sides"
+                android:src="@drawable/ic_cargo_capacity_24dp" />
+
+            <TextView
+                android:id="@+id/shipListItemMaxCargoTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                tools:text="535 tons" />
+        </LinearLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>

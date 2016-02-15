@@ -6,6 +6,7 @@
     <string name="title_activity_comm_link_reader_webview">Chrome tab</string>
 
     <string name="subtitle_by_manufacturer">by %1$s</string>
+    <string name="ship_max_cargo_with_unit">%1$s tons</string>
 
     <!-- Navigation drawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -35,7 +36,8 @@
     <string name="content_desc_comm_link_slide_show_item">Image slide show item</string>
     <string name="content_desc_comm_link_wrapper_header_image">Content part backdrop image</string>
     <string name="content_desc_nav_header">Nav header image</string>
-
+    <string name="content_desc_ship_max_crew_icon">Passenger count icon</string>
+    <string name="content_desc_ship_max_cargo_icon">Max cargo capacity icon</string>
     <string name="content_desc_ship_backdrop">Ship store front image</string>
 
     <!-- General UI -->

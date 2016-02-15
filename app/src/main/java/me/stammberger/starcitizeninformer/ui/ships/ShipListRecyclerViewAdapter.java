@@ -102,17 +102,21 @@ public class ShipListRecyclerViewAdapter extends RecyclerView.Adapter<ShipListRe
         public final View view;
         public final TextView shipNameTextView;
         public final TextView shipNameSubTextView;
-        public final TextView shipManufacturerTextView;
+        public final TextView shipMaxCrewTextView;
+        public final TextView shipMaxCargoTextView;
+        public final TextView shipDescriptionTextView;
         public final ImageView shipBackdropImageView;
         public Ship item;
 
         public ViewHolder(View view) {
             super(view);
             this.view = view;
-            shipNameTextView = (TextView) view.findViewById(R.id.shipNameTextView);
-            shipNameSubTextView = (TextView) view.findViewById(R.id.shipNameSubTextView);
-            shipManufacturerTextView = (TextView) view.findViewById(R.id.shipManufacturerTextView);
-            shipBackdropImageView = (ImageView) view.findViewById(R.id.shipBackdropImageView);
+            shipNameTextView = (TextView) view.findViewById(R.id.shipListNameTextView);
+            shipNameSubTextView = (TextView) view.findViewById(R.id.shipListNameSubTextView);
+            shipMaxCrewTextView = (TextView) view.findViewById(R.id.shipListItemMaxCrewCountTextView);
+            shipMaxCargoTextView = (TextView) view.findViewById(R.id.shipListItemMaxCargoTextView);
+            shipDescriptionTextView = (TextView) view.findViewById(R.id.shipListItemDescriptionTextView);
+            shipBackdropImageView = (ImageView) view.findViewById(R.id.shipListItemBackdropImageView);
         }
 
         @Override
@@ -125,7 +129,10 @@ public class ShipListRecyclerViewAdapter extends RecyclerView.Adapter<ShipListRe
             shipNameTextView.setText(item.titlecontainer.title);
             shipNameSubTextView.setText(mContext.getString(R.string.subtitle_by_manufacturer,
                     Utility.getFullManufacturerName(mContext, ship.titlecontainer.manufacturer)));
-
+            shipMaxCrewTextView.setText(item.structuralcontainer.maxcrew);
+            shipMaxCargoTextView.setText(mContext.getString(
+                    R.string.ship_max_cargo_with_unit, item.structuralcontainer.cargocapacity));
+            shipDescriptionTextView.setText(item.titlecontainer.description);
             Glide.with(mContext)
                     .load(Utility.RSI_BASE_URL + item.shipimgsmall)
                     .into(shipBackdropImageView);
