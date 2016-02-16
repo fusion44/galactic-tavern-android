@@ -8,6 +8,8 @@
     <string name="subtitle_by_manufacturer">by %1$s</string>
     <string name="ship_max_cargo_with_unit">%1$s tons</string>
 
+    <string name="title_activity_ship_detail_viewer">ShipDetailViewerActivity</string>
+
     <!-- Navigation drawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

@@ -1,5 +1,6 @@
 package me.stammberger.starcitizencompact.ui.ships;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -149,8 +150,9 @@ public class ShipListFragment extends Fragment implements SwipeRefreshLayout.OnR
      * @param item The clicked item
      */
     @Override
-    public void onListFragmentInteraction(ShipData item, ImageView view) {
-
+    public void onListFragmentInteraction(Ship item, ImageView view) {
+        Intent i = new Intent(getContext(), ShipDetailViewerActivity.class);
+        getActivity().startActivity(i);
     }
 
     @Override

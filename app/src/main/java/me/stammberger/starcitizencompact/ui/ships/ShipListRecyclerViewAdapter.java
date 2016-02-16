@@ -61,6 +61,8 @@ public class ShipListRecyclerViewAdapter extends RecyclerView.Adapter<ShipListRe
     @Override
     public void onBindViewHolder(final ViewHolder h, int position) {
         h.bindView(mModels.get(position));
+        h.view.setOnClickListener((v -> mListener.onListFragmentInteraction(
+                mModels.get(position), h.shipBackdropImageView)));
     }
 
     @Override
@@ -95,7 +97,7 @@ public class ShipListRecyclerViewAdapter extends RecyclerView.Adapter<ShipListRe
          * @param item that has been clicked on
          * @param view that has been clicked on
          */
-        void onListFragmentInteraction(ShipData item, ImageView view);
+        void onListFragmentInteraction(Ship item, ImageView view);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
