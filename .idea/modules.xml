@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/StarCitizenInformer.iml" filepath="$PROJECT_DIR$/StarCitizenInformer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/StarCitizenCompact.iml" filepath="$PROJECT_DIR$/StarCitizenCompact.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/pkrss-debug/pkrss-debug.iml" filepath="$PROJECT_DIR$/pkrss-debug/pkrss-debug.iml" />
     </modules>

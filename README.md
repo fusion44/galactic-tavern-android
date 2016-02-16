@@ -1,4 +1,4 @@
-# Star Citizen Informer
+# Star Citizen Compact
 #### Description
 This is an app about the game Star Citizen by Cloud Imperium Games.
 

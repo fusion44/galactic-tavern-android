@@ -1,4 +1,4 @@
-package me.stammberger.starcitizeninformer;
+package me.stammberger.starcitizencompact;
 
 import org.junit.Test;
 
