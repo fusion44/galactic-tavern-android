@@ -152,6 +152,7 @@ public class ShipListFragment extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public void onListFragmentInteraction(Ship item, ImageView view) {
         Intent i = new Intent(getContext(), ShipDetailViewerActivity.class);
+        i.putExtra(ShipDetailViewerActivity.SHIP_ITEM, item.titlecontainer.title);
         getActivity().startActivity(i);
     }
 

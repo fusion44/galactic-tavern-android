@@ -41,7 +41,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingTop="@dimen/card_view_title_text_padding_top_bottom"
-                    android:textAppearance="@style/AppTheme.CardViewTitle"
+                    android:textAppearance="@style/AppTheme.CardViewTitleAboveImage"
                     tools:text="Text M50"
                     tools:textColor="@color/cardview_dark_background" />
 
@@ -51,7 +51,7 @@
                     android:layout_height="wrap_content"
                     android:paddingBottom="@dimen/card_view_subtitle_text_padding_bottom"
                     android:paddingTop="@dimen/card_view_subtitle_text_padding_top"
-                    android:textAppearance="@style/AppTheme.CardViewSubTitle"
+                    android:textAppearance="@style/AppTheme.CardViewSubTitleAboveImage"
                     tools:text="by origin jumworks"
                     tools:textColor="@color/cardview_dark_background" />
 

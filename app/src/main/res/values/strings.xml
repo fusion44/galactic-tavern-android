@@ -63,5 +63,12 @@
     <string name="sc_manufacturer_orig" translatable="false">Origin Jumpworks GmbH</string>
     <string name="sc_manufacturer_rsi" translatable="false">Roberts Space Industries</string>
     <string name="sc_manufacturer_vanduul" translatable="false">Vanduul</string>
+    <string name="ship_detail_card_production_state">Production State</string>
+    <string name="ship_detail_card_role">Role</string>
+    <string name="ship_detail_card_measurement_title">Measurement</string>
+    <string name="ship_detail_card_measurement_beam">Beam</string>
+    <string name="ship_detail_card_measurement_height">Height</string>
+    <string name="ship_detail_card_measurement_length">Length</string>
+    <string name="ship_detail_card_measurement_mass">Mass</string>
 
 </resources>
