@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -20,6 +21,13 @@ public class ShipData {
     @SerializedName("ships")
     @Expose
     public List<Ship> ships = new ArrayList<>();
+
+    /**
+     * Link from ship id (name) to the ship data object in memory
+     * <p>
+     * TODO: Add a list to the json object to avoid creating this within the {@link me.stammberger.starcitizencompact.actions.SciActionCreator}
+     */
+    public LinkedHashMap<String, Ship> shipMap = new LinkedHashMap<>();
     @SerializedName("statbox_headers")
     @Expose
     public List<StatboxHeader> statboxHeaders = new ArrayList<>();

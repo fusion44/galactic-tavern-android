@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import me.stammberger.starcitizencompact.core.CommLinkFetcher;
 import me.stammberger.starcitizencompact.core.retrofit.ShipApiService;
+import me.stammberger.starcitizencompact.models.ship.Ship;
 import me.stammberger.starcitizencompact.stores.CommLinkStore;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -118,6 +119,12 @@ public class SciActionCreator extends RxActionCreator implements Actions {
 
         addRxAction(action, ShipApiService.Factory.getInstance().getShips()
                 .subscribeOn(Schedulers.io())
+                .map(shipData -> {
+                    for (Ship ship : shipData.ships) {
+                        shipData.shipMap.put(ship.titlecontainer.title, ship);
+                    }
+                    return shipData;
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shipData -> {
                     action.getData().put(Keys.SHIP_DATA_ALL, shipData);

@@ -7,6 +7,7 @@ import com.hardsoftstudio.rxflux.store.RxStoreChange;
 
 import me.stammberger.starcitizencompact.actions.Actions;
 import me.stammberger.starcitizencompact.actions.Keys;
+import me.stammberger.starcitizencompact.models.ship.Ship;
 import me.stammberger.starcitizencompact.models.ship.ShipData;
 
 /**
@@ -55,6 +56,21 @@ public class ShipStore extends RxStore implements ShipStoreInterface {
     @Override
     public ShipData getAllShips() {
         return mShipData;
+    }
+
+    /**
+     * Gets a single ship
+     *
+     * @param id The ship string id
+     * @return the {@link Ship} object. Null if ship is not found
+     */
+    @Override
+    public Ship getShipById(String id) {
+        if (mShipData.shipMap.size() == 0 || mShipData.shipMap.get(id) == null) {
+            return null;
+        }
+
+        return mShipData.shipMap.get(id);
     }
 
     /**
