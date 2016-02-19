@@ -32,6 +32,7 @@ public class ShipDetailViewerActivity extends AppCompatActivity {
 
         setupTitleCard();
         setupMeasurementCard();
+        setupStructuralCard();
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -74,5 +75,40 @@ public class ShipDetailViewerActivity extends AppCompatActivity {
 
         tv = (TextView) findViewById(R.id.shipDetailCardMassTextView);
         tv.setText(mShip.measurementcontainer.mass);
+    }
+
+    /**
+     * Fills the structural card information display
+     */
+    private void setupStructuralCard() {
+        TextView tv = (TextView) findViewById(R.id.shipDetailCardCargoCapacityTextView);
+        tv.setText(mShip.structuralcontainer.cargocapacity);
+
+        tv = (TextView) findViewById(R.id.shipDetailCardMaxCrewTextView);
+        tv.setText(mShip.structuralcontainer.maxcrew);
+
+        tv = (TextView) findViewById(R.id.shipDetailCardMaxPowerPlantSizeTextView);
+        tv.setText(mShip.structuralcontainer.maxpowerplant);
+
+        tv = (TextView) findViewById(R.id.shipDetailCardFactoryPowerPlantTextView);
+        tv.setText(mShip.structuralcontainer.factorypowerplant);
+
+        tv = (TextView) findViewById(R.id.shipDetailCardPrimaryThrustersTextView);
+        tv.setText(mShip.structuralcontainer.maxprimarythruster);
+
+        tv = (TextView) findViewById(R.id.shipDetailCardFactoryEngineTextView);
+        tv.setText(mShip.structuralcontainer.factorythruster);
+
+        tv = (TextView) findViewById(R.id.shipDetailCardManeuveringThrustersTextView);
+        tv.setText(mShip.structuralcontainer.maneuveringthrusters);
+
+        tv = (TextView) findViewById(R.id.shipDetailCardFactoryManeuveringThrustersTextView);
+        tv.setText(mShip.structuralcontainer.factorymaneuveringthrusters);
+
+        tv = (TextView) findViewById(R.id.shipDetailCardFactoryMaxShieldTextView);
+        tv.setText(mShip.structuralcontainer.maxshield);
+
+        tv = (TextView) findViewById(R.id.shipDetailCardFactoryShieldTextView);
+        tv.setText(mShip.structuralcontainer.shield);
     }
 }

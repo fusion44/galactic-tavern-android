@@ -70,5 +70,15 @@
     <string name="ship_detail_card_measurement_height">Height</string>
     <string name="ship_detail_card_measurement_length">Length</string>
     <string name="ship_detail_card_measurement_mass">Mass</string>
-
+    <string name="ship_detail_card_structural_title">Structural</string>
+    <string name="ship_detail_card_structural_cargo_capacity">Cargo capacity</string>
+    <string name="ship_detail_card_structural_max_crew">Max crew</string>
+    <string name="ship_detail_card_structural_max_power_plant_size">Max power plant size</string>
+    <string name="ship_detail_card_structural_factory_power_plant">Factory power plant</string>
+    <string name="ship_detail_card_structural_primary_thrusters">Max Engine</string>
+    <string name="ship_detail_card_structural_factory_engine">Factory engine</string>
+    <string name="ship_detail_card_structural_maneuvering_thrusters">Maneuvering thrusters</string>
+    <string name="ship_detail_card_structural_factory_maneuvering_thrusters">Factory maneuvering thrusters</string>
+    <string name="ship_detail_card_structural_max_shield">Max shield</string>
+    <string name="ship_detail_card_structural_shield">Shield</string>
 </resources>
