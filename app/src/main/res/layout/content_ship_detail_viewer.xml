@@ -19,5 +19,7 @@
         <include layout="@layout/activity_ship_detail_card_measurement" />
 
         <include layout="@layout/activity_ship_detail_card_structural" />
+
+        <include layout="@layout/activity_ship_detail_card_propulsion" />
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

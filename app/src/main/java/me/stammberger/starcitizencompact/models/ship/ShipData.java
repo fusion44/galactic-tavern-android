@@ -28,8 +28,10 @@ public class ShipData {
      * TODO: Add a list to the json object to avoid creating this within the {@link me.stammberger.starcitizencompact.actions.SciActionCreator}
      */
     public LinkedHashMap<String, Ship> shipMap = new LinkedHashMap<>();
+
     @SerializedName("statbox_headers")
     @Expose
-    public List<StatboxHeader> statboxHeaders = new ArrayList<>();
+    public StatboxHeaders statboxHeaders;
+
 
 }

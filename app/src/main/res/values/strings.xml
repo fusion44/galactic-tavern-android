@@ -81,4 +81,5 @@
     <string name="ship_detail_card_structural_factory_maneuvering_thrusters">Factory maneuvering thrusters</string>
     <string name="ship_detail_card_structural_max_shield">Max shield</string>
     <string name="ship_detail_card_structural_shield">Shield</string>
+    <string name="ship_detail_card_propulsion_title">Propulsion</string>
 </resources>

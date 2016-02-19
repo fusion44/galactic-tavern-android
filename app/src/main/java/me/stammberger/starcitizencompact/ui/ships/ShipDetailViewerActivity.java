@@ -1,15 +1,19 @@
 package me.stammberger.starcitizencompact.ui.ships;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import me.stammberger.starcitizencompact.R;
 import me.stammberger.starcitizencompact.SciApplication;
 import me.stammberger.starcitizencompact.core.Utility;
 import me.stammberger.starcitizencompact.models.ship.Ship;
+import me.stammberger.starcitizencompact.models.ship.ShipData;
 import me.stammberger.starcitizencompact.stores.ShipStore;
 
 /**
@@ -33,6 +37,7 @@ public class ShipDetailViewerActivity extends AppCompatActivity {
         setupTitleCard();
         setupMeasurementCard();
         setupStructuralCard();
+        setupPropulsionCard();
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -110,5 +115,31 @@ public class ShipDetailViewerActivity extends AppCompatActivity {
 
         tv = (TextView) findViewById(R.id.shipDetailCardFactoryShieldTextView);
         tv.setText(mShip.structuralcontainer.shield);
+    }
+
+    /**
+     * Fills the propulsion card information display
+     */
+    @SuppressLint("InflateParams")
+    private void setupPropulsionCard() {
+        LinearLayout root = (LinearLayout) findViewById(R.id.shipDetailCardPropulsionContentLinearLayout);
+        ShipData allShips = ShipStore.get(SciApplication.getInstance().getRxFlux().getDispatcher())
+                .getAllShips();
+
+        for (int i = 0; i < mShip.propulsionscontainer.additionals.size(); i++) {
+            String left = allShips.statboxHeaders.propulsionscontainerheader.additionals.get(i);
+            String right = mShip.propulsionscontainer.additionals.get(i);
+
+            View v = getLayoutInflater().inflate(R.layout.activity_ship_detail_card_row_item, null);
+
+            // left row item is the item description, i.e. "Maneuvering"
+            TextView tv = (TextView) v.findViewById(R.id.shipDetailCardLeftRowItem);
+            tv.setText(left);
+
+            tv = (TextView) v.findViewById(R.id.shipDetailCardRightRowItem);
+            tv.setText(right);
+
+            root.addView(v);
+        }
     }
 }
