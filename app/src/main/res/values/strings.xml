@@ -92,4 +92,5 @@
     <string name="ship_detail_card_hardpoints_c7">Class 7</string>
     <string name="ship_detail_card_hardpoints_c8">Class 8</string>
     <string name="ship_detail_card_hardpoints_c9">Class 9</string>
+    <string name="ship_detail_card_modular_title">Additional</string>
 </resources>

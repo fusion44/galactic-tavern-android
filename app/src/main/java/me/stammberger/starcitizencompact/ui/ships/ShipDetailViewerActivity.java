@@ -39,6 +39,7 @@ public class ShipDetailViewerActivity extends AppCompatActivity {
         setupStructuralCard();
         setupPropulsionCard();
         setupHardpointsCard();
+        setupModularCard();
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -174,5 +175,30 @@ public class ShipDetailViewerActivity extends AppCompatActivity {
 
         tv = (TextView) findViewById(R.id.shipDetailCardHardpointsC9TextView);
         tv.setText(mShip.hardpointscontainer.hpC9);
+    }
+
+    /**
+     * Fills the additional card information display
+     */
+    @SuppressLint("InflateParams")
+    private void setupModularCard() {
+        LinearLayout root = (LinearLayout) findViewById(R.id.shipDetailCardModularContentLinearLayout);
+        ShipData allShips = ShipStore.get(SciApplication.getInstance().getRxFlux().getDispatcher())
+                .getAllShips();
+
+        for (int i = 0; i < mShip.modularcontainer.additionals.size(); i++) {
+            String left = allShips.statboxHeaders.modularcontainerheader.additionals.get(i);
+            String right = mShip.modularcontainer.additionals.get(i);
+
+            View v = getLayoutInflater().inflate(R.layout.activity_ship_detail_card_row_item, null);
+
+            TextView tv = (TextView) v.findViewById(R.id.shipDetailCardLeftRowItem);
+            tv.setText(left);
+
+            tv = (TextView) v.findViewById(R.id.shipDetailCardRightRowItem);
+            tv.setText(right);
+
+            root.addView(v);
+        }
     }
 }

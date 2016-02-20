@@ -23,5 +23,7 @@
         <include layout="@layout/activity_ship_detail_card_propulsion" />
 
         <include layout="@layout/activity_ship_detail_card_hardpoints" />
+
+        <include layout="@layout/activity_ship_detail_card_modular" />
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>
