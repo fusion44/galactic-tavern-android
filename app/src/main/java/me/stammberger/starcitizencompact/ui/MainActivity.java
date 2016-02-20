@@ -25,6 +25,7 @@ import me.stammberger.starcitizencompact.stores.CommLinkStore;
 import me.stammberger.starcitizencompact.stores.ShipStore;
 import me.stammberger.starcitizencompact.ui.commlinks.CommLinkListFragment;
 import me.stammberger.starcitizencompact.ui.ships.ShipListFragment;
+import me.stammberger.starcitizencompact.ui.users.UserFragment;
 import timber.log.Timber;
 
 
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        openShipsFragment();
+        openUsersFragment();
     }
 
     @Override
@@ -114,7 +115,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_ships) {
             openShipsFragment();
         } else if (id == R.id.nav_users) {
-
+            openUsersFragment();
         } else if (id == R.id.nav_forums) {
 
         } else if (id == R.id.nav_orgs) {
@@ -154,6 +155,20 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.commit();
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(R.string.navigation_drawer_ships);
+        }
+    }
+
+    /**
+     * Creates and shows the {@link .users.UserFragment}
+     */
+    private void openUsersFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        mCurrentFragment = UserFragment.newInstance();
+        fragmentTransaction.replace(R.id.fragment_container, mCurrentFragment);
+        fragmentTransaction.commit();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(R.string.navigation_drawer_users);
         }
     }
 
