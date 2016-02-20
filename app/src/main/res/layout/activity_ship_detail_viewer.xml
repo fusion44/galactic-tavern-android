@@ -32,6 +32,6 @@
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_ship_detail_viewer" />
+    <include layout="@layout/activity_ship_detail_viewer_content" />
 
 </android.support.design.widget.CoordinatorLayout>

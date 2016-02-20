@@ -82,4 +82,14 @@
     <string name="ship_detail_card_structural_max_shield">Max shield</string>
     <string name="ship_detail_card_structural_shield">Shield</string>
     <string name="ship_detail_card_propulsion_title">Propulsion</string>
+    <string name="ship_detail_card_hardpoints_title">Hardpoints</string>
+    <string name="ship_detail_card_hardpoints_c1">Fixed</string>
+    <string name="ship_detail_card_hardpoints_c2">Gimbal</string>
+    <string name="ship_detail_card_hardpoints_c3">Pylon</string>
+    <string name="ship_detail_card_hardpoints_c4">Unmanned Turret</string>
+    <string name="ship_detail_card_hardpoints_c5">Manned Turret</string>
+    <string name="ship_detail_card_hardpoints_c6">Class 6</string>
+    <string name="ship_detail_card_hardpoints_c7">Class 7</string>
+    <string name="ship_detail_card_hardpoints_c8">Class 8</string>
+    <string name="ship_detail_card_hardpoints_c9">Class 9</string>
 </resources>

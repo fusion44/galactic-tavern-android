@@ -38,6 +38,7 @@ public class ShipDetailViewerActivity extends AppCompatActivity {
         setupMeasurementCard();
         setupStructuralCard();
         setupPropulsionCard();
+        setupHardpointsCard();
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -141,5 +142,37 @@ public class ShipDetailViewerActivity extends AppCompatActivity {
 
             root.addView(v);
         }
+    }
+
+    /**
+     * Fills the structural card information display
+     */
+    private void setupHardpointsCard() {
+        TextView tv = (TextView) findViewById(R.id.shipDetailCardHardpointsC1TextView);
+        tv.setText(mShip.hardpointscontainer.hpC1);
+
+        tv = (TextView) findViewById(R.id.shipDetailCardHardpointsC2TextView);
+        tv.setText(mShip.hardpointscontainer.hpC2);
+
+        tv = (TextView) findViewById(R.id.shipDetailCardHardpointsC3TextView);
+        tv.setText(mShip.hardpointscontainer.hpC3);
+
+        tv = (TextView) findViewById(R.id.shipDetailCardHardpointsC4TextView);
+        tv.setText(mShip.hardpointscontainer.hpC4);
+
+        tv = (TextView) findViewById(R.id.shipDetailCardHardpointsC5TextView);
+        tv.setText(mShip.hardpointscontainer.hpC5);
+
+        tv = (TextView) findViewById(R.id.shipDetailCardHardpointsC6TextView);
+        tv.setText(mShip.hardpointscontainer.hpC6);
+
+        tv = (TextView) findViewById(R.id.shipDetailCardHardpointsC7TextView);
+        tv.setText(mShip.hardpointscontainer.hpC7);
+
+        tv = (TextView) findViewById(R.id.shipDetailCardHardpointsC8TextView);
+        tv.setText(mShip.hardpointscontainer.hpC8);
+
+        tv = (TextView) findViewById(R.id.shipDetailCardHardpointsC9TextView);
+        tv.setText(mShip.hardpointscontainer.hpC9);
     }
 }

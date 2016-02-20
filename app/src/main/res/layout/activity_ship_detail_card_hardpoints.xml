@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/shipDetailCardHardpointsTitle"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="@dimen/card_view_margin_bottom"
+    android:elevation="@dimen/card_view_rested_elevation_state"
+    card_view:cardCornerRadius="@dimen/card_view_corner_radius">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/AppTheme.CardViewTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/ship_detail_card_hardpoints_title" />
+
+        <LinearLayout
+            style="@style/AppTheme.CardViewRowItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/AppTheme.CardViewRowItemColumnLeft"
+                android:layout_height="wrap_content"
+                android:text="@string/ship_detail_card_hardpoints_c1" />
+
+            <TextView
+                android:id="@+id/shipDetailCardHardpointsC1TextView"
+                style="@style/AppTheme.CardViewRowItemColumnRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="2x S2 - 2x CF -007 Bulldog (1)" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/AppTheme.CardViewRowItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/AppTheme.CardViewRowItemColumnLeft"
+                android:layout_height="wrap_content"
+                android:text="@string/ship_detail_card_hardpoints_c2" />
+
+            <TextView
+                android:id="@+id/shipDetailCardHardpointsC2TextView"
+                style="@style/AppTheme.CardViewRowItemColumnRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="1x S1 - Scorpion GT 215 Gattling (1)" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/AppTheme.CardViewRowItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/AppTheme.CardViewRowItemColumnLeft"
+                android:layout_height="wrap_content"
+                android:text="@string/ship_detail_card_hardpoints_c3" />
+
+            <TextView
+                android:id="@+id/shipDetailCardHardpointsC3TextView"
+                style="@style/AppTheme.CardViewRowItemColumnRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="2x S2 - 8x ASIM-5/x Ignite 2 (2)" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/AppTheme.CardViewRowItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/AppTheme.CardViewRowItemColumnLeft"
+                android:layout_height="wrap_content"
+                android:text="@string/ship_detail_card_hardpoints_c4" />
+
+            <TextView
+                android:id="@+id/shipDetailCardHardpointsC4TextView"
+                style="@style/AppTheme.CardViewRowItemColumnRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="1x S3 - 2x 11-Series Broadsword (3) \n2x S4 - 3x FL33 (4)" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/AppTheme.CardViewRowItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/AppTheme.CardViewRowItemColumnLeft"
+                android:layout_height="wrap_content"
+                android:text="@string/ship_detail_card_hardpoints_c5" />
+
+            <TextView
+                android:id="@+id/shipDetailCardHardpointsC5TextView"
+                style="@style/AppTheme.CardViewRowItemColumnRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="2x S4 - 3x 4- Lookup  \n2x S4 - 3x 4- Lookup" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/AppTheme.CardViewRowItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/AppTheme.CardViewRowItemColumnLeft"
+                android:layout_height="wrap_content"
+                android:text="@string/ship_detail_card_hardpoints_c6" />
+
+            <TextView
+                android:id="@+id/shipDetailCardHardpointsC6TextView"
+                style="@style/AppTheme.CardViewRowItemColumnRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="1x Automatic PDG Gun" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/AppTheme.CardViewRowItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/AppTheme.CardViewRowItemColumnLeft"
+                android:layout_height="wrap_content"
+                android:text="@string/ship_detail_card_hardpoints_c7" />
+
+            <TextView
+                android:id="@+id/shipDetailCardHardpointsC7TextView"
+                style="@style/AppTheme.CardViewRowItemColumnRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="2x S4 - 3x 4- Lookup  \n2x S4 - 3x 4- Lookup" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/AppTheme.CardViewRowItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/AppTheme.CardViewRowItemColumnLeft"
+                android:layout_height="wrap_content"
+                android:text="@string/ship_detail_card_hardpoints_c8" />
+
+            <TextView
+                android:id="@+id/shipDetailCardHardpointsC8TextView"
+                style="@style/AppTheme.CardViewRowItemColumnRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Lorem Ipsum gun" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/AppTheme.CardViewRowItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/AppTheme.CardViewRowItemColumnLeft"
+                android:layout_height="wrap_content"
+                android:text="@string/ship_detail_card_hardpoints_c9" />
+
+            <TextView
+                android:id="@+id/shipDetailCardHardpointsC9TextView"
+                style="@style/AppTheme.CardViewRowItemColumnRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Lorem Ipsum gun" />
+        </LinearLayout>
+    </LinearLayout>
+</android.support.v7.widget.CardView>
