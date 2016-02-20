@@ -11,6 +11,7 @@
     <string name="title_activity_ship_detail_viewer">ShipDetailViewerActivity</string>
 
     <string name="title_activity_user_search_result">Search results</string>
+    <string name="user_search_hint">Type username</string>
 
     <!-- Navigation drawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>

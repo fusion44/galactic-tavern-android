@@ -4,5 +4,14 @@
     android:layout_height="match_parent"
     tools:context="me.stammberger.starcitizencompact.ui.users.UserFragment">
 
+    <com.mypopsy.widget.FloatingSearchView
+        android:id="@+id/userSearchView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#90000000"
+        android:hint="@string/user_search_hint"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="16dp" />
 
 </FrameLayout>

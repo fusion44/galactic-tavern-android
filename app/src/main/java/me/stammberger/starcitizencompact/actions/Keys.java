@@ -32,4 +32,14 @@ public interface Keys {
      * Key for the {@link me.stammberger.starcitizencompact.models.ship.ShipData} object
      */
     String SHIP_DATA_ALL = "ship_data_all";
+
+    /**
+     * Key for the user handle
+     */
+    String USER_HANDLE = "user_handle";
+
+    /**
+     * Key for the user data
+     */
+    String USER_DATA = "user_data";
 }

@@ -6,10 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.mypopsy.widget.FloatingSearchView;
+
 import me.stammberger.starcitizencompact.R;
+import me.stammberger.starcitizencompact.SciApplication;
 
 
-public class UserFragment extends Fragment {
+public class UserFragment extends Fragment implements FloatingSearchView.OnSearchListener {
+    FloatingSearchView mSearchView;
 
     public UserFragment() {
         // Required empty public constructor
@@ -31,6 +35,16 @@ public class UserFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user, container, false);
+        View v = inflater.inflate(R.layout.fragment_user, container, false);
+
+        mSearchView = (FloatingSearchView) v.findViewById(R.id.userSearchView);
+        mSearchView.setOnSearchListener(this);
+        return v;
+    }
+
+    @Override
+    public void onSearchAction(CharSequence charSequence) {
+        SciApplication.getInstance().getActionCreator().getUserByUserHandle(charSequence.toString());
+        mSearchView.setActivated(false);
     }
 }

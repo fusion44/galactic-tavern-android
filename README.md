@@ -38,6 +38,8 @@ Retrofit integrates nicely with RxJava. This will be used fetch data from http:/
 
 [Stetho](http://facebook.github.io/stetho/) - For making debugging easier (especially browsing the SQL database easily from Chrome). This will be implemented in Debug build only.
 
+[FloatingSearchView](https://github.com/renaudcerrato/FloatingSearchView) - For providing a nice looking search view
+
 Optional:
 [Dagger2](http://google.github.io/dagger/) - A dependency injection framework for managing dependencies in a maintainable way. This needs serious research which might cause the project to take much longer.
 

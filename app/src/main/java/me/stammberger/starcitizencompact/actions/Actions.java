@@ -10,6 +10,8 @@ public interface Actions {
 
     String GET_SHIP_DATA_ALL = "get_ship_data_all";
 
+    String GET_USER_BY_USER_HANDLE = "get_user_by_user_handle";
+
     /**
      * Fetches a single comm link
      *
@@ -33,4 +35,10 @@ public interface Actions {
      * Fetches all available ships
      */
     void getAllShips();
+
+    /**
+     * Searches for a user by its handle
+     * @param userHandle String with the handle
+     */
+    void getUserByUserHandle(String userHandle);
 }

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import me.stammberger.starcitizencompact.core.CommLinkFetcher;
 import me.stammberger.starcitizencompact.core.retrofit.ShipApiService;
+import me.stammberger.starcitizencompact.core.retrofit.UserApiService;
 import me.stammberger.starcitizencompact.models.ship.Ship;
 import me.stammberger.starcitizencompact.stores.CommLinkStore;
 import rx.android.schedulers.AndroidSchedulers;
@@ -130,6 +131,29 @@ public class SciActionCreator extends RxActionCreator implements Actions {
                     action.getData().put(Keys.SHIP_DATA_ALL, shipData);
                     postRxAction(action);
                 }, throwable -> {
+                    postError(action, throwable);
+                }));
+    }
+
+    /**
+     * Searches for a user by its handle
+     *
+     * @param userHandle String with the handle
+     */
+    @Override
+    public void getUserByUserHandle(String userHandle) {
+        RxAction action = newRxAction(GET_USER_BY_USER_HANDLE, Keys.USER_HANDLE, userHandle);
+        if (hasRxAction(action)) return;
+
+        addRxAction(action, UserApiService.Factory.getInstanceWithFullLogging().getUser(userHandle)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(user -> {
+                    action.getData().put(Keys.USER_HANDLE, userHandle);
+                    action.getData().put(Keys.USER_DATA, user);
+                    postRxAction(action);
+                }, throwable -> {
+                    Timber.d("Error searching for user: %s", throwable.getCause());
                     postError(action, throwable);
                 }));
     }
