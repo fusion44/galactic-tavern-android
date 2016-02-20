@@ -1,6 +1,7 @@
 package me.stammberger.starcitizencompact.ui.ships;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -138,6 +139,10 @@ public class ShipListRecyclerViewAdapter extends RecyclerView.Adapter<ShipListRe
             Glide.with(mContext)
                     .load(Utility.RSI_BASE_URL + item.shipimgsmall)
                     .into(shipBackdropImageView);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                shipBackdropImageView.setTransitionName(ship.shipimgsmall);
+            }
         }
     }
 

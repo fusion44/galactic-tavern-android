@@ -1,13 +1,21 @@
 package me.stammberger.starcitizencompact.ui.ships;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import me.stammberger.starcitizencompact.R;
 import me.stammberger.starcitizencompact.SciApplication;
@@ -19,7 +27,7 @@ import me.stammberger.starcitizencompact.stores.ShipStore;
 /**
  * This class displays all the available data for a ship in an card interface
  */
-public class ShipDetailViewerActivity extends AppCompatActivity {
+public class ShipDetailViewerActivity extends AppCompatActivity implements RequestListener<String, GlideDrawable> {
     public static final String SHIP_ITEM = "ship_item";
     private Ship mShip;
 
@@ -28,11 +36,26 @@ public class ShipDetailViewerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ship_detail_viewer);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
 
         String id = getIntent().getStringExtra(SHIP_ITEM);
         mShip = ShipStore.get(SciApplication.getInstance().getRxFlux().getDispatcher()).getShipById(id);
+
+        ImageView backdropView = (ImageView) findViewById(R.id.activityShipDetailViewerBackdrop);
+        Glide.with(this)
+                .load(Utility.RSI_BASE_URL + mShip.shipimgsrc)
+                .listener(this)
+                .into(backdropView);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            /**
+             * See {@link CommLinkReaderActivity} for a description
+             */
+            supportPostponeEnterTransition();
+            backdropView.setTransitionName(mShip.shipimgsmall);
+        }
 
         setupTitleCard();
         setupMeasurementCard();
@@ -200,5 +223,31 @@ public class ShipDetailViewerActivity extends AppCompatActivity {
 
             root.addView(v);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            super.onBackPressed();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+        return false;
+    }
+
+    @Override
+    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            supportStartPostponedEnterTransition();
+        }
+
+        return false;
     }
 }

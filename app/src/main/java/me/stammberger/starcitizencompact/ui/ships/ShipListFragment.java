@@ -2,6 +2,7 @@ package me.stammberger.starcitizencompact.ui.ships;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -34,6 +35,7 @@ public class ShipListFragment extends Fragment implements SwipeRefreshLayout.OnR
         ShipFilterDialog.ShipFilterDialogClickListener {
 
     private static final String ARG_COLUMN_COUNT = "column-count";
+    private static final int VIEWER_ACTIVITY_RESULT = 0;
 
     private int mColumnCount = 2;
     private SuperRecyclerView mRecyclerView;
@@ -151,9 +153,11 @@ public class ShipListFragment extends Fragment implements SwipeRefreshLayout.OnR
      */
     @Override
     public void onListFragmentInteraction(Ship item, ImageView view) {
-        Intent i = new Intent(getContext(), ShipDetailViewerActivity.class);
+        ActivityOptionsCompat options = ActivityOptionsCompat.
+                makeSceneTransitionAnimation(this.getActivity(), view, item.shipimgsmall);
+        Intent i = new Intent(this.getContext(), ShipDetailViewerActivity.class);
         i.putExtra(ShipDetailViewerActivity.SHIP_ITEM, item.titlecontainer.title);
-        getActivity().startActivity(i);
+        getActivity().startActivityForResult(i, VIEWER_ACTIVITY_RESULT, options.toBundle());
     }
 
     @Override
