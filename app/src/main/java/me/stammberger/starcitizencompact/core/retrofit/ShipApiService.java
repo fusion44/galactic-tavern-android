@@ -64,7 +64,7 @@ public interface ShipApiService {
                     OkHttpClient httpClient = new OkHttpClient().newBuilder().addInterceptor(logging).build();
 
                     Retrofit retrofit = new Retrofit.Builder()
-                            .baseUrl("http://fusion44.bitbucket.org/")
+                            .baseUrl(BASE_URL)
                             .addConverterFactory(GsonConverterFactory.create())
                             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                             .client(httpClient)
