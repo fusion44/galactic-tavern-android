@@ -10,6 +10,7 @@ import me.stammberger.starcitizencompact.stores.db.tables.commlink.ContentBlock1
 import me.stammberger.starcitizencompact.stores.db.tables.commlink.ContentBlock2Table;
 import me.stammberger.starcitizencompact.stores.db.tables.commlink.ContentBlock4Table;
 import me.stammberger.starcitizencompact.stores.db.tables.commlink.ContentWrapperTable;
+import me.stammberger.starcitizencompact.stores.db.tables.user.UserSearchHistoryEntryTable;
 
 /**
  * Base OpenHelper class as necessary by StorIO
@@ -27,6 +28,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
         db.execSQL(ContentBlock2Table.getCreateTableQuery());
         db.execSQL(ContentBlock4Table.getCreateTableQuery());
         db.execSQL(ContentWrapperTable.getCreateTableQuery());
+        db.execSQL(UserSearchHistoryEntryTable.getCreateTableQuery());
     }
 
     @Override
@@ -36,5 +38,6 @@ public class DbOpenHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + ContentBlock2Table.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + ContentBlock4Table.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + ContentWrapperTable.TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + UserSearchHistoryEntryTable.TABLE);
     }
 }

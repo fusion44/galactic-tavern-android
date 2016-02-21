@@ -42,4 +42,14 @@ public interface Keys {
      * Key for the user data
      */
     String USER_DATA = "user_data";
+
+    /**
+     * Key for storing whether a search was successful or not
+     */
+    String USER_DATA_SEARCH_SUCCESSFUL = "user_data_search_successful";
+
+    /**
+     * Key for recent user search data
+     */
+    String USER_SEARCH_HISTORY_ENTRIES = "recent_user_searches";
 }

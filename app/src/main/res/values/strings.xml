@@ -45,6 +45,7 @@
     <string name="content_desc_ship_max_cargo_icon">Max cargo capacity icon</string>
     <string name="content_desc_ship_backdrop">Ship store front image</string>
     <string name="content_desc_ship_backdrop_image">Ship detail backdrop image</string>
+    <string name="content_desc_user_avatar">User avatar</string>
 
     <!-- General UI -->
     <string name="loading">Still loading!!!!</string>

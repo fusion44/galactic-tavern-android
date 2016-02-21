@@ -4,14 +4,20 @@ import com.hardsoftstudio.rxflux.action.RxAction;
 import com.hardsoftstudio.rxflux.action.RxActionCreator;
 import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
 import com.hardsoftstudio.rxflux.util.SubscriptionManager;
+import com.pushtorefresh.storio.sqlite.impl.DefaultStorIOSQLite;
+import com.pushtorefresh.storio.sqlite.queries.Query;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
+import me.stammberger.starcitizencompact.SciApplication;
 import me.stammberger.starcitizencompact.core.CommLinkFetcher;
 import me.stammberger.starcitizencompact.core.retrofit.ShipApiService;
 import me.stammberger.starcitizencompact.core.retrofit.UserApiService;
 import me.stammberger.starcitizencompact.models.ship.Ship;
+import me.stammberger.starcitizencompact.models.user.UserSearchHistoryEntry;
 import me.stammberger.starcitizencompact.stores.CommLinkStore;
+import me.stammberger.starcitizencompact.stores.db.tables.user.UserSearchHistoryEntryTable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
@@ -21,6 +27,7 @@ import timber.log.Timber;
  * Responsible for managing all actions used in the application
  */
 public class SciActionCreator extends RxActionCreator implements Actions {
+    private static final int MAX_USER_SEARCH_ENTRIES = 10;
     private CommLinkFetcher mCommLinkFetcher;
 
     /**
@@ -149,12 +156,78 @@ public class SciActionCreator extends RxActionCreator implements Actions {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(user -> {
+                    if (user.data != null) {
+                        action.getData().put(Keys.USER_DATA_SEARCH_SUCCESSFUL, true);
+                        action.getData().put(Keys.USER_DATA, user);
+                    } else {
+                        action.getData().put(Keys.USER_DATA_SEARCH_SUCCESSFUL, false);
+                    }
                     action.getData().put(Keys.USER_HANDLE, userHandle);
-                    action.getData().put(Keys.USER_DATA, user);
                     postRxAction(action);
                 }, throwable -> {
                     Timber.d("Error searching for user: %s", throwable.getCause());
                     postError(action, throwable);
                 }));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void getUserSearchHistory() {
+        RxAction action = newRxAction(Actions.GET_USER_SEARCH_HISTORY);
+        if (hasRxAction(action)) return;
+
+        Query q = Query.builder()
+                .table(UserSearchHistoryEntryTable.TABLE)
+                .orderBy(UserSearchHistoryEntryTable.COLUMN_SEARCH_DATE)
+                .limit(MAX_USER_SEARCH_ENTRIES)
+                .build();
+
+        SciApplication.getInstance().getStorIOSQLite()
+                .get()
+                .listOfObjects(UserSearchHistoryEntry.class)
+                .withQuery(q)
+                .prepare()
+                .asRxObservable()
+                .map(list -> {
+                    ArrayList<UserSearchHistoryEntry> alist = new ArrayList<>(list);
+                    Collections.reverse(alist);
+                    return alist;
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(userSearchHistoryEntries -> {
+                    action.getData().put(Keys.USER_SEARCH_HISTORY_ENTRIES,
+                            new ArrayList<>(userSearchHistoryEntries));
+                    postRxAction(action);
+                }, throwable -> {
+                    Timber.d("Error getting last user searches: %s", throwable.getCause());
+                    postError(action, throwable);
+                });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void pushNewUserSearchToDb(UserSearchHistoryEntry e) {
+        // TODO: Add logic to the method to delete oldest entry if we have more entries than defined in MAX_USER_SEARCH_ENTRIES
+        // also search for the handle and move the entry to the top instead of creating a duplicate
+
+        DefaultStorIOSQLite storio = SciApplication.getInstance().getStorIOSQLite();
+
+        storio.put()
+                .object(e)
+                .prepare()
+                .asRxObservable()
+                .subscribeOn(Schedulers.io())
+                .subscribe(wrapperPutResults -> {
+                    getUserSearchHistory();
+                }, throwable -> {
+                    Timber.d("Error putting %s entry to DB", e.handle);
+                    Timber.d(throwable.getCause().toString());
+                    Timber.d(throwable.toString());
+                });
     }
 }

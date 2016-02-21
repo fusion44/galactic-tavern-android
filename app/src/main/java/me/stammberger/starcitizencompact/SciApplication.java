@@ -22,6 +22,8 @@ import me.stammberger.starcitizencompact.models.commlink.ContentBlock4SQLiteType
 import me.stammberger.starcitizencompact.models.commlink.Wrapper;
 import me.stammberger.starcitizencompact.models.commlink.WrapperStorIOSQLiteDeleteResolver;
 import me.stammberger.starcitizencompact.models.commlink.WrapperStorIOSQLitePutResolver;
+import me.stammberger.starcitizencompact.models.user.UserSearchHistoryEntry;
+import me.stammberger.starcitizencompact.models.user.UserSearchHistoryEntrySQLiteTypeMapping;
 import me.stammberger.starcitizencompact.stores.db.DbOpenHelper;
 import me.stammberger.starcitizencompact.stores.db.resolvers.ContentWrapperGetResolver;
 import timber.log.Timber;
@@ -95,6 +97,7 @@ public class SciApplication extends Application {
                         .getResolver(new ContentWrapperGetResolver())
                         .deleteResolver(new WrapperStorIOSQLiteDeleteResolver())
                         .build())
+                .addTypeMapping(UserSearchHistoryEntry.class, new UserSearchHistoryEntrySQLiteTypeMapping())
                 .build();
     }
 

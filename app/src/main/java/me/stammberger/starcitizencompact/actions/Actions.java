@@ -1,5 +1,7 @@
 package me.stammberger.starcitizencompact.actions;
 
+import me.stammberger.starcitizencompact.models.user.UserSearchHistoryEntry;
+
 /**
  * Contains all actions used by the application
  */
@@ -10,7 +12,14 @@ public interface Actions {
 
     String GET_SHIP_DATA_ALL = "get_ship_data_all";
 
+    /**
+     * Action id for retrieving a user data object from the API
+     */
     String GET_USER_BY_USER_HANDLE = "get_user_by_user_handle";
+    /**
+     * An action with this id might also be created by the system when a new entry is added to the database
+     */
+    String GET_USER_SEARCH_HISTORY = "get_user_search_history";
 
     /**
      * Fetches a single comm link
@@ -38,7 +47,21 @@ public interface Actions {
 
     /**
      * Searches for a user by its handle
+     *
      * @param userHandle String with the handle
      */
     void getUserByUserHandle(String userHandle);
+
+    /**
+     * Retrieves search history from DB and puts it into {@link me.stammberger.starcitizencompact.stores.UserStore}
+     */
+    void getUserSearchHistory();
+
+    /**
+     * Pushes a new search entry to the DB. No more than {@value SciActionCreator#MAX_USER_SEARCH_ENTRIES} entries will be stored.
+     * Last entry will be discarded.
+     *
+     * @param e the {@link UserSearchHistoryEntry} object
+     */
+    void pushNewUserSearchToDb(UserSearchHistoryEntry e);
 }

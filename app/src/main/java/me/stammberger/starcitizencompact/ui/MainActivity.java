@@ -21,8 +21,10 @@ import com.hardsoftstudio.rxflux.store.RxStoreChange;
 import me.stammberger.starcitizencompact.R;
 import me.stammberger.starcitizencompact.SciApplication;
 import me.stammberger.starcitizencompact.actions.Actions;
+import me.stammberger.starcitizencompact.actions.Keys;
 import me.stammberger.starcitizencompact.stores.CommLinkStore;
 import me.stammberger.starcitizencompact.stores.ShipStore;
+import me.stammberger.starcitizencompact.stores.UserStore;
 import me.stammberger.starcitizencompact.ui.commlinks.CommLinkListFragment;
 import me.stammberger.starcitizencompact.ui.ships.ShipListFragment;
 import me.stammberger.starcitizencompact.ui.users.UserFragment;
@@ -46,6 +48,12 @@ public class MainActivity extends AppCompatActivity
      * instance of {@link ShipStore} for retrieving ship data
      */
     private ShipStore mShipStore;
+
+
+    /**
+     * Instance of {@link UserStore} for retrieving user data
+     */
+    private UserStore mUserStore;
 
     /**
      * Currently displayed {@link Fragment} for whenever {@link MainActivity#onRxStoreChanged(RxStoreChange)}
@@ -172,6 +180,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void onRxStoreChanged(RxStoreChange change) {
         switch (change.getStoreId()) {
@@ -192,6 +201,24 @@ public class MainActivity extends AppCompatActivity
                             ShipListFragment f = (ShipListFragment) mCurrentFragment;
                             f.setShipData(mShipStore.getAllShips());
                         }
+                }
+                break;
+            case UserStore.ID:
+                switch (change.getRxAction().getType()) {
+                    case Actions.GET_USER_BY_USER_HANDLE:
+                        if (mCurrentFragment != null && mCurrentFragment instanceof UserFragment) {
+                            String handle = (String) change.getRxAction().getData().get(Keys.USER_HANDLE);
+                            boolean successful = (boolean) change.getRxAction().getData().get(Keys.USER_DATA_SEARCH_SUCCESSFUL);
+                            UserFragment f = (UserFragment) mCurrentFragment;
+                            f.setUser(successful, handle, mUserStore.getUser(handle));
+                        }
+                        break;
+                    case Actions.GET_USER_SEARCH_HISTORY:
+                        if (mCurrentFragment != null && mCurrentFragment instanceof UserFragment) {
+                            UserFragment f = (UserFragment) mCurrentFragment;
+                            f.setUserSearchHistory(mUserStore.getUserSearchHistory(5));
+                        }
+                        break;
                 }
         }
     }
@@ -222,5 +249,8 @@ public class MainActivity extends AppCompatActivity
 
         mShipStore = ShipStore.get(dispatcher);
         mShipStore.register();
+
+        mUserStore = UserStore.get(dispatcher);
+        mUserStore.register();
     }
 }
