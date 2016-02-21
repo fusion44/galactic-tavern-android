@@ -4,6 +4,10 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
+import net.danlew.android.joda.DateUtils;
+
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -130,5 +134,19 @@ public class Utility {
                 Timber.d("Unknown manufacturer: %s", shortName);
                 return "";
         }
+    }
+
+    /**
+     * Converts a unix timestamp to a human readable String.
+     * The output will be relative to current device time
+     *
+     * @param c         The Context
+     * @param timestamp The unix timestamp
+     * @return String in the format "1 hour ago" and "1 week ago"
+     */
+    public static String getFormattedRelativeTimeSpan(Context c, Long timestamp) {
+        DateTime dt = new DateTime(timestamp);
+        CharSequence formattedDate = DateUtils.getRelativeTimeSpanString(c, dt);
+        return formattedDate.toString();
     }
 }

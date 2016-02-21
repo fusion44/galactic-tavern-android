@@ -15,13 +15,10 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
-import net.danlew.android.joda.DateUtils;
-
-import org.joda.time.DateTime;
-
 import java.util.ArrayList;
 
 import me.stammberger.starcitizencompact.R;
+import me.stammberger.starcitizencompact.core.Utility;
 import me.stammberger.starcitizencompact.models.commlink.CommLinkModel;
 import timber.log.Timber;
 
@@ -61,9 +58,7 @@ public class CommLinkListRecyclerViewAdapter extends RecyclerView.Adapter<CommLi
         h.item = mValues.get(position);
         h.titleTextView.setText(h.item.getTitle());
 
-        DateTime dt = new DateTime(h.item.getPublished());
-        CharSequence formattedDate = DateUtils.getRelativeTimeSpanString(mContext, dt);
-        h.dateTextView.setText(formattedDate);
+        h.dateTextView.setText(Utility.getFormattedRelativeTimeSpan(mContext, h.item.getPublished()));
 
         if (h.item.getMainBackdrop() != null) {
             Glide.with(mContext)
