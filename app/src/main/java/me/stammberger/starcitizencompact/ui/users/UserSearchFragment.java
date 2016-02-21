@@ -18,17 +18,17 @@ import me.stammberger.starcitizencompact.models.user.User;
 import me.stammberger.starcitizencompact.models.user.UserSearchHistoryEntry;
 
 
-public class UserFragment extends Fragment implements FloatingSearchView.OnSearchListener, UserSearchHistoryAdapter.OnListFragmentInteractionListener {
+public class UserSearchFragment extends Fragment implements FloatingSearchView.OnSearchListener, UserSearchHistoryAdapter.OnListFragmentInteractionListener {
     FloatingSearchView mSearchView;
     private User mUser;
     private ArrayList<UserSearchHistoryEntry> mUserSearchEntries;
 
-    public UserFragment() {
+    public UserSearchFragment() {
         // Required empty public constructor
     }
 
-    public static UserFragment newInstance() {
-        UserFragment fragment = new UserFragment();
+    public static UserSearchFragment newInstance() {
+        UserSearchFragment fragment = new UserSearchFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;

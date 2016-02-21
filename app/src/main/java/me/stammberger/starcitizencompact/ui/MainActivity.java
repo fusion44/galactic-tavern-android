@@ -27,7 +27,7 @@ import me.stammberger.starcitizencompact.stores.ShipStore;
 import me.stammberger.starcitizencompact.stores.UserStore;
 import me.stammberger.starcitizencompact.ui.commlinks.CommLinkListFragment;
 import me.stammberger.starcitizencompact.ui.ships.ShipListFragment;
-import me.stammberger.starcitizencompact.ui.users.UserFragment;
+import me.stammberger.starcitizencompact.ui.users.UserSearchFragment;
 import timber.log.Timber;
 
 
@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity
     private void openUsersFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        mCurrentFragment = UserFragment.newInstance();
+        mCurrentFragment = UserSearchFragment.newInstance();
         fragmentTransaction.replace(R.id.fragment_container, mCurrentFragment);
         fragmentTransaction.commit();
         if (getSupportActionBar() != null) {
@@ -206,16 +206,16 @@ public class MainActivity extends AppCompatActivity
             case UserStore.ID:
                 switch (change.getRxAction().getType()) {
                     case Actions.GET_USER_BY_USER_HANDLE:
-                        if (mCurrentFragment != null && mCurrentFragment instanceof UserFragment) {
+                        if (mCurrentFragment != null && mCurrentFragment instanceof UserSearchFragment) {
                             String handle = (String) change.getRxAction().getData().get(Keys.USER_HANDLE);
                             boolean successful = (boolean) change.getRxAction().getData().get(Keys.USER_DATA_SEARCH_SUCCESSFUL);
-                            UserFragment f = (UserFragment) mCurrentFragment;
+                            UserSearchFragment f = (UserSearchFragment) mCurrentFragment;
                             f.setUser(successful, handle, mUserStore.getUser(handle));
                         }
                         break;
                     case Actions.GET_USER_SEARCH_HISTORY:
-                        if (mCurrentFragment != null && mCurrentFragment instanceof UserFragment) {
-                            UserFragment f = (UserFragment) mCurrentFragment;
+                        if (mCurrentFragment != null && mCurrentFragment instanceof UserSearchFragment) {
+                            UserSearchFragment f = (UserSearchFragment) mCurrentFragment;
                             f.setUserSearchHistory(mUserStore.getUserSearchHistory(5));
                         }
                         break;

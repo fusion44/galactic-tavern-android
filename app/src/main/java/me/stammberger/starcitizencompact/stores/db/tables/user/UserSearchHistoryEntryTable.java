@@ -2,9 +2,11 @@ package me.stammberger.starcitizencompact.stores.db.tables.user;
 
 import android.support.annotation.NonNull;
 
+import me.stammberger.starcitizencompact.ui.users.UserSearchFragment;
+
 /**
  * Table data class for StorIO.
- * This is for storing entries of recently searched users in {@link me.stammberger.starcitizencompact.ui.users.UserFragment}
+ * This is for storing entries of recently searched users in {@link UserSearchFragment}
  */
 public class UserSearchHistoryEntryTable {
     public static final String TABLE = "user_search_history_entries";
