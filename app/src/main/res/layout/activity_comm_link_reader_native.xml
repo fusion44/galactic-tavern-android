@@ -22,7 +22,10 @@
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            app:expandedTitleMarginEnd="64dp"
+            app:expandedTitleMarginStart="48dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:titleEnabled="false">
 
             <ImageView
                 android:id="@+id/comm_link_backdrop"
@@ -30,7 +33,7 @@
                 android:layout_height="match_parent"
                 android:contentDescription="@string/content_desc_comm_link_backdrop_image"
                 android:scaleType="centerCrop"
-                app:layout_scrollFlags="scroll|enterAlways" />
+                app:layout_scrollFlags="scroll" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -43,14 +46,32 @@
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-
-    <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/commLinkContentRecyclerView"
+    <android.support.percent.PercentFrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context=".ui.commlinks.CommLinkReaderActivity"
-        tools:showIn="@layout/activity_comm_link_reader_native" />
+        app:behavior_overlapTop="@dimen/card_view_appbar_layout_overlap"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/article_card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:transitionGroup="true"
+            app:cardElevation="8dp"
+            app:contentPadding="16dp"
+            app:layout_widthPercent="@fraction/detail_card_width_percent">
+
+            <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/commLinkContentRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                tools:context=".ui.commlinks.CommLinkReaderActivity"
+                tools:showIn="@layout/activity_comm_link_reader_native" />
+
+        </android.support.v7.widget.CardView>
+    </android.support.percent.PercentFrameLayout>
 </android.support.design.widget.CoordinatorLayout>

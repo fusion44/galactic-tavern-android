@@ -5,4 +5,13 @@
     <dimen name="activity_horizontal_margin">64dp</dimen>
 
     <fraction name="comm_link_reader_column_width_percent">75%</fraction>
+
+    <dimen name="list_side_margin">64dp</dimen>
+    <dimen name="list_toolbar_side_margin">52dp</dimen>
+    <!-- minus 64 - 12 -->
+    <integer name="list_column_count">3</integer>
+
+    <!-- detail -->
+    <fraction name="detail_card_width_percent">70%</fraction>
+    <dimen name="card_view_appbar_layout_overlap">60dp</dimen>
 </resources>
