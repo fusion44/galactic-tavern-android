@@ -25,7 +25,7 @@ public class Data {
     public String avatar;
     @SerializedName("enlisted")
     @Expose
-    public String enlisted;
+    public Long enlisted;
     @SerializedName("title")
     @Expose
     public String title;
@@ -34,16 +34,16 @@ public class Data {
     public String titleImage;
     @SerializedName("bio")
     @Expose
-    public Object bio;
+    public String bio;
     @SerializedName("website_link")
     @Expose
-    public Object websiteLink;
+    public String websiteLink;
     @SerializedName("website_title")
     @Expose
-    public Object websiteTitle;
+    public String websiteTitle;
     @SerializedName("country")
     @Expose
-    public Object country;
+    public String country;
     @SerializedName("region")
     @Expose
     public String region;
@@ -52,24 +52,23 @@ public class Data {
     public List<String> fluency = new ArrayList<>();
     @SerializedName("discussion_count")
     @Expose
-    public Object discussionCount;
+    public Integer discussionCount;
     @SerializedName("post_count")
     @Expose
-    public Object postCount;
+    public Integer postCount;
     @SerializedName("last_forum_visit")
     @Expose
-    public String lastForumVisit;
+    public Long lastForumVisit;
     @SerializedName("forum_roles")
     @Expose
     public List<String> forumRoles = new ArrayList<>();
     @SerializedName("organizations")
     @Expose
-    public Object organizations;
+    public List<UserOrganizationObject> userOrganizationObjects = new ArrayList<>();
     @SerializedName("date_added")
     @Expose
-    public Object dateAdded;
+    public Long dateAdded;
     @SerializedName("last_scrape_date")
     @Expose
-    public Object lastScrapeDate;
-
+    public Long lastScrapeDate;
 }

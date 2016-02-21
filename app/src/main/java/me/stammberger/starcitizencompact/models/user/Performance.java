@@ -10,7 +10,7 @@ public class Performance {
 
     @SerializedName("network_io_time")
     @Expose
-    public Double networkIoTime;
+    public Integer networkIoTime;
     @SerializedName("processing_time")
     @Expose
     public Double processingTime;

@@ -145,7 +145,7 @@ public class SciActionCreator extends RxActionCreator implements Actions {
         RxAction action = newRxAction(GET_USER_BY_USER_HANDLE, Keys.USER_HANDLE, userHandle);
         if (hasRxAction(action)) return;
 
-        addRxAction(action, UserApiService.Factory.getInstanceWithFullLogging().getUser(userHandle)
+        addRxAction(action, UserApiService.Factory.getInstance().getUser(userHandle)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(user -> {

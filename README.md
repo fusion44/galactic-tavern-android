@@ -61,3 +61,8 @@ Well, it didn't. *Solution:* Store comm links in database and retrieve data from
 * Always implement onError and actually log the error message
 * Make sure to add arguments to the RxActions in [RxActionCreator#newRxAction](https://github.com/skimarxall/RxFlux/wiki/Actions)
 to avoid the newly created action being mistaken to an existing one
+
+##### JSON / GSON
+* While [jsonschema2pojo](http://www.jsonschema2pojo.org/) is great for quickly converting a JSON string to a usable POJO there are some things to consider.
+  * Make sure to have a JSON file which has all data and does not contain nulls where there should be an actual object.
+  * Check the resulting POJOs for Object fields where there should be another type like String or another class instance.
