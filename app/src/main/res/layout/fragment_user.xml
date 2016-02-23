@@ -4,11 +4,31 @@
     android:layout_height="match_parent"
     tools:context=".ui.users.UserSearchFragment">
 
+    <LinearLayout
+        style="@style/AppTheme.userFragmentSuccessfulSearchHistoryLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="8dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingStart="8dp"
+            android:text="@string/user_search_recent_history" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/userSearchResultsHistoryRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+
     <com.mypopsy.widget.FloatingSearchView
         android:id="@+id/userSearchView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#90000000"
         android:hint="@string/user_search_hint"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"

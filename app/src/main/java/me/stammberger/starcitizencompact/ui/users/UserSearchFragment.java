@@ -2,6 +2,8 @@ package me.stammberger.starcitizencompact.ui.users;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +19,12 @@ import me.stammberger.starcitizencompact.SciApplication;
 import me.stammberger.starcitizencompact.models.user.User;
 import me.stammberger.starcitizencompact.models.user.UserSearchHistoryEntry;
 
-
+/**
+ * This Fragment handles all the UI for searching for a user.
+ */
 public class UserSearchFragment extends Fragment implements FloatingSearchView.OnSearchListener, UserSearchHistoryAdapter.OnListFragmentInteractionListener {
     FloatingSearchView mSearchView;
+    RecyclerView mSuccessfulSearchHistoryRecyclerView;
     private User mUser;
     private ArrayList<UserSearchHistoryEntry> mUserSearchEntries;
 
@@ -48,15 +53,32 @@ public class UserSearchFragment extends Fragment implements FloatingSearchView.O
 
         mSearchView = (FloatingSearchView) v.findViewById(R.id.userSearchView);
         mSearchView.setOnSearchListener(this);
+
+        mSuccessfulSearchHistoryRecyclerView = (RecyclerView) v.findViewById(R.id.userSearchResultsHistoryRecyclerView);
+        LinearLayoutManager mgr = new LinearLayoutManager(
+                getContext(), LinearLayoutManager.VERTICAL, false);
+        mSuccessfulSearchHistoryRecyclerView.setLayoutManager(mgr);
         return v;
     }
 
+    /**
+     * Called when the user initiated a search
+     *
+     * @param charSequence The user handle to search for
+     */
     @Override
     public void onSearchAction(CharSequence charSequence) {
         SciApplication.getInstance().getActionCreator().getUserByUserHandle(charSequence.toString());
         mSearchView.setActivated(false);
     }
 
+    /**
+     * After a search was conducted this method will be called with the search result.
+     *
+     * @param successful Determines whether the user was found or not
+     * @param handle     The search text (Uase handle)
+     * @param user       The user object if successful. When unsuccessful the User.data object will be null
+     */
     public void setUser(boolean successful, String handle, User user) {
         UserSearchHistoryEntry use = new UserSearchHistoryEntry();
         use.handle = handle;
@@ -74,13 +96,38 @@ public class UserSearchFragment extends Fragment implements FloatingSearchView.O
         SciApplication.getInstance().getActionCreator().pushNewUserSearchToDb(use);
     }
 
+    /**
+     * Sets the search history present on this installation. Necessary to fill both RecyclerViews
+     * with content.
+     *
+     * @param entries The search history items
+     */
     public void setUserSearchHistory(ArrayList<UserSearchHistoryEntry> entries) {
         mUserSearchEntries = entries;
+
+        ArrayList<UserSearchHistoryEntry> successfullEntries = new ArrayList<>();
+        for (UserSearchHistoryEntry e : mUserSearchEntries) {
+            if (e.successful) {
+                successfullEntries.add(e);
+            }
+        }
+
         UserSearchHistoryAdapter a = new UserSearchHistoryAdapter(
                 getContext(), mUserSearchEntries, this);
         mSearchView.setAdapter(a);
+
+        // This RecyclerView will only hold the successful searches.
+        a = new UserSearchHistoryAdapter(
+                getContext(), successfullEntries, this);
+        mSuccessfulSearchHistoryRecyclerView.setAdapter(a);
     }
 
+    /**
+     * Called when a history item is clicked. Can either be in the search box recycler view or the
+     * RecyclerView embedded into the fragment directly
+     *
+     * @param entry that has been clicked on
+     */
     @Override
     public void onListFragmentInteraction(UserSearchHistoryEntry entry) {
         onSearchAction(entry.handle);

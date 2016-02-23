@@ -104,4 +104,13 @@
         <item name="android:layout_gravity">center</item>
     </style>
 
+    <style name="AppTheme.userFragmentSuccessfulSearchHistoryLayout">
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:paddingTop">90dp</item>
+    </style>
+
 </resources>

@@ -12,6 +12,7 @@
 
     <string name="title_activity_user_search_result">Search results</string>
     <string name="user_search_hint">Type username</string>
+    <string name="user_search_recent_history">Recent Search History</string>
 
     <!-- Navigation drawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
