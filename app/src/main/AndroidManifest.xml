@@ -52,6 +52,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="me.stammberger.starcitizencompact.ui.MainActivity" />
         </activity>
+
+        <activity
+            android:name=".ui.users.UserDetailSlidingActivity"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:theme="@style/Theme.Sliding.Light" />
     </application>
 
 </manifest>

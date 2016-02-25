@@ -1,5 +1,6 @@
 package me.stammberger.starcitizencompact.ui.users;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -88,12 +89,17 @@ public class UserSearchFragment extends Fragment implements FloatingSearchView.O
         if (successful) {
             mUser = user;
             use.avatarUrl = user.data.avatar;
+
+            Intent i = new Intent(getContext(), UserDetailSlidingActivity.class);
+            i.putExtra(UserDetailSlidingActivity.USER_HANDLE, handle);
+            getActivity().startActivity(i);
         } else {
             mUser = null;
             use.avatarUrl = "";
         }
 
         SciApplication.getInstance().getActionCreator().pushNewUserSearchToDb(use);
+
     }
 
     /**
@@ -102,6 +108,7 @@ public class UserSearchFragment extends Fragment implements FloatingSearchView.O
      *
      * @param entries The search history items
      */
+    @SuppressWarnings("Convert2streamapi") // no streams for Java 1.7 :(
     public void setUserSearchHistory(ArrayList<UserSearchHistoryEntry> entries) {
         mUserSearchEntries = entries;
 
