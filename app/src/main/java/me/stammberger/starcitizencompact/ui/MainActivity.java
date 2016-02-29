@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity
                     case Actions.GET_USER_SEARCH_HISTORY:
                         if (mCurrentFragment != null && mCurrentFragment instanceof UserSearchFragment) {
                             UserSearchFragment f = (UserSearchFragment) mCurrentFragment;
-                            f.setUserSearchHistory(mUserStore.getUserSearchHistory(5));
+                            f.setUserSearchHistory(mUserStore.getUserSearchHistory(10));
                         }
                         break;
                 }

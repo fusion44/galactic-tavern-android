@@ -180,8 +180,6 @@ public class SciActionCreator extends RxActionCreator implements Actions {
 
         Query q = Query.builder()
                 .table(UserSearchHistoryEntryTable.TABLE)
-                .orderBy(UserSearchHistoryEntryTable.COLUMN_SEARCH_DATE)
-                .limit(MAX_USER_SEARCH_ENTRIES)
                 .build();
 
         SciApplication.getInstance().getStorIOSQLite()
