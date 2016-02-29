@@ -7,4 +7,6 @@
 
     <include layout="@layout/activity_user_detail_header_info_card" />
 
+    <include layout="@layout/activity_user_detail_bio_card" />
+
 </LinearLayout>

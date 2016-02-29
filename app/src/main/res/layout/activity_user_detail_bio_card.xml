@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/AppTheme.CardViewSubTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/first_card_marginTop"
+            android:text="@string/title" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/userDetailTitleImageView"
+                style="@style/AppTheme.countryFlagImageStyle" />
+
+            <TextView
+                android:id="@+id/userDetailTitleTextView"
+                style="@style/AppTheme.CardViewRowItemColumnRight"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                tools:text="Civilian" />
+
+        </LinearLayout>
+
+        <TextView
+            style="@style/AppTheme.CardViewSubTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/first_card_marginTop"
+            android:text="@string/bio" />
+
+        <TextView
+            android:id="@+id/userDetailBioTextView"
+            style="@style/AppTheme.CardViewSupportingText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/activity_user_detail_no_bio"
+            tools:text="Player Bio: I am a Firefighter for my local town. I am also 3rd in command of the First Regiment Gaming Alliance.
+
+Character Bio:
+
+Name: Wollf, Jack
+Status: Pilot
+
+Date of Birth: 18NOV2914 Scars  Marks: None
+Place of Birth: Earth Hair Color: Black
+Height: 5 ft. 9 in. Eye Color: Blue
+Weight 200 lbs Marital Status: Single
+Build: Slender Sex: Male
+Occupation: Pilot Country of Origin: USA" />
+
+        <TextView
+            style="@style/AppTheme.CardViewSubTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/first_card_marginTop"
+            android:text="@string/forum" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                style="@style/AppTheme.CardViewRowItem"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/AppTheme.CardViewRowItemColumnLeft"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/posts" />
+
+                <TextView
+                    android:id="@+id/userDetailPostsTextView"
+                    style="@style/AppTheme.CardViewRowItemColumnRight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="547" />
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/AppTheme.CardViewRowItem"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/AppTheme.CardViewRowItemColumnLeft"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/discussions" />
+
+                <TextView
+                    android:id="@+id/userDetailDiscussionsTextView"
+                    style="@style/AppTheme.CardViewRowItemColumnRight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    tools:text="243" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- TODO: re-enable when API returns more reliable data is its often old -->
+        <!--LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/last_forum_visit" />
+
+            <TextView
+                android:id="@+id/userDetailLastForumVisitTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="2016-05-04"/>
+
+        </LinearLayout -->
+    </LinearLayout>
+</android.support.v7.widget.CardView>

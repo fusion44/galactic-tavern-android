@@ -14,6 +14,7 @@
     <string name="user_search_hint">Type username</string>
     <string name="user_search_recent_history">Recent Search History</string>
     <string name="activity_user_detail_citizen_number">Citizen number</string>
+    <string name="activity_user_detail_no_bio">User has not publicized a biography yet.</string>
 
     <!-- Navigation drawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -54,6 +55,12 @@
     <string name="loading">Still loading!!!!</string>
     <string name="none">None</string>
     <string name="country">Country</string>
+    <string name="last_forum_visit">Last forum visit</string>
+    <string name="discussions">Discussions</string>
+    <string name="forum">Forum</string>
+    <string name="posts">Posts</string>
+    <string name="title">Title</string>
+    <string name="bio">Bio</string>
 
     <!-- Error messages -->
     <string name="error_failed_to_load_comm_link_rss">Failed to load RSS feed. Please check connection</string>

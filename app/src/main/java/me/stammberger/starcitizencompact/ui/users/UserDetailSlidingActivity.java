@@ -1,6 +1,7 @@
 package me.stammberger.starcitizencompact.ui.users;
 
 import android.os.Bundle;
+import android.text.Html;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,6 +34,16 @@ public class UserDetailSlidingActivity extends SlidingActivity {
     ImageView mCountryFlagImageView;
     @Bind(R.id.userDetailAvatarRoundedImageView)
     ImageView mAvatarImageView;
+    @Bind(R.id.userDetailTitleImageView)
+    ImageView mUserTitleImageView;
+    @Bind(R.id.userDetailTitleTextView)
+    TextView mUserDetailTitleTextView;
+    @Bind(R.id.userDetailBioTextView)
+    TextView mUserBioTextView;
+    @Bind(R.id.userDetailDiscussionsTextView)
+    TextView mDiscussionsTextView;
+    @Bind(R.id.userDetailPostsTextView)
+    TextView mPostsTextView;
 
     @Override
     public void init(Bundle savedInstanceState) {
@@ -80,6 +91,22 @@ public class UserDetailSlidingActivity extends SlidingActivity {
                 }
             }
 
+            Glide.with(this)
+                    .load(user.data.titleImage)
+                    .into(mUserTitleImageView);
+            mUserDetailTitleTextView.setText(user.data.title);
+
+            if (user.data.bio != null && !user.data.bio.equals("")) {
+                mUserBioTextView.setText(Html.fromHtml(user.data.bio));
+            }
+
+            if (user.data.discussionCount != null) {
+                mDiscussionsTextView.setText(String.valueOf(user.data.discussionCount));
+            }
+
+            if (user.data.postCount != null) {
+                mPostsTextView.setText(String.valueOf(user.data.postCount));
+            }
         }
     }
 }
