@@ -22,6 +22,11 @@ public interface Actions {
     String GET_USER_SEARCH_HISTORY = "get_user_search_history";
 
     /**
+     * Action id for retrieving an organizations data object from the API
+     */
+    String GET_ORGANIZATION_BY_ID = "get_organization_by_id";
+
+    /**
      * Fetches a single comm link
      *
      * @param id the comm link id. Note this is not the SQLite id
@@ -64,4 +69,11 @@ public interface Actions {
      * @param e the {@link UserSearchHistoryEntry} object
      */
     void pushNewUserSearchToDb(UserSearchHistoryEntry e);
+
+    /**
+     * Searches for an organization by its ID
+     *
+     * @param id of the organization
+     */
+    void getOrganizationById(String id);
 }

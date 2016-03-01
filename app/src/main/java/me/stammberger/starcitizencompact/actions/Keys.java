@@ -52,4 +52,14 @@ public interface Keys {
      * Key for recent user search data
      */
     String USER_SEARCH_HISTORY_ENTRIES = "recent_user_searches";
+
+    /**
+     * Key for the organization id
+     */
+    String ORGANIZATION_ID = "org_id";
+
+    /**
+     * Key for organization data
+     */
+    String ORGANIZATION_DATA = "organization_data";
 }

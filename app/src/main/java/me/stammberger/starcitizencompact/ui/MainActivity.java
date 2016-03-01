@@ -23,6 +23,7 @@ import me.stammberger.starcitizencompact.SciApplication;
 import me.stammberger.starcitizencompact.actions.Actions;
 import me.stammberger.starcitizencompact.actions.Keys;
 import me.stammberger.starcitizencompact.stores.CommLinkStore;
+import me.stammberger.starcitizencompact.stores.OrganizationStore;
 import me.stammberger.starcitizencompact.stores.ShipStore;
 import me.stammberger.starcitizencompact.stores.UserStore;
 import me.stammberger.starcitizencompact.ui.commlinks.CommLinkListFragment;
@@ -55,6 +56,10 @@ public class MainActivity extends AppCompatActivity
      */
     private UserStore mUserStore;
 
+    /**
+     * Instance of {@link OrganizationStore} for retrieving organization data
+     */
+    private OrganizationStore mOrganizationStore;
     /**
      * Currently displayed {@link Fragment} for whenever {@link MainActivity#onRxStoreChanged(RxStoreChange)}
      * is called and data needs to be passed on.
@@ -252,5 +257,8 @@ public class MainActivity extends AppCompatActivity
 
         mUserStore = UserStore.get(dispatcher);
         mUserStore.register();
+
+        mOrganizationStore = OrganizationStore.get(dispatcher);
+        mOrganizationStore.register();
     }
 }

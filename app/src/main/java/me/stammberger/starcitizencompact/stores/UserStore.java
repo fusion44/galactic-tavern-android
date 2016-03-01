@@ -10,6 +10,7 @@ import java.util.TreeMap;
 
 import me.stammberger.starcitizencompact.actions.Actions;
 import me.stammberger.starcitizencompact.actions.Keys;
+import me.stammberger.starcitizencompact.actions.SciActionCreator;
 import me.stammberger.starcitizencompact.models.user.User;
 import me.stammberger.starcitizencompact.models.user.UserSearchHistoryEntry;
 
@@ -27,7 +28,7 @@ public class UserStore extends RxStore implements UserStoreInterface {
      * Creates the singleton instance
      *
      * @param dispatcher RxFlux dispatcher
-     * @return The ShipStore instance
+     * @return The {@link UserStore} instance
      */
     public static synchronized UserStore get(Dispatcher dispatcher) {
         if (mInstance == null) {
@@ -39,8 +40,10 @@ public class UserStore extends RxStore implements UserStoreInterface {
 
     /**
      * Searches for a user using his handle on RSI.com
+     * If this method returns null, the user is not yet in the store and must be searched for
+     * using the {@link SciActionCreator}
      *
-     * @return {@link User} object with user data. Null if user with this handle was not found
+     * @return {@link User} object with user data. Null if user with this handle was not found in the store
      */
     @Override
     public User getUser(String handle) {

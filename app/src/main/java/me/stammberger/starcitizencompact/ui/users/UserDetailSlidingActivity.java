@@ -1,12 +1,18 @@
 package me.stammberger.starcitizencompact.ui.users;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.Html;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.hardsoftstudio.rxflux.action.RxError;
 import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
+import com.hardsoftstudio.rxflux.dispatcher.RxViewDispatch;
+import com.hardsoftstudio.rxflux.store.RxStoreChange;
 import com.klinker.android.sliding.SlidingActivity;
 import com.neovisionaries.i18n.CountryCode;
 
@@ -16,14 +22,19 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import me.stammberger.starcitizencompact.R;
 import me.stammberger.starcitizencompact.SciApplication;
+import me.stammberger.starcitizencompact.actions.Actions;
+import me.stammberger.starcitizencompact.actions.Keys;
+import me.stammberger.starcitizencompact.models.orgs.Organization;
 import me.stammberger.starcitizencompact.models.user.User;
+import me.stammberger.starcitizencompact.models.user.UserOrganizationObject;
+import me.stammberger.starcitizencompact.stores.OrganizationStore;
 import me.stammberger.starcitizencompact.stores.UserStore;
 
 /**
  * This Activity will display all known user details. The behaviour is similar to the stock Android
  * contacts app. When dragging an Activity down it'll close automatically.
  */
-public class UserDetailSlidingActivity extends SlidingActivity {
+public class UserDetailSlidingActivity extends SlidingActivity implements RxViewDispatch {
     public static final String USER_HANDLE = "user_handle";
 
     @Bind(R.id.userDetailCitizenNumberTextView)
@@ -45,38 +56,65 @@ public class UserDetailSlidingActivity extends SlidingActivity {
     @Bind(R.id.userDetailPostsTextView)
     TextView mPostsTextView;
 
+    private OrganizationStore mOrganizationStore;
+    private User mUser;
+    private Organization mOrganization;
+
     @Override
     public void init(Bundle savedInstanceState) {
         setContent(R.layout.activity_user_detail);
         ButterKnife.bind(this);
+        SciApplication.getInstance().getRxFlux().onActivityCreated(this, savedInstanceState);
 
         String handle = getIntent().getStringExtra(USER_HANDLE);
 
         Dispatcher d = SciApplication.getInstance().getRxFlux().getDispatcher();
+        mOrganizationStore = OrganizationStore.get(d);
         UserStore userStore = UserStore.get(d);
-        User user = userStore.getUser(handle);
-        if (user != null) {
-            setTitle(user.data.handle);
+        mUser = userStore.getUser(handle);
+        if (mUser != null) {
+            if (mUser.data.userOrganizationObjects != null) {
+                boolean requested = false;
+                for (UserOrganizationObject userOrganizationObject : mUser.data.userOrganizationObjects) {
+                    if (userOrganizationObject.sid == null) {
+                        // for some users the API return organizations with null data
+                        continue;
+                    }
 
-            mCitizenNumberTextView.setText(user.data.citizenNumber);
+                    mOrganization = mOrganizationStore.getOrganization(userOrganizationObject.sid);
+                    if (mOrganization != null) {
+                        loadHeaderImage();
+                    } else {
+                        if (!requested) {
+                            // we only want the image of the first organization
+                            SciApplication.getInstance().getActionCreator().getOrganizationById(userOrganizationObject.sid);
+                            requested = true;
+                        }
+                    }
+                }
+            }
+
+            setTitle(mUser.data.handle);
+
+            mCitizenNumberTextView.setText(mUser.data.citizenNumber);
 
             Glide.with(this)
-                    .load(user.data.avatar)
+                    .load(mUser.data.avatar)
                     .into(mAvatarImageView);
 
             List<CountryCode> byName;
             String countryText = "";
             // Workaround for a bug in the API
             // Some users have their country displayed in the region field
-            if (user.data.country != null) {
-                byName = CountryCode.findByName(".*" + user.data.country + ".*");
-                countryText = user.data.country;
+            if (mUser.data.country != null) {
+                byName = CountryCode.findByName(".*" + mUser.data.country + ".*");
+                countryText = mUser.data.country;
             } else {
-                byName = CountryCode.findByName(".*" + user.data.region + ".*");
+                byName = CountryCode.findByName(".*" + mUser.data.region + ".*");
             }
 
-            if (user.data.region != null) {
-                countryText += user.data.region;
+            if (mUser.data.region != null) {
+                countryText += mUser.data.region;
             }
 
             mCountryTextView.setText(countryText);
@@ -92,21 +130,90 @@ public class UserDetailSlidingActivity extends SlidingActivity {
             }
 
             Glide.with(this)
-                    .load(user.data.titleImage)
+                    .load(mUser.data.titleImage)
                     .into(mUserTitleImageView);
-            mUserDetailTitleTextView.setText(user.data.title);
+            mUserDetailTitleTextView.setText(mUser.data.title);
 
-            if (user.data.bio != null && !user.data.bio.equals("")) {
-                mUserBioTextView.setText(Html.fromHtml(user.data.bio));
+            if (mUser.data.bio != null && !mUser.data.bio.equals("")) {
+                mUserBioTextView.setText(Html.fromHtml(mUser.data.bio));
             }
 
-            if (user.data.discussionCount != null) {
-                mDiscussionsTextView.setText(String.valueOf(user.data.discussionCount));
+            if (mUser.data.discussionCount != null) {
+                mDiscussionsTextView.setText(String.valueOf(mUser.data.discussionCount));
             }
 
-            if (user.data.postCount != null) {
-                mPostsTextView.setText(String.valueOf(user.data.postCount));
+            if (mUser.data.postCount != null) {
+                mPostsTextView.setText(String.valueOf(mUser.data.postCount));
             }
         }
+    }
+
+    /**
+     * Loads the header image background if an organization is loaded
+     */
+    private void loadHeaderImage() {
+        if (mOrganization != null) {
+            // check if we have at least one usable image - if not return
+            String url = mOrganization.data.coverImage;
+            if (url == null || url.equals("")) {
+                url = mOrganization.data.logo;
+            }
+            if (url == null || url.equals("")) {
+                return;
+            }
+
+            Glide.with(this)
+                    .load(url)
+                    .asBitmap()
+                    .into(new SimpleTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                            setImage(resource);
+                        }
+                    });
+        }
+    }
+
+    /**
+     * Called by RxFlux whenever a RxStore has received data.
+     *
+     * @param change The change model with the data
+     */
+    @Override
+    public void onRxStoreChanged(RxStoreChange change) {
+        switch (change.getStoreId()) {
+            case OrganizationStore.ID:
+                switch (change.getRxAction().getType()) {
+                    case Actions.GET_ORGANIZATION_BY_ID:
+                        Organization o = (Organization) change.getRxAction()
+                                .getData().get(Keys.ORGANIZATION_DATA);
+                        if (mUser.data.userOrganizationObjects.get(0).sid.equals(o.data.sid)) {
+                            mOrganization = o;
+                            loadHeaderImage();
+                        }
+                        break;
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onRxError(RxError error) {
+
+    }
+
+    @Override
+    public void onRxViewRegistered() {
+
+    }
+
+    @Override
+    public void onRxViewUnRegistered() {
+
+    }
+
+    @Override
+    public void onRxStoresRegister() {
+
     }
 }

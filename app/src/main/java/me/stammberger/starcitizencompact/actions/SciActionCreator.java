@@ -12,6 +12,7 @@ import java.util.Collections;
 
 import me.stammberger.starcitizencompact.SciApplication;
 import me.stammberger.starcitizencompact.core.CommLinkFetcher;
+import me.stammberger.starcitizencompact.core.retrofit.OrganizationApiService;
 import me.stammberger.starcitizencompact.core.retrofit.ShipApiService;
 import me.stammberger.starcitizencompact.core.retrofit.UserApiService;
 import me.stammberger.starcitizencompact.models.ship.Ship;
@@ -227,5 +228,27 @@ public class SciActionCreator extends RxActionCreator implements Actions {
                     Timber.d(throwable.getCause().toString());
                     Timber.d(throwable.toString());
                 });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void getOrganizationById(String id) {
+        RxAction action = newRxAction(Actions.GET_ORGANIZATION_BY_ID, Keys.ORGANIZATION_ID, id);
+
+        if (hasRxAction(action)) return;
+
+        addRxAction(action, OrganizationApiService.Factory.getInstance().getOrganization(id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(organization -> {
+                    action.getData().put(Keys.ORGANIZATION_DATA, organization);
+                    postRxAction(action);
+                }, throwable -> {
+                    Timber.d("Error getting organization with id %s", id);
+                    Timber.d(throwable.getCause().toString());
+                    postError(action, throwable);
+                }));
     }
 }
