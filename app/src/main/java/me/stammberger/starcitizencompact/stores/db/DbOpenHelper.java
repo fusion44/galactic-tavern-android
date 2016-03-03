@@ -10,6 +10,7 @@ import me.stammberger.starcitizencompact.stores.db.tables.commlink.ContentBlock1
 import me.stammberger.starcitizencompact.stores.db.tables.commlink.ContentBlock2Table;
 import me.stammberger.starcitizencompact.stores.db.tables.commlink.ContentBlock4Table;
 import me.stammberger.starcitizencompact.stores.db.tables.commlink.ContentWrapperTable;
+import me.stammberger.starcitizencompact.stores.db.tables.forums.ForumModelTable;
 import me.stammberger.starcitizencompact.stores.db.tables.user.UserSearchHistoryEntryTable;
 
 /**
@@ -29,6 +30,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
         db.execSQL(ContentBlock4Table.getCreateTableQuery());
         db.execSQL(ContentWrapperTable.getCreateTableQuery());
         db.execSQL(UserSearchHistoryEntryTable.getCreateTableQuery());
+        db.execSQL(ForumModelTable.getCreateTableQuery());
     }
 
     @Override
@@ -39,5 +41,6 @@ public class DbOpenHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + ContentBlock4Table.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + ContentWrapperTable.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + UserSearchHistoryEntryTable.TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + ForumModelTable.TABLE);
     }
 }

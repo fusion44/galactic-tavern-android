@@ -62,4 +62,9 @@ public interface Keys {
      * Key for organization data
      */
     String ORGANIZATION_DATA = "organization_data";
+
+    /**
+     * Key for all forum data
+     */
+    String FORUM_DATA_ALL = "forums_data_all";
 }

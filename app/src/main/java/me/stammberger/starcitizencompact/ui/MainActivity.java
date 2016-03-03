@@ -23,10 +23,12 @@ import me.stammberger.starcitizencompact.SciApplication;
 import me.stammberger.starcitizencompact.actions.Actions;
 import me.stammberger.starcitizencompact.actions.Keys;
 import me.stammberger.starcitizencompact.stores.CommLinkStore;
+import me.stammberger.starcitizencompact.stores.ForumStore;
 import me.stammberger.starcitizencompact.stores.OrganizationStore;
 import me.stammberger.starcitizencompact.stores.ShipStore;
 import me.stammberger.starcitizencompact.stores.UserStore;
 import me.stammberger.starcitizencompact.ui.commlinks.CommLinkListFragment;
+import me.stammberger.starcitizencompact.ui.forums.ForumListFragment;
 import me.stammberger.starcitizencompact.ui.ships.ShipListFragment;
 import me.stammberger.starcitizencompact.ui.users.UserSearchFragment;
 import timber.log.Timber;
@@ -60,11 +62,18 @@ public class MainActivity extends AppCompatActivity
      * Instance of {@link OrganizationStore} for retrieving organization data
      */
     private OrganizationStore mOrganizationStore;
+
+    /**
+     * Instance of {@link ForumStore} for retrieving forum data
+     */
+    private ForumStore mForumsStore;
+
     /**
      * Currently displayed {@link Fragment} for whenever {@link MainActivity#onRxStoreChanged(RxStoreChange)}
      * is called and data needs to be passed on.
      */
     private Fragment mCurrentFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +91,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        openUsersFragment();
+        openForumsFragment();
     }
 
     @Override
@@ -130,7 +139,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_users) {
             openUsersFragment();
         } else if (id == R.id.nav_forums) {
-
+            openForumsFragment();
         } else if (id == R.id.nav_orgs) {
 
         } else if (id == R.id.nav_favorites) {
@@ -185,6 +194,20 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Creates and shows the {@link .forums.ForumListFragment}
+     */
+    private void openForumsFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        mCurrentFragment = ForumListFragment.newInstance();
+        fragmentTransaction.replace(R.id.fragment_container, mCurrentFragment);
+        fragmentTransaction.commit();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(R.string.navigation_drawer_forums);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public void onRxStoreChanged(RxStoreChange change) {
@@ -225,6 +248,14 @@ public class MainActivity extends AppCompatActivity
                         }
                         break;
                 }
+            case ForumStore.ID:
+                switch (change.getRxAction().getType()) {
+                    case Actions.GET_FORUMS_ALL:
+                        if (mCurrentFragment != null && mCurrentFragment instanceof ForumListFragment) {
+                            ForumListFragment f = (ForumListFragment) mCurrentFragment;
+                            f.setForums(mForumsStore.getForums());
+                        }
+                }
         }
     }
 
@@ -260,5 +291,8 @@ public class MainActivity extends AppCompatActivity
 
         mOrganizationStore = OrganizationStore.get(dispatcher);
         mOrganizationStore.register();
+
+        mForumsStore = ForumStore.get(dispatcher);
+        mForumsStore.register();
     }
 }

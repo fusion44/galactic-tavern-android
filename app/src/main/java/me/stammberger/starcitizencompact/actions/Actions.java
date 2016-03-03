@@ -27,6 +27,11 @@ public interface Actions {
     String GET_ORGANIZATION_BY_ID = "get_organization_by_id";
 
     /**
+     * Action id for retrieving all forums data
+     */
+    String GET_FORUMS_ALL = "get_all_forums";
+
+    /**
      * Fetches a single comm link
      *
      * @param id the comm link id. Note this is not the SQLite id
@@ -76,4 +81,9 @@ public interface Actions {
      * @param id of the organization
      */
     void getOrganizationById(String id);
+
+    /**
+     * Get all forum names and the basic forum data
+     */
+    void getForumsAll();
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.malinskiy.superrecyclerview.SuperRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/forums_list"
+    android:name="me.stammberger.starcitizencompact.ui.forums.ForumListFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layoutManager="LinearLayoutManager"
+    app:layout_empty="@layout/fragment_forum_adapter_empty"
+    app:mainLayoutId="@layout/layout_recyclerview_horizontalscroll"
+    tools:context=".ui.forums.ForumListFragment"
+    tools:listitem="@layout/fragment_forum_item" />

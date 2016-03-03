@@ -12,9 +12,11 @@ import java.util.Collections;
 
 import me.stammberger.starcitizencompact.SciApplication;
 import me.stammberger.starcitizencompact.core.CommLinkFetcher;
+import me.stammberger.starcitizencompact.core.retrofit.ForumsApiService;
 import me.stammberger.starcitizencompact.core.retrofit.OrganizationApiService;
 import me.stammberger.starcitizencompact.core.retrofit.ShipApiService;
 import me.stammberger.starcitizencompact.core.retrofit.UserApiService;
+import me.stammberger.starcitizencompact.models.forums.Forum;
 import me.stammberger.starcitizencompact.models.ship.Ship;
 import me.stammberger.starcitizencompact.models.user.UserSearchHistoryEntry;
 import me.stammberger.starcitizencompact.stores.CommLinkStore;
@@ -247,6 +249,43 @@ public class SciActionCreator extends RxActionCreator implements Actions {
                     postRxAction(action);
                 }, throwable -> {
                     Timber.d("Error getting organization with id %s", id);
+                    Timber.d(throwable.getCause().toString());
+                    postError(action, throwable);
+                }));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void getForumsAll() {
+        RxAction action = newRxAction(Actions.GET_FORUMS_ALL);
+
+        if (hasRxAction(action)) return;
+
+        addRxAction(action, ForumsApiService.Factory.getInstance().getForums()
+                .subscribeOn(Schedulers.io())
+                .map(forumsObject -> {
+                    for (Forum forum : forumsObject.data) {
+                        if (forum.forumDiscussionCountString != null && !forum.forumDiscussionCountString.equals("")) {
+                            forum.forumDiscussionCount = Integer.parseInt(forum.forumDiscussionCountString);
+                        } else {
+                            forum.forumDiscussionCount = 0;
+                        }
+                        if (forum.forumPostCountString != null && !forum.forumPostCountString.equals("")) {
+                            forum.forumPostCount = Integer.parseInt(forum.forumPostCountString);
+                        } else {
+                            forum.forumPostCount = 0;
+                        }
+                    }
+                    return forumsObject.data;
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(forums -> {
+                    action.getData().put(Keys.FORUM_DATA_ALL, forums);
+                    postRxAction(action);
+                }, throwable -> {
+                    Timber.d("Error getting forums data");
                     Timber.d(throwable.getCause().toString());
                     postError(action, throwable);
                 }));
