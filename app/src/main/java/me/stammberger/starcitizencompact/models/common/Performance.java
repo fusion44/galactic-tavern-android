@@ -1,4 +1,4 @@
-package me.stammberger.starcitizencompact.models.orgs;
+package me.stammberger.starcitizencompact.models.common;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -10,7 +10,7 @@ public class Performance {
 
     @SerializedName("network_io_time")
     @Expose
-    public Integer networkIoTime;
+    public Double networkIoTime;
     @SerializedName("processing_time")
     @Expose
     public Double processingTime;

@@ -1,4 +1,4 @@
-package me.stammberger.starcitizencompact.models.user;
+package me.stammberger.starcitizencompact.models.common;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

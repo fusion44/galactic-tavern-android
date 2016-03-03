@@ -9,7 +9,7 @@ import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteType;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.stammberger.starcitizencompact.models.BaseModel;
+import me.stammberger.starcitizencompact.models.common.BaseModel;
 import me.stammberger.starcitizencompact.stores.db.tables.commlink.CommLinkModelTable;
 
 /**

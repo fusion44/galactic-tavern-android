@@ -1,4 +1,4 @@
-package me.stammberger.starcitizencompact.models;
+package me.stammberger.starcitizencompact.models.common;
 
 /**
  * Base for all models used in this app.
