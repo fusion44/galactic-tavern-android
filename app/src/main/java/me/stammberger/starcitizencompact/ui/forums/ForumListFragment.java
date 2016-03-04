@@ -3,23 +3,27 @@ package me.stammberger.starcitizencompact.ui.forums;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 
 import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
 import java.util.List;
 
+import jp.wasabeef.recyclerview.animators.adapters.SlideInBottomAnimationAdapter;
 import me.stammberger.starcitizencompact.R;
 import me.stammberger.starcitizencompact.SciApplication;
 import me.stammberger.starcitizencompact.models.forums.Forum;
 import me.stammberger.starcitizencompact.stores.ForumStore;
+import timber.log.Timber;
 
 /**
  * Container fragment for the forums RecyclerView
  */
-public class ForumListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class ForumListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ForumListAdapter.OnListFragmentInteractionListener {
 
     private SuperRecyclerView mRecyclerView;
 
@@ -30,7 +34,6 @@ public class ForumListFragment extends Fragment implements SwipeRefreshLayout.On
     public ForumListFragment() {
     }
 
-    @SuppressWarnings("unused")
     public static ForumListFragment newInstance() {
         ForumListFragment fragment = new ForumListFragment();
         Bundle args = new Bundle();
@@ -68,6 +71,21 @@ public class ForumListFragment extends Fragment implements SwipeRefreshLayout.On
         if (forums == null) {
             throw new NullPointerException("Forum list is null");
         }
+
+        ForumListAdapter adapter
+                = new ForumListAdapter(getContext(), forums, this);
+
+        LinearLayoutManager llm = new LinearLayoutManager(getContext(),
+                LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(llm);
+
+        SlideInBottomAnimationAdapter slideInAdapter
+                = new SlideInBottomAnimationAdapter(adapter);
+
+        slideInAdapter.setDuration(500);
+        slideInAdapter.setInterpolator(new DecelerateInterpolator());
+
+        mRecyclerView.setAdapter(slideInAdapter);
     }
 
     /**
@@ -85,5 +103,10 @@ public class ForumListFragment extends Fragment implements SwipeRefreshLayout.On
      */
     public void setForums(List<Forum> forums) {
         setupRecyclerView(forums);
+    }
+
+    @Override
+    public void onListFragmentInteraction(Forum item) {
+        Timber.d(item.forumId);
     }
 }
