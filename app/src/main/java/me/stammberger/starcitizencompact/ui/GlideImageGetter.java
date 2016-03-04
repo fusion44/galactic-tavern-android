@@ -23,7 +23,7 @@ import me.stammberger.starcitizencompact.R;
 import me.stammberger.starcitizencompact.core.Utility;
 
 /**
- * Implements an {@link Html.ImageGetter} to load embedded images into textviews
+ * Implements an {@link Html.ImageGetter} to load embedded images into TextViews
  * <p>
  * Please see https://github.com/bumptech/glide/issues/550 for further explanation.
  */
@@ -45,12 +45,12 @@ public final class GlideImageGetter implements Html.ImageGetter, Drawable.Callba
         return (GlideImageGetter) view.getTag(R.id.drawable_callback_tag);
     }
 
+    @SuppressWarnings("Convert2streamapi") // no stream API :(
     public void clear() {
         GlideImageGetter prev = get(mTextView);
         if (prev == null) return;
 
         for (ImageGetterViewTarget target : mTargets) {
-            System.out.println("Cleared!");
             Glide.clear(target);
         }
     }
@@ -64,7 +64,6 @@ public final class GlideImageGetter implements Html.ImageGetter, Drawable.Callba
             fullUrl = Utility.RSI_BASE_URL + url;
         }
 
-        System.out.println("Downloading from: " + fullUrl);
         Glide.with(mContext)
                 .load(fullUrl)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
