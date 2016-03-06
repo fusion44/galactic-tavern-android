@@ -6,11 +6,14 @@ import com.hardsoftstudio.rxflux.store.RxStore;
 import com.hardsoftstudio.rxflux.store.RxStoreChange;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 
 import me.stammberger.starcitizencompact.actions.Actions;
 import me.stammberger.starcitizencompact.actions.Keys;
 import me.stammberger.starcitizencompact.models.forums.Forum;
+import me.stammberger.starcitizencompact.models.forums.ForumThread;
 
 /**
  * Stores all forum data once they've been loaded by an action
@@ -26,6 +29,7 @@ public class ForumStore extends RxStore implements ForumStoreInterface {
     public static final String ID = "ForumStore";
     private static ForumStore mInstance;
     List<Forum> mForums = new ArrayList<>();
+    TreeMap<String, HashMap<Integer, List<ForumThread>>> mThreads = new TreeMap<>();
 
     public ForumStore(Dispatcher dispatcher) {
         super(dispatcher);
@@ -55,6 +59,20 @@ public class ForumStore extends RxStore implements ForumStoreInterface {
         return mForums;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ForumThread> getThreads(String forumId, int page) {
+        if (mThreads.keySet().contains(forumId)) {
+            HashMap<Integer, List<ForumThread>> forumThreads = mThreads.get(forumId);
+            if (forumThreads.keySet().contains(page)) {
+                return forumThreads.get(page);
+            }
+        }
+        return new ArrayList<>();
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public void onRxAction(RxAction action) {
@@ -64,6 +82,22 @@ public class ForumStore extends RxStore implements ForumStoreInterface {
                 if (forums != null) {
                     mForums = forums;
                 }
+                break;
+            case Actions.GET_FORUM_THREADS:
+                String forumId = (String) action.getData().get(Keys.FORUM_ID);
+                Integer page = (Integer) action.getData().get(Keys.PAGINATION_CURRENT_PAGE);
+                List<ForumThread> forumThreads = (List<ForumThread>) action.getData().get(Keys.FORUM_THREADS_FOR_PAGE);
+
+                HashMap<Integer, List<ForumThread>> threadsForForum;
+                if (mThreads.get(forumId) == null) {
+                    threadsForForum = new HashMap<>();
+                } else {
+                    threadsForForum = mThreads.get(forumId);
+                }
+
+                threadsForForum.put(page, forumThreads);
+
+                mThreads.put(forumId, threadsForForum);
                 break;
             default:
                 // return without posting a change to the store.

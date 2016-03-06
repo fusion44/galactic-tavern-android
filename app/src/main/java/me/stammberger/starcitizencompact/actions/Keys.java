@@ -8,6 +8,14 @@ import com.hardsoftstudio.rxflux.action.RxAction;
  */
 public interface Keys {
     /**
+     * Key for current data page
+     * <p>
+     * If the currently requested data is paginated this data point will be
+     * set to the current page included in the action
+     */
+    String PAGINATION_CURRENT_PAGE = "pagination_current_page";
+
+    /**
      * Key for a single comm link
      */
     String COMM_LINK = "comm_link";
@@ -64,7 +72,17 @@ public interface Keys {
     String ORGANIZATION_DATA = "organization_data";
 
     /**
+     * Id of the Forum
+     */
+    String FORUM_ID = "forum_id";
+
+    /**
      * Key for all forum data
      */
     String FORUM_DATA_ALL = "forums_data_all";
+
+    /**
+     * Key for {@link Thread} data
+     */
+    String FORUM_THREADS_FOR_PAGE = "forum_threads_for_page";
 }

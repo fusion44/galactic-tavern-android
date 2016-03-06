@@ -58,6 +58,25 @@
             android:excludeFromRecents="true"
             android:taskAffinity=""
             android:theme="@style/Theme.Sliding.Light" />
+        <activity
+            android:name=".ui.forums.ForumThreadListActivity"
+            android:label="@string/title_forum_thread_list"
+            android:parentActivityName=".ui.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="me.stammberger.starcitizencompact.ui.MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".ui.forums.ForumThreadReaderActivity"
+            android:label="@string/title_forum_thread_reader_detail"
+            android:parentActivityName=".ui.forums.ForumThreadListActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.forums.ForumThreadListActivity" />
+        </activity>
     </application>
 
 </manifest>

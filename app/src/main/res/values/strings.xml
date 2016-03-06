@@ -18,6 +18,9 @@
 
     <string name="forum_activity_text">%1$d topics with %2$d posts</string>
 
+    <string name="title_forum_thread_list">Threads</string>
+    <string name="title_forum_thread_reader_detail">Posts</string>
+
     <!-- Navigation drawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -112,4 +115,5 @@
     <string name="ship_detail_card_hardpoints_c9">Class 9</string>
     <string name="ship_detail_card_modular_title">Additional</string>
     <string name="content_desc_forum_new_discussion_count_bubble">Forum new discussion count bubble</string>
+
 </resources>

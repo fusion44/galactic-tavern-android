@@ -1,5 +1,6 @@
 package me.stammberger.starcitizencompact.ui.forums;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -107,6 +108,9 @@ public class ForumListFragment extends Fragment implements SwipeRefreshLayout.On
 
     @Override
     public void onListFragmentInteraction(Forum item) {
+        Intent i = new Intent(getActivity(), ForumThreadListActivity.class);
+        i.putExtra(ForumThreadListActivity.KEY_FORUM_ID, item.forumId);
+        startActivity(i);
         Timber.d(item.forumId);
     }
 }

@@ -32,6 +32,11 @@ public interface Actions {
     String GET_FORUMS_ALL = "get_all_forums";
 
     /**
+     *
+     */
+    String GET_FORUM_THREADS = "get_forum_threads";
+
+    /**
      * Fetches a single comm link
      *
      * @param id the comm link id. Note this is not the SQLite id
@@ -86,4 +91,12 @@ public interface Actions {
      * Get all forum names and the basic forum data
      */
     void getForumsAll();
+
+    /**
+     * Gets all threads of the specified forum at the specified page
+     *
+     * @param forumId The Forum ID
+     * @param page    The page id for the data
+     */
+    void getForumThreads(String forumId, int page);
 }

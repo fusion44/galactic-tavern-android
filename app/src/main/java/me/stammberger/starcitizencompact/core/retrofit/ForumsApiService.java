@@ -1,6 +1,7 @@
 package me.stammberger.starcitizencompact.core.retrofit;
 
 import me.stammberger.starcitizencompact.BuildConfig;
+import me.stammberger.starcitizencompact.models.forums.ForumThreads;
 import me.stammberger.starcitizencompact.models.forums.Forums;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -8,6 +9,7 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
+import retrofit2.http.Query;
 import rx.Observable;
 
 public interface ForumsApiService {
@@ -20,6 +22,23 @@ public interface ForumsApiService {
      */
     @GET("?api_source=live&system=forums&action=forums&expedite=0&format=json\n")
     Observable<Forums> getForums();
+
+    /**
+     * Gets all threads for the specified Forum and data page.
+     * <p>
+     * Note: Currently the API's pagination feature is broken.
+     * Start page and end page must be the same value!
+     *
+     * @param forumId   The ID of the Forum
+     * @param startPage Start page of forum data
+     * @param endPage   End page of forum data
+     * @return Observable for the forum thread data
+     */
+    @GET("?api_source=live&system=forums&action=threads&expedite=0&format=json")
+    Observable<ForumThreads> getTreads(
+            @Query("target_id") String forumId,
+            @Query("start_page") int startPage,
+            @Query("end_page") int endPage);
 
     /**
      * Factory class to create and store the singleton
