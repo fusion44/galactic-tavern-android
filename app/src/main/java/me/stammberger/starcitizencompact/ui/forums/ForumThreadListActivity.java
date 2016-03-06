@@ -11,13 +11,17 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.hardsoftstudio.rxflux.action.RxAction;
 import com.hardsoftstudio.rxflux.store.RxStoreChange;
 
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import me.stammberger.starcitizencompact.R;
 import me.stammberger.starcitizencompact.SciApplication;
 import me.stammberger.starcitizencompact.actions.Actions;
@@ -131,14 +135,12 @@ public class ForumThreadListActivity extends RxFluxActivity {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mItem = mValues.get(position);
-            holder.mIdView.setText(String.valueOf(mValues.get(position).threadId));
-            holder.mContentView.setText(mValues.get(position).threadTitle);
+            holder.bind(mValues.get(position));
 
-            holder.mView.setOnClickListener(v -> {
+            holder.view.setOnClickListener(v -> {
                 if (mTwoPane) {
                     Bundle arguments = new Bundle();
-                    arguments.putInt(ForumThreadReaderFragment.ARG_ITEM_ID, holder.mItem.threadId);
+                    arguments.putInt(ForumThreadReaderFragment.ARG_ITEM_ID, holder.forumThread.threadId);
                     ForumThreadReaderFragment fragment = new ForumThreadReaderFragment();
                     fragment.setArguments(arguments);
                     getSupportFragmentManager().beginTransaction()
@@ -147,7 +149,7 @@ public class ForumThreadListActivity extends RxFluxActivity {
                 } else {
                     Context context = v.getContext();
                     Intent intent = new Intent(context, ForumThreadReaderActivity.class);
-                    intent.putExtra(ForumThreadReaderFragment.ARG_ITEM_ID, holder.mItem.threadId);
+                    intent.putExtra(ForumThreadReaderFragment.ARG_ITEM_ID, holder.forumThread.threadId);
 
                     context.startActivity(intent);
                 }
@@ -160,21 +162,39 @@ public class ForumThreadListActivity extends RxFluxActivity {
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
-            public final View mView;
-            public final TextView mIdView;
-            public final TextView mContentView;
-            public ForumThread mItem;
+            public final View view;
+
+            @Bind(R.id.forumThreadListAvatarImageView)
+            public ImageView avatarImageView;
+            @Bind(R.id.forumThreadListTopicTextView)
+            public TextView titleTextView;
+            @Bind(R.id.forumThreadListViewCount)
+            public TextView viewCountTextView;
+            @Bind(R.id.forumThreadListPostCount)
+            public TextView postCountTextView;
+
+            public ForumThread forumThread;
 
             public ViewHolder(View view) {
                 super(view);
-                mView = view;
-                mIdView = (TextView) view.findViewById(R.id.id);
-                mContentView = (TextView) view.findViewById(R.id.content);
+                this.view = view;
+                ButterKnife.bind(this, view);
+            }
+
+            public void bind(ForumThread forumThread) {
+                this.forumThread = forumThread;
+                Glide.with(view.getContext())
+                        .load(forumThread.originalPoster.avatar)
+                        .into(avatarImageView);
+
+                titleTextView.setText(forumThread.threadTitle);
+                viewCountTextView.setText(String.valueOf(forumThread.threadViews));
+                postCountTextView.setText(String.valueOf(forumThread.threadReplies));
             }
 
             @Override
             public String toString() {
-                return super.toString() + " '" + mContentView.getText() + "'";
+                return super.toString() + " '" + titleTextView.getText() + "'";
             }
         }
     }

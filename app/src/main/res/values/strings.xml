@@ -58,6 +58,9 @@
     <string name="content_desc_ship_backdrop_image">Ship detail backdrop image</string>
     <string name="content_desc_user_avatar">User avatar</string>
     <string name="content_desc_user_country_flag">Users country flag</string>
+    <string name="content_desc_forum_new_discussion_count_bubble">Forum new discussion count bubble</string>
+    <string name="content_desc_forum_post_count_icon">Post count icon</string>
+    <string name="content_desc_forum_view_count_icon">Thread view count icon</string>
 
     <!-- General UI -->
     <string name="loading">Still loading!!!!</string>
@@ -118,6 +121,5 @@
     <string name="ship_detail_card_hardpoints_c8">Class 8</string>
     <string name="ship_detail_card_hardpoints_c9">Class 9</string>
     <string name="ship_detail_card_modular_title">Additional</string>
-    <string name="content_desc_forum_new_discussion_count_bubble">Forum new discussion count bubble</string>
 
 </resources>

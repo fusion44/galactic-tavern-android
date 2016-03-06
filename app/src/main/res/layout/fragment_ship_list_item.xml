@@ -77,38 +77,23 @@
             android:paddingStart="@dimen/card_view_content_padding_sides">
 
             <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:alpha="30"
+                style="@style/AppTheme.EmbeddedIcon"
                 android:contentDescription="@string/content_desc_ship_max_crew_icon"
                 android:src="@drawable/ic_person_24dp" />
 
             <TextView
                 android:id="@+id/shipListItemMaxCrewCountTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:textAppearance="?android:attr/textAppearanceLarge"
+                style="@style/AppTheme.EmbeddedIconValueText"
                 tools:text="4" />
 
             <ImageView
-                android:id="@+id/imageView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                style="@style/AppTheme.EmbeddedIcon"
                 android:contentDescription="@string/content_desc_ship_max_cargo_icon"
-                android:paddingLeft="@dimen/card_view_content_padding_sides"
-                android:paddingStart="@dimen/card_view_content_padding_sides"
                 android:src="@drawable/ic_cargo_capacity_24dp" />
 
             <TextView
                 android:id="@+id/shipListItemMaxCargoTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:textAppearance="?android:attr/textAppearanceLarge"
+                style="@style/AppTheme.EmbeddedIconValueText"
                 tools:text="535 tons" />
         </LinearLayout>
     </LinearLayout>

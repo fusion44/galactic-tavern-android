@@ -12,14 +12,14 @@
     <dimen name="ship_item_height">300dp</dimen>
     <dimen name="app_bar_height">300dp</dimen>
     <fraction name="detail_card_width_percent">100%</fraction>
-    <dimen name="forum_thread_item_width">200dp</dimen>
+    <dimen name="forum_thread_item_width">320dp</dimen>
 
     <dimen name="slideshow_total_height">300dp</dimen>
 
     <!-- Standard material dimens -->
     <dimen name="dialog_padding_material">24dp</dimen>
 
-    <dimen name="divider_margin_vertical">2dp</dimen>
+    <dimen name="divider_margin_vertical">4dp</dimen>
 
     <dimen name="card_view_rested_elevation_state">2dp</dimen>
     <dimen name="card_view_raised_elevation_state">8dp</dimen>
