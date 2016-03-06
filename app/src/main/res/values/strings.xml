@@ -17,6 +17,9 @@
     <string name="activity_user_detail_no_bio">User has not publicized a biography yet.</string>
 
     <string name="forum_activity_text">%1$d topics with %2$d posts</string>
+    <string name="forum_section_star_citizen">STAR CITIZEN</string>
+    <string name="forum_section_star_citizen_community">STAR CITIZEN COMMUNITY</string>
+    <string name="forum_section_cig">CLOUD IMPERIUM GAMES</string>
 
     <string name="title_forum_thread_list">Threads</string>
     <string name="title_forum_thread_reader_detail">Posts</string>
@@ -66,6 +69,7 @@
     <string name="posts">Posts</string>
     <string name="title">Title</string>
     <string name="bio">Bio</string>
+    <string name="unknown">Unknown</string>
 
     <!-- Error messages -->
     <string name="error_failed_to_load_comm_link_rss">Failed to load RSS feed. Please check connection</string>

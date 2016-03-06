@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import jp.wasabeef.recyclerview.animators.adapters.SlideInBottomAnimationAdapter
 import me.stammberger.starcitizencompact.R;
 import me.stammberger.starcitizencompact.SciApplication;
 import me.stammberger.starcitizencompact.models.forums.Forum;
+import me.stammberger.starcitizencompact.models.forums.ForumSectioned;
 import me.stammberger.starcitizencompact.stores.ForumStore;
 import timber.log.Timber;
 
@@ -26,6 +28,7 @@ import timber.log.Timber;
  */
 public class ForumListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, ForumListAdapter.OnListFragmentInteractionListener {
 
+    private int mListColumnCount = 1;
     private SuperRecyclerView mRecyclerView;
 
     /**
@@ -48,12 +51,14 @@ public class ForumListFragment extends Fragment implements SwipeRefreshLayout.On
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_forum_list, container, false);
 
+        mListColumnCount = getActivity().getResources().getInteger(R.integer.forum_list_column_count);
+
         // Set the adapter
         if (view instanceof SuperRecyclerView) {
             mRecyclerView = (SuperRecyclerView) view;
             ForumStore forumStore = ForumStore.get(SciApplication.getInstance().getRxFlux().getDispatcher());
 
-            List<Forum> forums = forumStore.getForums();
+            List<ForumSectioned> forums = forumStore.getForums();
             if (forums.size() == 0) {
                 SciApplication.getInstance().getActionCreator().getForumsAll();
             } else {
@@ -68,17 +73,24 @@ public class ForumListFragment extends Fragment implements SwipeRefreshLayout.On
      *
      * @param forums Forums list for the Adapter
      */
-    private void setupRecyclerView(List<Forum> forums) {
+    private void setupRecyclerView(List<ForumSectioned> forums) {
         if (forums == null) {
             throw new NullPointerException("Forum list is null");
         }
 
         ForumListAdapter adapter
                 = new ForumListAdapter(getContext(), forums, this);
+        adapter.setHasStableIds(true);
 
-        LinearLayoutManager llm = new LinearLayoutManager(getContext(),
-                LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(llm);
+        if (mListColumnCount == 1) {
+            LinearLayoutManager llm = new LinearLayoutManager(getContext(),
+                    LinearLayoutManager.VERTICAL, false);
+            mRecyclerView.setLayoutManager(llm);
+        } else {
+            GridLayoutManager glm = new GridLayoutManager(getContext(), mListColumnCount);
+            glm.setSpanSizeLookup(adapter.getSpanSizeLookup());
+            mRecyclerView.setLayoutManager(glm);
+        }
 
         SlideInBottomAnimationAdapter slideInAdapter
                 = new SlideInBottomAnimationAdapter(adapter);
@@ -102,7 +114,7 @@ public class ForumListFragment extends Fragment implements SwipeRefreshLayout.On
      *
      * @param forums The forum data objects for the Adapter
      */
-    public void setForums(List<Forum> forums) {
+    public void setForums(List<ForumSectioned> forums) {
         setupRecyclerView(forums);
     }
 

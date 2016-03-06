@@ -12,7 +12,7 @@ import java.util.TreeMap;
 
 import me.stammberger.starcitizencompact.actions.Actions;
 import me.stammberger.starcitizencompact.actions.Keys;
-import me.stammberger.starcitizencompact.models.forums.Forum;
+import me.stammberger.starcitizencompact.models.forums.ForumSectioned;
 import me.stammberger.starcitizencompact.models.forums.ForumThread;
 
 /**
@@ -28,7 +28,7 @@ import me.stammberger.starcitizencompact.models.forums.ForumThread;
 public class ForumStore extends RxStore implements ForumStoreInterface {
     public static final String ID = "ForumStore";
     private static ForumStore mInstance;
-    List<Forum> mForums = new ArrayList<>();
+    List<ForumSectioned> mForums = new ArrayList<>();
     TreeMap<String, HashMap<Integer, List<ForumThread>>> mThreads = new TreeMap<>();
 
     public ForumStore(Dispatcher dispatcher) {
@@ -55,7 +55,7 @@ public class ForumStore extends RxStore implements ForumStoreInterface {
      * @return List with forum data objects. Empty list if forums haven't been loaded yet.
      */
     @Override
-    public List<Forum> getForums() {
+    public List<ForumSectioned> getForums() {
         return mForums;
     }
 
@@ -78,7 +78,7 @@ public class ForumStore extends RxStore implements ForumStoreInterface {
     public void onRxAction(RxAction action) {
         switch (action.getType()) {
             case Actions.GET_FORUMS_ALL:
-                List<Forum> forums = (List<Forum>) action.getData().get(Keys.FORUM_DATA_ALL);
+                List<ForumSectioned> forums = (List<ForumSectioned>) action.getData().get(Keys.FORUM_DATA_ALL);
                 if (forums != null) {
                     mForums = forums;
                 }

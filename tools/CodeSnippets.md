@@ -1,5 +1,10 @@
-##### How to test GSON:
+# Code Snippets
+Useful code snippets are kept here for future reference.
+
+#### How to test GSON:
+Useful if Retrofit has problems with GSON. It's easier to debug the problem this way.
 ``` java ```
+
     run("http://fusion44.bitbucket.org/sci/ships/ships_all.json");
     void run(String url) {
         OkHttpClient c = new OkHttpClient();
@@ -24,3 +29,15 @@
             }
         });
     }
+
+#### How to draw a divider via xml
+Add this to a layout:
+``` xml ```
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="@dimen/divider_margin_vertical"
+        android:layout_marginTop="@dimen/divider_margin_vertical"
+        android:background="@color/divider" />
+

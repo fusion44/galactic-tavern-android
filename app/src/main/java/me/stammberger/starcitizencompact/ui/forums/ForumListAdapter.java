@@ -1,6 +1,7 @@
 package me.stammberger.starcitizencompact.ui.forums;
 
 import android.content.Context;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,20 +18,22 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import me.stammberger.starcitizencompact.R;
 import me.stammberger.starcitizencompact.models.forums.Forum;
+import me.stammberger.starcitizencompact.models.forums.ForumSectioned;
 import timber.log.Timber;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Forum} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  */
-public class ForumListAdapter extends RecyclerView.Adapter<ForumListAdapter.ViewHolder>
+public class ForumListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements RequestListener<String, GlideDrawable> {
 
-    private final List<Forum> mValues;
+    private final List<ForumSectioned> mValues;
     private final OnListFragmentInteractionListener mListener;
+    private SpanSizeLookup mSpanSizeLookup = new SpanSizeLookup();
     private Context mContext;
 
-    public ForumListAdapter(Context c, List<Forum> items,
+    public ForumListAdapter(Context c, List<ForumSectioned> items,
                             OnListFragmentInteractionListener listener) {
         mContext = c;
         mValues = items;
@@ -39,20 +42,49 @@ public class ForumListAdapter extends RecyclerView.Adapter<ForumListAdapter.View
     }
 
     @Override
-    public void onViewRecycled(ViewHolder holder) {
+    public void onViewRecycled(RecyclerView.ViewHolder holder) {
         super.onViewRecycled(holder);
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_forum_item, parent, false);
-        return new ViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view;
+        if (viewType == ForumSectioned.TYPE_FORUM) {
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.fragment_forum_item, parent, false);
+            return new ForumViewHolder(view);
+        } else {
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.fragment_forum_section_header, parent, false);
+            return new SectionViewHolder(view);
+        }
+    }
+
+    public GridLayoutManager.SpanSizeLookup getSpanSizeLookup() {
+        return mSpanSizeLookup;
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder h, int position) {
-        h.bind(mValues.get(position));
+    public void onBindViewHolder(final RecyclerView.ViewHolder h, int position) {
+        ForumSectioned forumSectioned = mValues.get(position);
+        if (forumSectioned.type == ForumSectioned.TYPE_FORUM) {
+            if (h instanceof ForumViewHolder) {
+                ((ForumViewHolder) h).bind(forumSectioned.forum);
+            } else {
+                throw new IllegalArgumentException("ViewHolder type is not correct");
+            }
+        } else {
+            if (h instanceof SectionViewHolder) {
+                ((SectionViewHolder) h).sectionTextView.setText(forumSectioned.section);
+            } else {
+                throw new IllegalArgumentException("ViewHolder type is not correct");
+            }
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return mValues.get(position).type;
     }
 
     @Override
@@ -81,7 +113,34 @@ public class ForumListAdapter extends RecyclerView.Adapter<ForumListAdapter.View
         void onListFragmentInteraction(Forum item);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+
+    /**
+     * Represents a section header as defined at the RSI forums.
+     */
+    public class SectionViewHolder extends RecyclerView.ViewHolder {
+        public final View view;
+        @Bind(R.id.forumSectionHeaderTextView)
+        public TextView sectionTextView;
+
+
+        public Forum item;
+
+        public SectionViewHolder(View view) {
+            super(view);
+            this.view = view;
+            ButterKnife.bind(this, view);
+        }
+
+        @Override
+        public String toString() {
+            return super.toString() + "HeaderViewHolder " + item.forumTitle;
+        }
+    }
+
+    /**
+     * Represents a Forum item.
+     */
+    public class ForumViewHolder extends RecyclerView.ViewHolder {
         public final View view;
         @Bind(R.id.forumTitleTextView)
         public TextView titleTextView;
@@ -95,7 +154,7 @@ public class ForumListAdapter extends RecyclerView.Adapter<ForumListAdapter.View
 
         public Forum item;
 
-        public ViewHolder(View view) {
+        public ForumViewHolder(View view) {
             super(view);
             this.view = view;
             ButterKnife.bind(this, view);
@@ -103,7 +162,7 @@ public class ForumListAdapter extends RecyclerView.Adapter<ForumListAdapter.View
 
         @Override
         public String toString() {
-            return super.toString() + "ViewHolder " + item.forumTitle;
+            return super.toString() + "ForumViewHolder " + item.forumTitle;
         }
 
         public void bind(Forum forum) {
@@ -124,6 +183,13 @@ public class ForumListAdapter extends RecyclerView.Adapter<ForumListAdapter.View
                     mListener.onListFragmentInteraction(item);
                 }
             });
+        }
+    }
+
+    private class SpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
+        @Override
+        public int getSpanSize(int position) {
+            return mValues.get(position).spanCount;
         }
     }
 }

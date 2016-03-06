@@ -149,4 +149,39 @@ public class Utility {
         CharSequence formattedDate = DateUtils.getRelativeTimeSpanString(c, dt);
         return formattedDate.toString();
     }
+
+    /**
+     * Gets the forum section name for the specified forum ID
+     *
+     * @param c       Context for accessing Resources
+     * @param forumId Id of the Forum
+     * @return the corresponding section name as a String
+     */
+    public static String getForumSectionForForumId(Context c, String forumId) {
+        switch (forumId) {
+            case "recruiting-station":
+            case "new-recruits":
+            case "official-announcements":
+            case "general-chat":
+            case "arena-commander":
+            case "question-answer":
+            case "game-ideas":
+            case "live-service-notifications":
+                return c.getString(R.string.forum_section_star_citizen);
+            case "star-citizen-role-play":
+            case "fan-art":
+            case "fan-fiction":
+            case "fan-sites":
+            case "modding":
+            case "the-next-great-starship":
+            case "guilds-squadrons":
+            case "gathering-meet-ups":
+            case "fan-art-fiction":
+                return c.getString(R.string.forum_section_star_citizen_community);
+            case "ask-a-developer":
+                return c.getString(R.string.forum_section_cig);
+            default:
+                return c.getString(R.string.unknown);
+        }
+    }
 }

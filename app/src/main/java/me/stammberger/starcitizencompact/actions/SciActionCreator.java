@@ -9,14 +9,18 @@ import com.pushtorefresh.storio.sqlite.queries.Query;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
+import me.stammberger.starcitizencompact.R;
 import me.stammberger.starcitizencompact.SciApplication;
 import me.stammberger.starcitizencompact.core.CommLinkFetcher;
+import me.stammberger.starcitizencompact.core.Utility;
 import me.stammberger.starcitizencompact.core.retrofit.ForumsApiService;
 import me.stammberger.starcitizencompact.core.retrofit.OrganizationApiService;
 import me.stammberger.starcitizencompact.core.retrofit.ShipApiService;
 import me.stammberger.starcitizencompact.core.retrofit.UserApiService;
 import me.stammberger.starcitizencompact.models.forums.Forum;
+import me.stammberger.starcitizencompact.models.forums.ForumSectioned;
 import me.stammberger.starcitizencompact.models.ship.Ship;
 import me.stammberger.starcitizencompact.models.user.UserSearchHistoryEntry;
 import me.stammberger.starcitizencompact.stores.CommLinkStore;
@@ -266,7 +270,23 @@ public class SciActionCreator extends RxActionCreator implements Actions {
         addRxAction(action, ForumsApiService.Factory.getInstance().getForums()
                 .subscribeOn(Schedulers.io())
                 .map(forumsObject -> {
-                    for (Forum forum : forumsObject.data) {
+                    ArrayList<ForumSectioned> newList =
+                            new ArrayList<>();
+                    String section = Utility.getForumSectionForForumId(
+                            SciApplication.getInstance(), forumsObject.data.get(0).forumId);
+                    String nextSection;
+
+                    ForumSectioned f = new ForumSectioned();
+                    f.type = ForumSectioned.TYPE_SECTION_HEADER;
+                    f.spanCount = SciApplication.getContext().getResources()
+                            .getInteger(R.integer.forum_list_column_count);
+                    f.section = section;
+
+                    newList.add(f);
+
+                    List<Forum> data = forumsObject.data;
+                    for (int i = 0; i < data.size(); i++) {
+                        Forum forum = data.get(i);
                         if (forum.forumDiscussionCountString != null && !forum.forumDiscussionCountString.equals("")) {
                             forum.forumDiscussionCount = Integer.parseInt(forum.forumDiscussionCountString);
                         } else {
@@ -277,8 +297,32 @@ public class SciActionCreator extends RxActionCreator implements Actions {
                         } else {
                             forum.forumPostCount = 0;
                         }
+
+                        f = new ForumSectioned();
+                        f.type = ForumSectioned.TYPE_FORUM;
+                        f.forum = forum;
+                        f.section = section;
+                        newList.add(f);
+
+                        // peek next => if distinct add a new section header item
+                        if (data.size() > i + 1) {
+                            nextSection = Utility.getForumSectionForForumId(
+                                    SciApplication.getContext(),
+                                    data.get(i + 1).forumId
+                            );
+                            if (!section.equals(nextSection)) {
+                                section = nextSection;
+                                f = new ForumSectioned();
+                                f.type = ForumSectioned.TYPE_SECTION_HEADER;
+                                f.section = section;
+                                f.spanCount = SciApplication.getContext().getResources()
+                                        .getInteger(R.integer.forum_list_column_count);
+                                newList.add(f);
+                            }
+                        }
                     }
-                    return forumsObject.data;
+
+                    return newList;
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(forums -> {
