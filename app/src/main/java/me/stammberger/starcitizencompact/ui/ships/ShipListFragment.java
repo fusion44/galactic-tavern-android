@@ -42,6 +42,7 @@ public class ShipListFragment extends Fragment implements SwipeRefreshLayout.OnR
     private ShipStore mShipStore;
     private ShipListRecyclerViewAdapter mShipListRecyclerViewAdapter;
     private ArrayList<String> mCurrentFilterList = new ArrayList<>();
+    private boolean mIsLargeLayout;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -69,6 +70,8 @@ public class ShipListFragment extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mIsLargeLayout = getActivity().getResources().getBoolean(R.bool.is_large_layout);
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
@@ -109,7 +112,7 @@ public class ShipListFragment extends Fragment implements SwipeRefreshLayout.OnR
         }
 
         mShipListRecyclerViewAdapter
-                = new ShipListRecyclerViewAdapter(getContext(), shipData.ships, this);
+                = new ShipListRecyclerViewAdapter(getContext(), shipData.ships, this, mIsLargeLayout);
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), mColumnCount);
         gridLayoutManager.setSpanSizeLookup(mShipListRecyclerViewAdapter.getSpanSizeLookup());
@@ -239,7 +242,8 @@ public class ShipListFragment extends Fragment implements SwipeRefreshLayout.OnR
             }
         }
 
-        mShipListRecyclerViewAdapter = new ShipListRecyclerViewAdapter(getContext(), filteredList, this);
+        mShipListRecyclerViewAdapter = new ShipListRecyclerViewAdapter(
+                getContext(), filteredList, this, mIsLargeLayout);
         mRecyclerView.setAdapter(mShipListRecyclerViewAdapter);
     }
 

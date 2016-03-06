@@ -5,25 +5,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    app:behavior_overlapTop="@dimen/card_view_appbar_layout_overlap"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="me.stammberger.starcitizencompact.ui.ships.ShipDetailViewerActivity"
     tools:showIn="@layout/activity_ship_detail_viewer">
 
-    <LinearLayout
+    <android.support.percent.PercentFrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <include layout="@layout/activity_ship_detail_card_title" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            app:layout_widthPercent="@fraction/detail_card_width_percent">
 
-        <include layout="@layout/activity_ship_detail_card_measurement" />
+            <include layout="@layout/activity_ship_detail_card_title" />
 
-        <include layout="@layout/activity_ship_detail_card_structural" />
+            <include layout="@layout/activity_ship_detail_card_measurement" />
 
-        <include layout="@layout/activity_ship_detail_card_propulsion" />
+            <include layout="@layout/activity_ship_detail_card_structural" />
 
-        <include layout="@layout/activity_ship_detail_card_hardpoints" />
+            <include layout="@layout/activity_ship_detail_card_propulsion" />
 
-        <include layout="@layout/activity_ship_detail_card_modular" />
-    </LinearLayout>
+            <include layout="@layout/activity_ship_detail_card_hardpoints" />
+
+            <include layout="@layout/activity_ship_detail_card_modular" />
+        </LinearLayout>
+    </android.support.percent.PercentFrameLayout>
 </android.support.v4.widget.NestedScrollView>

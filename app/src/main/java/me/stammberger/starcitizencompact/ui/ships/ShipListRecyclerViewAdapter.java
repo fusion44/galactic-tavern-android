@@ -32,14 +32,17 @@ public class ShipListRecyclerViewAdapter extends RecyclerView.Adapter<ShipListRe
 
     private final SpanSizeLookup mSpanSizeLookup = new SpanSizeLookup();
     private final OnListFragmentInteractionListener mListener;
+    private final boolean mIsLargeLayout;
     private List<Ship> mModels;
     private Context mContext;
 
     public ShipListRecyclerViewAdapter(Context c, List<Ship> ships,
-                                       OnListFragmentInteractionListener listener) {
+                                       OnListFragmentInteractionListener listener,
+                                       boolean isLargeLayout) {
         mContext = c;
         mModels = new ArrayList<>(ships);
         mListener = listener;
+        mIsLargeLayout = isLargeLayout;
     }
 
     public void setModels(List<Ship> ships) {
@@ -136,10 +139,16 @@ public class ShipListRecyclerViewAdapter extends RecyclerView.Adapter<ShipListRe
             shipMaxCargoTextView.setText(mContext.getString(
                     R.string.ship_max_cargo_with_unit, item.structuralcontainer.cargocapacity));
             shipDescriptionTextView.setText(item.titlecontainer.description);
-            Glide.with(mContext)
-                    .load(Utility.RSI_BASE_URL + item.shipimgsmall)
-                    .into(shipBackdropImageView);
-
+            if (mIsLargeLayout) {
+                // On a large layout load the source image to avoid blurriness
+                Glide.with(mContext)
+                        .load(Utility.RSI_BASE_URL + item.shipimgsrc)
+                        .into(shipBackdropImageView);
+            } else {
+                Glide.with(mContext)
+                        .load(Utility.RSI_BASE_URL + item.shipimgsmall)
+                        .into(shipBackdropImageView);
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 shipBackdropImageView.setTransitionName(ship.shipimgsmall);
             }
