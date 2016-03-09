@@ -140,8 +140,11 @@ public class Utility {
      * Converts a unix timestamp to a human readable String.
      * The output will be relative to current device time
      *
-     * @param c         The Context
-     * @param timestamp The unix timestamp
+     * Input must be in milliseconds!
+     * Unix timestamp is in seconds but Javas timestamp is in milliseconds!
+     *
+     * @param c         Android Context
+     * @param timestamp Java timestamp in milliseconds.
      * @return String in the format "1 hour ago" and "1 week ago"
      */
     public static String getFormattedRelativeTimeSpan(Context c, Long timestamp) {
