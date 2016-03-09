@@ -32,9 +32,14 @@ public interface Actions {
     String GET_FORUMS_ALL = "get_all_forums";
 
     /**
-     *
+     * Action id for retrieving all thread for a given forum id and data page
      */
     String GET_FORUM_THREADS = "get_forum_threads";
+
+    /**
+     * Action id for retrieving all posts for a given thread and data page
+     */
+    String GET_FORUM_THREAD_POSTS = "get_forum_thread_posts";
 
     /**
      * Fetches a single comm link
@@ -93,10 +98,18 @@ public interface Actions {
     void getForumsAll();
 
     /**
-     * Gets all threads of the specified forum at the specified page
+     * Gets all threads of the specified forum at the specified data page
      *
      * @param forumId The Forum ID
      * @param page    The page id for the data
      */
     void getForumThreads(String forumId, int page);
+
+    /**
+     * Gets all posts of the specified thread at the specified data page
+     *
+     * @param threadId The Forum ID
+     * @param page     The page id for the data
+     */
+    void getForumThreadPosts(long threadId, int page);
 }

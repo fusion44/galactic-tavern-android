@@ -13,6 +13,7 @@ import me.stammberger.starcitizencompact.actions.Actions;
 import me.stammberger.starcitizencompact.actions.Keys;
 import me.stammberger.starcitizencompact.models.forums.ForumSectioned;
 import me.stammberger.starcitizencompact.models.forums.ForumThread;
+import me.stammberger.starcitizencompact.models.forums.ForumThreadPost;
 
 /**
  * Stores all forum data once they've been loaded by an action
@@ -28,7 +29,20 @@ public class ForumStore extends RxStore implements ForumStoreInterface {
     public static final String ID = "ForumStore";
     private static ForumStore mInstance;
     List<ForumSectioned> mForums = new ArrayList<>();
+
+    /**
+     * String: forum ID
+     * Integer: Page ID of data
+     * List<ForumThread>: List of threads belonging to this forum
+     */
     TreeMap<String, TreeMap<Integer, List<ForumThread>>> mThreads = new TreeMap<>();
+
+    /**
+     * Long: thread ID
+     * Integer: Page ID of data
+     * List<ForumThreadPost>: List of posts belonging to this thread
+     */
+    TreeMap<Long, TreeMap<Integer, List<ForumThreadPost>>> mPosts = new TreeMap<>();
 
     public ForumStore(Dispatcher dispatcher) {
         super(dispatcher);
@@ -72,6 +86,20 @@ public class ForumStore extends RxStore implements ForumStoreInterface {
         return new ArrayList<>();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ForumThreadPost> getPosts(long threadId, int page) {
+        if (mPosts.keySet().contains(threadId)) {
+            TreeMap<Integer, List<ForumThreadPost>> threadPosts = mPosts.get(threadId);
+            if (threadPosts.keySet().contains(page)) {
+                return threadPosts.get(page);
+            }
+        }
+        return new ArrayList<>();
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public void onRxAction(RxAction action) {
@@ -97,6 +125,22 @@ public class ForumStore extends RxStore implements ForumStoreInterface {
                 threadsForForum.put(page, forumThreads);
 
                 mThreads.put(forumId, threadsForForum);
+                break;
+            case Actions.GET_FORUM_THREAD_POSTS:
+                Long threadId = (Long) action.getData().get(Keys.FORUM_THREAD_ID);
+                Integer posts_dat_page = (Integer) action.getData().get(Keys.PAGINATION_CURRENT_PAGE);
+                List<ForumThreadPost> threadPosts = (List<ForumThreadPost>) action.getData().get(Keys.FORUM_THREAD_POSTS_FOR_PAGE);
+
+                TreeMap<Integer, List<ForumThreadPost>> postsForThread;
+                if (mPosts.get(threadId) == null) {
+                    postsForThread = new TreeMap<>();
+                } else {
+                    postsForThread = mPosts.get(threadId);
+                }
+
+                postsForThread.put(posts_dat_page, threadPosts);
+
+                mPosts.put(threadId, postsForThread);
                 break;
             default:
                 // return without posting a change to the store.

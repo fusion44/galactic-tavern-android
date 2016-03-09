@@ -10,7 +10,7 @@ public class ForumThread {
     public String threadTitle;
     @SerializedName("thread_id")
     @Expose
-    public Integer threadId;
+    public Long threadId;
     @SerializedName("thread_replies")
     @Expose
     public Integer threadReplies;

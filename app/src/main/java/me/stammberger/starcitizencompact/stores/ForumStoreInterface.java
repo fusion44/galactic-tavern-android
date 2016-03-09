@@ -4,6 +4,7 @@ import java.util.List;
 
 import me.stammberger.starcitizencompact.models.forums.ForumSectioned;
 import me.stammberger.starcitizencompact.models.forums.ForumThread;
+import me.stammberger.starcitizencompact.models.forums.ForumThreadPost;
 
 public interface ForumStoreInterface {
     /**
@@ -19,4 +20,13 @@ public interface ForumStoreInterface {
      * @return a List with the requested Threads
      */
     List<ForumThread> getThreads(String forumId, int page);
+
+    /**
+     * Gets {@link ForumThreadPost} data for specified Forum and data page
+     *
+     * @param threadId Id of the Forum Thread
+     * @param page     Page to get the data from
+     * @return a List with the requested Posts
+     */
+    List<ForumThreadPost> getPosts(long threadId, int page);
 }

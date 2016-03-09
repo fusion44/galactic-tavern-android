@@ -1,6 +1,8 @@
 package me.stammberger.starcitizencompact.core.retrofit;
 
 import me.stammberger.starcitizencompact.BuildConfig;
+import me.stammberger.starcitizencompact.models.forums.ForumThread;
+import me.stammberger.starcitizencompact.models.forums.ForumThreadPosts;
 import me.stammberger.starcitizencompact.models.forums.ForumThreads;
 import me.stammberger.starcitizencompact.models.forums.Forums;
 import okhttp3.OkHttpClient;
@@ -37,6 +39,23 @@ public interface ForumsApiService {
     @GET("?api_source=live&system=forums&action=threads&expedite=0&format=json")
     Observable<ForumThreads> getTreads(
             @Query("target_id") String forumId,
+            @Query("start_page") int startPage,
+            @Query("end_page") int endPage);
+
+    /**
+     * Gets all {@link ForumThreadPosts} for the specified {@link ForumThread} id and data page.
+     * <p>
+     * Note: Currently the API's pagination feature is broken.
+     * Start page and end page must be the same value!
+     *
+     * @param threadId  The ID of the Thread
+     * @param startPage Start page of data
+     * @param endPage   End page of data
+     * @return Observable with the post data
+     */
+    @GET("?api_source=live&system=forums&action=posts&expedite=0&format=json")
+    Observable<ForumThreadPosts> getPosts(
+            @Query("target_id") long threadId,
             @Query("start_page") int startPage,
             @Query("end_page") int endPage);
 

@@ -164,7 +164,7 @@ public class ForumThreadListActivity extends RxFluxActivity implements OnMoreLis
             holder.view.setOnClickListener(v -> {
                 if (mTwoPane) {
                     Bundle arguments = new Bundle();
-                    arguments.putInt(ForumThreadReaderFragment.ARG_ITEM_ID, holder.forumThread.threadId);
+                    arguments.putLong(ForumThreadReaderFragment.ARG_THREAD_ID, holder.forumThread.threadId);
                     ForumThreadReaderFragment fragment = new ForumThreadReaderFragment();
                     fragment.setArguments(arguments);
                     getSupportFragmentManager().beginTransaction()
@@ -173,7 +173,7 @@ public class ForumThreadListActivity extends RxFluxActivity implements OnMoreLis
                 } else {
                     Context context = v.getContext();
                     Intent intent = new Intent(context, ForumThreadReaderActivity.class);
-                    intent.putExtra(ForumThreadReaderFragment.ARG_ITEM_ID, holder.forumThread.threadId);
+                    intent.putExtra(ForumThreadReaderFragment.ARG_THREAD_ID, holder.forumThread.threadId);
 
                     context.startActivity(intent);
                 }

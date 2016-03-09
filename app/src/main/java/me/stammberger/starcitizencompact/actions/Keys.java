@@ -2,6 +2,9 @@ package me.stammberger.starcitizencompact.actions;
 
 import com.hardsoftstudio.rxflux.action.RxAction;
 
+import me.stammberger.starcitizencompact.models.forums.ForumThread;
+import me.stammberger.starcitizencompact.models.forums.ForumThreadPosts;
+
 
 /**
  * Holds all keys for storage and retrieval of data with {@link RxAction#getData()}
@@ -82,7 +85,18 @@ public interface Keys {
     String FORUM_DATA_ALL = "forums_data_all";
 
     /**
-     * Key for {@link Thread} data
+     * Key for {@link ForumThread} data
      */
     String FORUM_THREADS_FOR_PAGE = "forum_threads_for_page";
+
+    /**
+     * Key for a {@link ForumThread} id
+     */
+    String FORUM_THREAD_ID = "forum_thread_id";
+
+    /**
+     * Key for {@link ForumThreadPosts} data
+     */
+    String FORUM_THREAD_POSTS_FOR_PAGE = "forum_threads_for_page";
+
 }

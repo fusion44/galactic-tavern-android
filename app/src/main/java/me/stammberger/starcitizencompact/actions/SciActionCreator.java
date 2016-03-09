@@ -360,4 +360,31 @@ public class SciActionCreator extends RxActionCreator implements Actions {
                     postError(action, throwable);
                 }));
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void getForumThreadPosts(long threadId, int page) {
+        RxAction action = newRxAction(Actions.GET_FORUM_THREAD_POSTS, Keys.FORUM_THREAD_ID,
+                threadId, Keys.PAGINATION_CURRENT_PAGE, page);
+
+        if (hasRxAction(action)) return;
+
+        // The API's pagination feature is broken, so we abstract the start and end-page away from here on
+        addRxAction(action, ForumsApiService.Factory.getInstance().getPosts(threadId, page, page)
+                .subscribeOn(Schedulers.io())
+                .map(postsObject -> postsObject.data)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(posts -> {
+                    action.getData().put(Keys.FORUM_THREAD_ID, threadId);
+                    action.getData().put(Keys.PAGINATION_CURRENT_PAGE, page);
+                    action.getData().put(Keys.FORUM_THREAD_POSTS_FOR_PAGE, posts);
+                    postRxAction(action);
+                }, throwable -> {
+                    Timber.d("Error getting posts data for Thread %s", threadId);
+                    Timber.d(throwable.getCause().toString());
+                    postError(action, throwable);
+                }));
+    }
 }

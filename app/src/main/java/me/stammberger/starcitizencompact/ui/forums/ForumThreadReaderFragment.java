@@ -9,7 +9,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
+
+import java.util.List;
+import java.util.TreeMap;
+
 import me.stammberger.starcitizencompact.R;
+import me.stammberger.starcitizencompact.SciApplication;
+import me.stammberger.starcitizencompact.models.forums.ForumThreadPost;
+import me.stammberger.starcitizencompact.stores.ForumStore;
+import timber.log.Timber;
 
 /**
  * A fragment representing a single thread reader screen.
@@ -19,15 +28,26 @@ import me.stammberger.starcitizencompact.R;
  */
 public class ForumThreadReaderFragment extends Fragment {
     /**
-     * The fragment argument representing the item ID that this fragment
+     * The fragment argument representing the thread ID that this fragment
      * represents.
      */
-    public static final String ARG_ITEM_ID = "item_id";
+    public static final String ARG_THREAD_ID = "thread_id";
 
     /**
-     * Forum Id
+     * Thread Id
      */
-    private int mForumThreadId = -1;
+    private long mForumThreadId;
+
+    /**
+     * Current data page
+     */
+    private int mCurrentPage;
+
+    /**
+     * List of all currently fetched posts
+     */
+    private TreeMap<Integer, List<ForumThreadPost>> mPosts = new TreeMap<>();
+
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -40,11 +60,20 @@ public class ForumThreadReaderFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
+        if (getArguments().containsKey(ARG_THREAD_ID)) {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            //mForumId = .ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+            mForumThreadId = getArguments().getLong(ARG_THREAD_ID);
+
+            mCurrentPage = 1;
+            Dispatcher dispatcher = SciApplication.getInstance().getRxFlux().getDispatcher();
+            List<ForumThreadPost> posts = ForumStore.get(dispatcher).getPosts(mForumThreadId, mCurrentPage);
+            if (posts.size() == 0) {
+                SciApplication.getInstance().getActionCreator().getForumThreadPosts(mForumThreadId, mCurrentPage);
+            } else {
+                setupRecyclerView();
+            }
 
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
@@ -52,6 +81,18 @@ public class ForumThreadReaderFragment extends Fragment {
                 //appBarLayout.setTitle(mForumId.content);
             }
         }
+    }
+
+    private void setupRecyclerView() {
+        Timber.d("Setting up RecyclerView");
+    }
+
+    public void addPosts(long threadId, int page, List<ForumThreadPost> posts) {
+        if (posts == null || posts.size() == 0 || threadId != mForumThreadId) {
+            // Either something has gone wrong if the thread has no posts in it.
+            return;
+        }
+        mPosts.put(page, posts);
     }
 
     @Override
