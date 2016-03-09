@@ -17,9 +17,9 @@
     
     -->
 
-    <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.malinskiy.superrecyclerview.SuperRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/forumThreadListRecyclerView"
+        android:id="@+id/list"
         android:name="me.stammberger.starcitizencompact.ui.forums.ForumListFragment"
         android:layout_width="@dimen/forum_thread_item_width"
         android:layout_height="match_parent"

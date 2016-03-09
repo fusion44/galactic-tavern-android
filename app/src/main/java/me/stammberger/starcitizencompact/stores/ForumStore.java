@@ -6,7 +6,6 @@ import com.hardsoftstudio.rxflux.store.RxStore;
 import com.hardsoftstudio.rxflux.store.RxStoreChange;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -29,7 +28,7 @@ public class ForumStore extends RxStore implements ForumStoreInterface {
     public static final String ID = "ForumStore";
     private static ForumStore mInstance;
     List<ForumSectioned> mForums = new ArrayList<>();
-    TreeMap<String, HashMap<Integer, List<ForumThread>>> mThreads = new TreeMap<>();
+    TreeMap<String, TreeMap<Integer, List<ForumThread>>> mThreads = new TreeMap<>();
 
     public ForumStore(Dispatcher dispatcher) {
         super(dispatcher);
@@ -65,7 +64,7 @@ public class ForumStore extends RxStore implements ForumStoreInterface {
     @Override
     public List<ForumThread> getThreads(String forumId, int page) {
         if (mThreads.keySet().contains(forumId)) {
-            HashMap<Integer, List<ForumThread>> forumThreads = mThreads.get(forumId);
+            TreeMap<Integer, List<ForumThread>> forumThreads = mThreads.get(forumId);
             if (forumThreads.keySet().contains(page)) {
                 return forumThreads.get(page);
             }
@@ -88,9 +87,9 @@ public class ForumStore extends RxStore implements ForumStoreInterface {
                 Integer page = (Integer) action.getData().get(Keys.PAGINATION_CURRENT_PAGE);
                 List<ForumThread> forumThreads = (List<ForumThread>) action.getData().get(Keys.FORUM_THREADS_FOR_PAGE);
 
-                HashMap<Integer, List<ForumThread>> threadsForForum;
+                TreeMap<Integer, List<ForumThread>> threadsForForum;
                 if (mThreads.get(forumId) == null) {
-                    threadsForForum = new HashMap<>();
+                    threadsForForum = new TreeMap<>();
                 } else {
                     threadsForForum = mThreads.get(forumId);
                 }
