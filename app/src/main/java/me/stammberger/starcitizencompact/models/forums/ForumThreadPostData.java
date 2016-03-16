@@ -7,7 +7,7 @@ public class ForumThreadPostData {
 
     @SerializedName("post_time")
     @Expose
-    public Object postTime;
+    public Long postTime;
     @SerializedName("last_edit_time")
     @Expose
     public Boolean lastEditTime;
@@ -19,7 +19,7 @@ public class ForumThreadPostData {
     public String signature;
     @SerializedName("post_id")
     @Expose
-    public String postId;
+    public Long postId;
     @SerializedName("thread_id")
     @Expose
     public Object threadId;

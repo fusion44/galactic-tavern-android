@@ -1,7 +1,12 @@
 package me.stammberger.starcitizencompact.core.retrofit;
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonObject;
+
 import me.stammberger.starcitizencompact.BuildConfig;
 import me.stammberger.starcitizencompact.models.forums.ForumThread;
+import me.stammberger.starcitizencompact.models.forums.ForumThreadPostData;
 import me.stammberger.starcitizencompact.models.forums.ForumThreadPosts;
 import me.stammberger.starcitizencompact.models.forums.ForumThreads;
 import me.stammberger.starcitizencompact.models.forums.Forums;
@@ -73,9 +78,23 @@ public interface ForumsApiService {
          */
         public static synchronized ForumsApiService getInstance() {
             if (mService == null) {
+                GsonBuilder b = new GsonBuilder();
+                b.registerTypeAdapter(ForumThreadPostData.class,
+                        (JsonDeserializer<ForumThreadPostData>) (json, typeOfT, context) -> {
+                            ForumThreadPostData data = new ForumThreadPostData();
+                            JsonObject o = json.getAsJsonObject();
+                            data.postText = o.get("post_text").getAsString();
+                            try {
+                                data.postTime = o.get("post_time").getAsLong();
+                            } catch (NumberFormatException e) {
+                                data.postTime = 0L;
+                            }
+                            return data;
+                        });
+
                 Retrofit retrofit =
                         new Retrofit.Builder()
-                                .addConverterFactory(GsonConverterFactory.create())
+                                .addConverterFactory(GsonConverterFactory.create(b.create()))
                                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                                 .baseUrl(BASE_URL)
                                 .build();

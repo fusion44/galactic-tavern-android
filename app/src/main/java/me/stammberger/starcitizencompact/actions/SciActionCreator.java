@@ -21,6 +21,7 @@ import me.stammberger.starcitizencompact.core.retrofit.ShipApiService;
 import me.stammberger.starcitizencompact.core.retrofit.UserApiService;
 import me.stammberger.starcitizencompact.models.forums.Forum;
 import me.stammberger.starcitizencompact.models.forums.ForumSectioned;
+import me.stammberger.starcitizencompact.models.forums.ForumThreadPost;
 import me.stammberger.starcitizencompact.models.ship.Ship;
 import me.stammberger.starcitizencompact.models.user.UserSearchHistoryEntry;
 import me.stammberger.starcitizencompact.stores.CommLinkStore;
@@ -374,7 +375,18 @@ public class SciActionCreator extends RxActionCreator implements Actions {
         // The API's pagination feature is broken, so we abstract the start and end-page away from here on
         addRxAction(action, ForumsApiService.Factory.getInstance().getPosts(threadId, page, page)
                 .subscribeOn(Schedulers.io())
-                .map(postsObject -> postsObject.data)
+                .map(postsObject -> {
+                    ArrayList<ForumThreadPost> posts = new ArrayList<>();
+                    for (ForumThreadPost forumThreadPost : postsObject.data) {
+                        if (forumThreadPost.author != null
+                                && forumThreadPost.author.handle != null
+                                && !forumThreadPost.author.handle.equals("")) {
+                            posts.add(forumThreadPost);
+                        }
+                    }
+                    postsObject.data = posts;
+                    return postsObject.data;
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(posts -> {
                     action.getData().put(Keys.FORUM_THREAD_ID, threadId);
@@ -384,6 +396,7 @@ public class SciActionCreator extends RxActionCreator implements Actions {
                 }, throwable -> {
                     Timber.d("Error getting posts data for Thread %s", threadId);
                     Timber.d(throwable.getCause().toString());
+                    Timber.d("Stacktrace \n %s", throwable.getCause().getStackTrace());
                     postError(action, throwable);
                 }));
     }

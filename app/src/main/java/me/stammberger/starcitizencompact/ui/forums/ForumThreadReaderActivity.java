@@ -70,7 +70,7 @@ public class ForumThreadReaderActivity extends RxFluxActivity implements OnMoreL
         super.onRxStoreChanged(change);
         RxAction rxAction = change.getRxAction();
         if (change.getStoreId().equals(ForumStore.ID)) {
-            if (rxAction.getType().equals(Actions.GET_FORUM_THREADS)) {
+            if (rxAction.getType().equals(Actions.GET_FORUM_THREAD_POSTS)) {
                 long threadId = (long) rxAction.getData().get(Keys.FORUM_THREAD_ID);
                 int page = (int) rxAction.getData().get(Keys.PAGINATION_CURRENT_PAGE);
                 List<ForumThreadPost> posts =
