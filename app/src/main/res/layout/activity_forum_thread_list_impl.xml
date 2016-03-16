@@ -8,4 +8,4 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     tools:context=".ui.forums.ForumThreadListActivity"
-    tools:listitem="@layout/forum_thread_list_item" />
+    tools:listitem="@layout/activity_forum_thread_list_item" />

@@ -10,7 +10,7 @@
 
     <dimen name="comm_link_item_height">180dp</dimen>
     <dimen name="ship_item_height">300dp</dimen>
-    <dimen name="app_bar_height">300dp</dimen>
+    <dimen name="app_bar_height_expanded">300dp</dimen>
     <fraction name="detail_card_width_percent">100%</fraction>
     <dimen name="forum_thread_item_width">320dp</dimen>
 
