@@ -3,6 +3,7 @@ package me.stammberger.starcitizencompact.ui.forums;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -45,6 +46,11 @@ import me.stammberger.starcitizencompact.ui.RxFluxActivity;
  */
 public class ForumThreadListActivity extends RxFluxActivity implements OnMoreListener {
     public static final String KEY_FORUM_ID = "forum_id";
+
+    public static final String VIEWER_TYPE_WEB_VIEW = "web_view";
+    public static final String VIEWER_TYPE_RECYCLER_VIEW = "recycler_view";
+    public static String viewerType = VIEWER_TYPE_WEB_VIEW;
+
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -153,7 +159,7 @@ public class ForumThreadListActivity extends RxFluxActivity implements OnMoreLis
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.forum_thread_list_item, parent, false);
+                    .inflate(R.layout.activity_forum_thread_list_item, parent, false);
             return new ViewHolder(view);
         }
 
@@ -165,7 +171,12 @@ public class ForumThreadListActivity extends RxFluxActivity implements OnMoreLis
                 if (mTwoPane) {
                     Bundle arguments = new Bundle();
                     arguments.putLong(ForumThreadReaderFragment.ARG_THREAD_ID, holder.forumThread.threadId);
-                    ForumThreadReaderFragment fragment = new ForumThreadReaderFragment();
+                    Fragment fragment;
+                    if(viewerType.equals(VIEWER_TYPE_WEB_VIEW)) {
+                        fragment = new ForumThreadReaderWebViewFragment();
+                    } else {
+                        fragment = new ForumThreadReaderFragment();
+                    }
                     fragment.setArguments(arguments);
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.forumThreadReaderContainer, fragment)

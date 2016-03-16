@@ -10,7 +10,6 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.TextView;
 
 import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
@@ -54,8 +53,6 @@ public class ForumThreadReaderFragment extends Fragment implements OnMoreListene
 
     private SuperRecyclerView mRecyclerView;
     private ForumThreadPostsRecyclerViewAdapter mAdapter;
-    private WebView mWebView;
-
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -67,7 +64,6 @@ public class ForumThreadReaderFragment extends Fragment implements OnMoreListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Timber.d("fragment creat");
         if (getArguments().containsKey(ARG_THREAD_ID)) {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
@@ -83,7 +79,6 @@ public class ForumThreadReaderFragment extends Fragment implements OnMoreListene
     }
 
     private void setupRecyclerView(List<ForumThreadPost> posts) {
-        Timber.d("seup recycler");
         if (mCurrentPage == 1) {
             LinearLayoutManager llm = new LinearLayoutManager(
                     getContext(), LinearLayoutManager.VERTICAL, false);
@@ -98,7 +93,6 @@ public class ForumThreadReaderFragment extends Fragment implements OnMoreListene
 
     @Override
     public void onStart() {
-        Timber.d("on start");
         mCurrentPage = 1;
         Dispatcher dispatcher = SciApplication.getInstance().getRxFlux().getDispatcher();
         List<ForumThreadPost> posts = ForumStore.get(dispatcher).getPosts(mForumThreadId, mCurrentPage);
@@ -117,8 +111,6 @@ public class ForumThreadReaderFragment extends Fragment implements OnMoreListene
             return;
         }
 
-        Timber.d("add posts");
-
         if (page == mCurrentPage + 1) {
             mCurrentPage = page;
         }
@@ -133,8 +125,8 @@ public class ForumThreadReaderFragment extends Fragment implements OnMoreListene
         //mWebView = (WebView) inflater.inflate(
         //        R.layout.forum_thread_reader_fragment, container, false);
         mRecyclerView = (SuperRecyclerView) inflater.inflate(
-                R.layout.forum_thread_reader_fragment, container, false);
-        return mWebView;
+                R.layout.fragment_forum_thread_reader, container, false);
+        return mRecyclerView;
     }
 
     @Override
@@ -164,8 +156,6 @@ public class ForumThreadReaderFragment extends Fragment implements OnMoreListene
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.bind(mValues.get(position));
-
-            holder.view.setOnClickListener(v -> Timber.d("Clicked on post"));
         }
 
         @Override
@@ -193,7 +183,6 @@ public class ForumThreadReaderFragment extends Fragment implements OnMoreListene
                 super(view);
                 this.view = view;
                 ButterKnife.bind(this, view);
-                Timber.d("new viewholder");
             }
 
             public void bind(ForumThreadPost post) {

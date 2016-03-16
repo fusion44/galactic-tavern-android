@@ -1,6 +1,7 @@
 package me.stammberger.starcitizencompact.ui.forums;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -26,12 +27,12 @@ import me.stammberger.starcitizencompact.ui.RxFluxActivity;
  */
 public class ForumThreadReaderActivity extends RxFluxActivity implements OnMoreListener {
 
-    private ForumThreadReaderFragment mFragment;
+    private Fragment mFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_forum_detail);
+        setContentView(R.layout.activity_forum_thread_reader_one_pane);
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
 
@@ -56,7 +57,13 @@ public class ForumThreadReaderActivity extends RxFluxActivity implements OnMoreL
             Bundle arguments = new Bundle();
             long threadId = getIntent().getExtras().getLong(ForumThreadReaderFragment.ARG_THREAD_ID);
             arguments.putLong(ForumThreadReaderFragment.ARG_THREAD_ID, threadId);
-            mFragment = new ForumThreadReaderFragment();
+
+            if (ForumThreadListActivity.viewerType.equals(ForumThreadListActivity.VIEWER_TYPE_WEB_VIEW)) {
+                mFragment = new ForumThreadReaderWebViewFragment();
+            } else {
+                mFragment = new ForumThreadReaderFragment();
+            }
+
             mFragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.forumThreadReaderContainer, mFragment)
@@ -71,11 +78,14 @@ public class ForumThreadReaderActivity extends RxFluxActivity implements OnMoreL
         RxAction rxAction = change.getRxAction();
         if (change.getStoreId().equals(ForumStore.ID)) {
             if (rxAction.getType().equals(Actions.GET_FORUM_THREAD_POSTS)) {
-                long threadId = (long) rxAction.getData().get(Keys.FORUM_THREAD_ID);
-                int page = (int) rxAction.getData().get(Keys.PAGINATION_CURRENT_PAGE);
-                List<ForumThreadPost> posts =
-                        (List<ForumThreadPost>) rxAction.getData().get(Keys.FORUM_THREAD_POSTS_FOR_PAGE);
-                mFragment.addPosts(threadId, page, posts);
+                if (ForumThreadListActivity.viewerType.equals(ForumThreadListActivity.VIEWER_TYPE_WEB_VIEW)) {
+                    long threadId = (long) rxAction.getData().get(Keys.FORUM_THREAD_ID);
+                    int page = (int) rxAction.getData().get(Keys.PAGINATION_CURRENT_PAGE);
+                    List<ForumThreadPost> posts =
+                            (List<ForumThreadPost>) rxAction.getData().get(Keys.FORUM_THREAD_POSTS_FOR_PAGE);
+
+                    ((ForumThreadReaderFragment) mFragment).addPosts(threadId, page, posts);
+                }
             }
         }
     }
