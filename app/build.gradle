@@ -61,6 +61,9 @@ dependencies {
     compile 'com.klinkerapps:sliding-activity:1.1.1'
     compile 'com.makeramen:roundedimageview:2.2.1' // https://github.com/vinc3m1/RoundedImageView
 
+    compile 'com.pixplicity.easyprefs:library:1.8.1@aar'
+    // https://github.com/Pixplicity/EasyPreferences
+
     // This if for converting full country name to its short ISO representation and the other way around
     // Norway -> NO
     compile 'com.neovisionaries:nv-i18n:1.18' // https://github.com/TakahikoKawasaki/nv-i18n

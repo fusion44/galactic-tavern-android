@@ -3,7 +3,7 @@ package me.stammberger.starcitizencompact.ui.ships;
 import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.MenuItem;
@@ -16,20 +16,29 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
+import com.hardsoftstudio.rxflux.store.RxStoreChange;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import me.stammberger.starcitizencompact.R;
 import me.stammberger.starcitizencompact.SciApplication;
+import me.stammberger.starcitizencompact.actions.Actions;
 import me.stammberger.starcitizencompact.core.Utility;
 import me.stammberger.starcitizencompact.models.ship.Ship;
 import me.stammberger.starcitizencompact.models.ship.ShipData;
 import me.stammberger.starcitizencompact.stores.ShipStore;
+import me.stammberger.starcitizencompact.ui.RxFluxActivity;
 
 /**
  * This class displays all the available data for a ship in an card interface
  */
-public class ShipDetailViewerActivity extends AppCompatActivity implements RequestListener<String, GlideDrawable> {
+public class ShipDetailViewerActivity extends RxFluxActivity implements RequestListener<String, GlideDrawable> {
     public static final String SHIP_ITEM = "ship_item";
+    private static final String PREF_KEY_SCROLL_POSITION =
+            ShipDetailViewerActivity.class.getSimpleName() + "ScrollView";
+    private String mShipId;
     private Ship mShip;
+    private NestedScrollView mScrollView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +48,22 @@ public class ShipDetailViewerActivity extends AppCompatActivity implements Reque
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
+        mShipId = getIntent().getStringExtra(SHIP_ITEM);
+        mShip = ShipStore.get(SciApplication.getInstance().getRxFlux().getDispatcher()).getShipById(mShipId);
+        if (mShip == null) {
+            // Should not matter whether we call this here again since the ActionCreators discards
+            // similar requests
+            SciApplication.getInstance().getActionCreator().getAllShips();
+        } else {
+            setupUI(savedInstanceState);
+        }
+    }
 
-        String id = getIntent().getStringExtra(SHIP_ITEM);
-        mShip = ShipStore.get(SciApplication.getInstance().getRxFlux().getDispatcher()).getShipById(id);
+    private void setupUI(Bundle savedInstanceState) {
+        mScrollView = (NestedScrollView) findViewById(R.id.shipDetailActivityScrollView);
+        if (savedInstanceState != null) {
+            mScrollView.setScrollY(Prefs.getInt(PREF_KEY_SCROLL_POSITION, 0));
+        }
 
         ImageView backdropView = (ImageView) findViewById(R.id.activityShipDetailViewerBackdrop);
         Glide.with(this)
@@ -67,6 +89,12 @@ public class ShipDetailViewerActivity extends AppCompatActivity implements Reque
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        Prefs.putInt(PREF_KEY_SCROLL_POSITION, mScrollView.getScrollY());
+        super.onSaveInstanceState(outState);
     }
 
     /**
@@ -240,6 +268,23 @@ public class ShipDetailViewerActivity extends AppCompatActivity implements Reque
     @Override
     public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
         return false;
+    }
+
+    @Override
+    public void onRxStoreChanged(RxStoreChange change) {
+        switch (change.getStoreId()) {
+            case ShipStore.ID:
+                switch (change.getRxAction().getType()) {
+                    case Actions.GET_SHIP_DATA_ALL:
+                        if (mShip == null) {
+                            Dispatcher dispatcher = SciApplication.getInstance().getRxFlux().getDispatcher();
+                            mShip = ShipStore.get(dispatcher).getShipById(mShipId);
+                            setupUI(null);
+                        }
+                        break;
+                }
+                break;
+        }
     }
 
     @Override

@@ -58,6 +58,8 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+
+        setRetainInstance(true);
     }
 
     @Override

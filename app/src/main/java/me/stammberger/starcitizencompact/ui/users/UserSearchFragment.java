@@ -44,6 +44,8 @@ public class UserSearchFragment extends Fragment implements FloatingSearchView.O
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SciApplication.getInstance().getActionCreator().getUserSearchHistory();
+
+        setRetainInstance(true);
     }
 
     @Override

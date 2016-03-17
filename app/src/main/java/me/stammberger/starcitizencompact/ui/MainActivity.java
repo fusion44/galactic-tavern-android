@@ -17,6 +17,7 @@ import com.hardsoftstudio.rxflux.action.RxError;
 import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
 import com.hardsoftstudio.rxflux.dispatcher.RxViewDispatch;
 import com.hardsoftstudio.rxflux.store.RxStoreChange;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import me.stammberger.starcitizencompact.R;
 import me.stammberger.starcitizencompact.SciApplication;
@@ -31,7 +32,6 @@ import me.stammberger.starcitizencompact.ui.commlinks.CommLinkListFragment;
 import me.stammberger.starcitizencompact.ui.forums.ForumListFragment;
 import me.stammberger.starcitizencompact.ui.ships.ShipListFragment;
 import me.stammberger.starcitizencompact.ui.users.UserSearchFragment;
-import timber.log.Timber;
 
 
 /**
@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
         , RxViewDispatch {
 
+    private static final String KEY_CURRENT_FRAGMENT = "stores_registered";
     /**
      * Instance of {@link CommLinkStore} for retrieving comm links
      */
@@ -79,6 +80,35 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(KEY_CURRENT_FRAGMENT)) {
+                String fragment = savedInstanceState.getString(KEY_CURRENT_FRAGMENT);
+                assert fragment != null;
+
+                if (fragment.equals(CommLinkListFragment.class.getSimpleName())) {
+                    openCommLinkFragment();
+                } else if (fragment.equals(ShipListFragment.class.getSimpleName())) {
+                    openShipsFragment();
+                } else if (fragment.equals(UserSearchFragment.class.getSimpleName())) {
+                    openUsersFragment();
+                } else if (fragment.equals(ForumListFragment.class.getSimpleName())) {
+                    openForumsFragment();
+                }
+            }
+        } else {
+            String f = Prefs.getString(KEY_CURRENT_FRAGMENT, "");
+            if (f.equals("") || f.equals(CommLinkListFragment.class.getSimpleName())) {
+                openCommLinkFragment();
+            } else if (f.equals(ShipListFragment.class.getSimpleName())) {
+                openShipsFragment();
+            } else if (f.equals(UserSearchFragment.class.getSimpleName())) {
+                openUsersFragment();
+            } else if (f.equals(ForumListFragment.class.getSimpleName())) {
+                openForumsFragment();
+            }
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -90,8 +120,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        openForumsFragment();
     }
 
     @Override
@@ -126,6 +154,12 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(KEY_CURRENT_FRAGMENT, mCurrentFragment.getTag());
+        super.onSaveInstanceState(outState);
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -158,12 +192,22 @@ public class MainActivity extends AppCompatActivity
     private void openCommLinkFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        mCurrentFragment = CommLinkListFragment.newInstance(2);
-        fragmentTransaction.replace(R.id.fragment_container, mCurrentFragment);
+
+        String simpleClassName = CommLinkListFragment.class.getSimpleName();
+
+        mCurrentFragment = fragmentManager.findFragmentByTag(simpleClassName);
+        if (mCurrentFragment == null) {
+            mCurrentFragment = CommLinkListFragment.newInstance(2);
+        }
+
+        fragmentTransaction.replace(R.id.fragment_container, mCurrentFragment, simpleClassName);
         fragmentTransaction.commit();
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(R.string.navigation_drawer_comm_link);
         }
+
+        Prefs.putString(KEY_CURRENT_FRAGMENT, simpleClassName);
     }
 
     /**
@@ -172,12 +216,21 @@ public class MainActivity extends AppCompatActivity
     private void openShipsFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        mCurrentFragment = ShipListFragment.newInstance(1);
-        fragmentTransaction.replace(R.id.fragment_container, mCurrentFragment);
+
+        String simpleClassName = ShipListFragment.class.getSimpleName();
+
+        mCurrentFragment = fragmentManager.findFragmentByTag(simpleClassName);
+        if (mCurrentFragment == null) {
+            mCurrentFragment = ShipListFragment.newInstance(1);
+        }
+
+        fragmentTransaction.replace(R.id.fragment_container, mCurrentFragment, simpleClassName);
         fragmentTransaction.commit();
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(R.string.navigation_drawer_ships);
         }
+
+        Prefs.putString(KEY_CURRENT_FRAGMENT, simpleClassName);
     }
 
     /**
@@ -186,12 +239,20 @@ public class MainActivity extends AppCompatActivity
     private void openUsersFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        mCurrentFragment = UserSearchFragment.newInstance();
-        fragmentTransaction.replace(R.id.fragment_container, mCurrentFragment);
+        String simpleClassName = UserSearchFragment.class.getSimpleName();
+
+        mCurrentFragment = fragmentManager.findFragmentByTag(simpleClassName);
+        if (mCurrentFragment == null) {
+            mCurrentFragment = UserSearchFragment.newInstance();
+        }
+
+        fragmentTransaction.replace(R.id.fragment_container, mCurrentFragment, simpleClassName);
         fragmentTransaction.commit();
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(R.string.navigation_drawer_users);
         }
+
+        Prefs.putString(KEY_CURRENT_FRAGMENT, simpleClassName);
     }
 
     /**
@@ -200,12 +261,20 @@ public class MainActivity extends AppCompatActivity
     private void openForumsFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        mCurrentFragment = ForumListFragment.newInstance();
-        fragmentTransaction.replace(R.id.fragment_container, mCurrentFragment);
+        String simpleClassName = ForumListFragment.class.getSimpleName();
+
+        mCurrentFragment = fragmentManager.findFragmentByTag(simpleClassName);
+        if (mCurrentFragment == null) {
+            mCurrentFragment = ForumListFragment.newInstance();
+        }
+
+        fragmentTransaction.replace(R.id.fragment_container, mCurrentFragment, simpleClassName);
         fragmentTransaction.commit();
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(R.string.navigation_drawer_forums);
         }
+
+        Prefs.putString(KEY_CURRENT_FRAGMENT, simpleClassName);
     }
 
     @SuppressWarnings("unchecked")
@@ -276,8 +345,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onRxStoresRegister() {
-        Timber.d("Registering stores");
-
         Dispatcher dispatcher = SciApplication.getInstance().getRxFlux().getDispatcher();
 
         mCommLinkStore = CommLinkStore.get(dispatcher);

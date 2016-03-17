@@ -2,9 +2,11 @@ package me.stammberger.starcitizencompact;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.util.Log;
 
 import com.hardsoftstudio.rxflux.RxFlux;
+import com.pixplicity.easyprefs.library.Prefs;
 import com.pushtorefresh.storio.sqlite.SQLiteTypeMapping;
 import com.pushtorefresh.storio.sqlite.impl.DefaultStorIOSQLite;
 
@@ -80,6 +82,13 @@ public class SciApplication extends Application {
         initStorIO();
 
         JodaTimeAndroid.init(this);
+
+        new Prefs.Builder()
+                .setContext(this)
+                .setMode(ContextWrapper.MODE_PRIVATE)
+                .setPrefsName(getPackageName())
+                .setUseDefaultSharedPreference(true)
+                .build();
 
         mInstance = this;
     }

@@ -76,6 +76,8 @@ public class ShipListFragment extends Fragment implements SwipeRefreshLayout.OnR
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+
+        setRetainInstance(true);
     }
 
     @Override

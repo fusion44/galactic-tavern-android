@@ -2,6 +2,7 @@ package me.stammberger.starcitizencompact.ui.forums;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -21,7 +22,6 @@ import me.stammberger.starcitizencompact.SciApplication;
 import me.stammberger.starcitizencompact.models.forums.Forum;
 import me.stammberger.starcitizencompact.models.forums.ForumSectioned;
 import me.stammberger.starcitizencompact.stores.ForumStore;
-import timber.log.Timber;
 
 /**
  * Container fragment for the forums RecyclerView
@@ -45,6 +45,12 @@ public class ForumListFragment extends Fragment implements SwipeRefreshLayout.On
         return fragment;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setRetainInstance(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -123,6 +129,5 @@ public class ForumListFragment extends Fragment implements SwipeRefreshLayout.On
         Intent i = new Intent(getActivity(), ForumThreadListActivity.class);
         i.putExtra(ForumThreadListActivity.KEY_FORUM_ID, item.forumId);
         startActivity(i);
-        Timber.d(item.forumId);
     }
 }
