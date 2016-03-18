@@ -78,11 +78,16 @@ public class ShipStore extends RxStore implements ShipStoreInterface {
      *
      * @param action RxAction that has finished loading. Must contain the {@link ShipData} object.
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void onRxAction(RxAction action) {
         switch (action.getType()) {
             case Actions.GET_SHIP_DATA_ALL:
                 mShipData = (ShipData) action.getData().get(Keys.SHIP_DATA_ALL);
+                break;
+            case Actions.SHIP_DATA_UPDATED:
+                // Do nothing as the already existing objects will be altered directly
+                // by the SciActionCreator
                 break;
             default:
                 // return without posting a change to the store.

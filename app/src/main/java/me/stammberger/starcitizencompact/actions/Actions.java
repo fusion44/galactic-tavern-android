@@ -1,5 +1,6 @@
 package me.stammberger.starcitizencompact.actions;
 
+import me.stammberger.starcitizencompact.models.favorites.Favorite;
 import me.stammberger.starcitizencompact.models.user.UserSearchHistoryEntry;
 
 /**
@@ -10,7 +11,15 @@ public interface Actions {
     String GET_COMM_LINKS = "get_comm_links";
     String GET_COMM_LINK_CONTENT_WRAPPERS = "get_comm_link_content_wrappers";
 
+    /**
+     * Action id for getting all Ships
+     */
     String GET_SHIP_DATA_ALL = "get_ship_data_all";
+
+    /**
+     * Action id when Ship data was updated
+     */
+    String SHIP_DATA_UPDATED = "ship_data_updated";
 
     /**
      * Action id for retrieving a user data object from the API
@@ -112,4 +121,23 @@ public interface Actions {
      * @param page     The page id for the data
      */
     void getForumThreadPosts(long threadId, int page);
+
+    /**
+     * Adds a Favorite to Database
+     *
+     * @param favorite The data object to add
+     */
+    void addFavorite(Favorite favorite);
+
+    /**
+     * Gets all Favorites saved to the Database
+     */
+    void getFavorites();
+
+    /**
+     * Removes a Favorite with the specified data
+     *
+     * @param f Favorite to remove
+     */
+    void removeFavorite(Favorite f);
 }

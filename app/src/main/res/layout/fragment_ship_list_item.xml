@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -66,7 +67,7 @@
             android:textSize="@dimen/card_view_supporting_text_size"
             tools:text="Often called the most common ship in the galaxy, the Hull C is the most-produced of the range and is considered by many to be the most versatile. Intended to hit the \u2018sweet spot\u2019 between the smaller single-person transports and the massive superfreighters that make up the rest of the range, the Hull C offers the expansive modularity of the larger ships while still retaining a modicum of the maneuverability allowed the low end of the range." />
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -77,24 +78,51 @@
             android:paddingStart="@dimen/card_view_content_padding_sides">
 
             <ImageView
+                android:id="@+id/imageView4"
                 style="@style/AppTheme.EmbeddedIcon"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="false"
+                android:layout_centerVertical="true"
                 android:contentDescription="@string/content_desc_ship_max_crew_icon"
                 android:src="@drawable/ic_person_24dp" />
 
             <TextView
                 android:id="@+id/shipListItemMaxCrewCountTextView"
                 style="@style/AppTheme.EmbeddedIconValueText"
+                android:layout_alignParentTop="false"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/imageView4"
+                android:layout_toRightOf="@+id/imageView4"
                 tools:text="4" />
 
             <ImageView
+                android:id="@+id/imageView5"
                 style="@style/AppTheme.EmbeddedIcon"
+                android:layout_alignTop="@+id/imageView4"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/shipListItemMaxCrewCountTextView"
+                android:layout_toRightOf="@+id/shipListItemMaxCrewCountTextView"
                 android:contentDescription="@string/content_desc_ship_max_cargo_icon"
                 android:src="@drawable/ic_cargo_capacity_24dp" />
 
             <TextView
                 android:id="@+id/shipListItemMaxCargoTextView"
                 style="@style/AppTheme.EmbeddedIconValueText"
+                android:layout_alignParentTop="true"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/imageView5"
+                android:layout_toRightOf="@+id/imageView5"
                 tools:text="535 tons" />
-        </LinearLayout>
+
+            <com.like.LikeButton
+                android:id="@+id/shipListItemFavButton"
+                style="@style/AppTheme.EmbeddedIcon"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                app:icon_type="star"
+                app:liked="false" />
+        </RelativeLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>

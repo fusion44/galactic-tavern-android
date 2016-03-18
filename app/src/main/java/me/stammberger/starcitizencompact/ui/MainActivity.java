@@ -19,10 +19,13 @@ import com.hardsoftstudio.rxflux.dispatcher.RxViewDispatch;
 import com.hardsoftstudio.rxflux.store.RxStoreChange;
 import com.pixplicity.easyprefs.library.Prefs;
 
+import java.util.List;
+
 import me.stammberger.starcitizencompact.R;
 import me.stammberger.starcitizencompact.SciApplication;
 import me.stammberger.starcitizencompact.actions.Actions;
 import me.stammberger.starcitizencompact.actions.Keys;
+import me.stammberger.starcitizencompact.models.ship.Ship;
 import me.stammberger.starcitizencompact.stores.CommLinkStore;
 import me.stammberger.starcitizencompact.stores.ForumStore;
 import me.stammberger.starcitizencompact.stores.OrganizationStore;
@@ -298,6 +301,15 @@ public class MainActivity extends AppCompatActivity
                             ShipListFragment f = (ShipListFragment) mCurrentFragment;
                             f.setShipData(mShipStore.getAllShips());
                         }
+                        break;
+                    case Actions.SHIP_DATA_UPDATED:
+                        if (mCurrentFragment != null && mCurrentFragment instanceof ShipListFragment) {
+                            ShipListFragment f = (ShipListFragment) mCurrentFragment;
+                            List<Ship> changedShips =
+                                    (List<Ship>) change.getRxAction().getData().get(Keys.SHIP_DATA_LIST);
+                            f.updateShipData(changedShips);
+                        }
+                        break;
                 }
                 break;
             case UserStore.ID:

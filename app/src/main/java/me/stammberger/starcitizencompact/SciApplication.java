@@ -24,6 +24,8 @@ import me.stammberger.starcitizencompact.models.commlink.ContentBlock4SQLiteType
 import me.stammberger.starcitizencompact.models.commlink.Wrapper;
 import me.stammberger.starcitizencompact.models.commlink.WrapperStorIOSQLiteDeleteResolver;
 import me.stammberger.starcitizencompact.models.commlink.WrapperStorIOSQLitePutResolver;
+import me.stammberger.starcitizencompact.models.favorites.Favorite;
+import me.stammberger.starcitizencompact.models.favorites.FavoriteSQLiteTypeMapping;
 import me.stammberger.starcitizencompact.models.forums.Forum;
 import me.stammberger.starcitizencompact.models.forums.ForumSQLiteTypeMapping;
 import me.stammberger.starcitizencompact.models.user.UserSearchHistoryEntry;
@@ -110,6 +112,7 @@ public class SciApplication extends Application {
                         .build())
                 .addTypeMapping(UserSearchHistoryEntry.class, new UserSearchHistoryEntrySQLiteTypeMapping())
                 .addTypeMapping(Forum.class, new ForumSQLiteTypeMapping())
+                .addTypeMapping(Favorite.class, new FavoriteSQLiteTypeMapping())
                 .build();
     }
 

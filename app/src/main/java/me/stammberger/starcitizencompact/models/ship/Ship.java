@@ -38,6 +38,8 @@ public class Ship extends BaseModel {
     @Expose
     public Titlecontainer titlecontainer;
 
+    public boolean favorite = false;
+
     public Ship() {
         // at least for phones span count will always be 1 by default
         spanCount = 1;

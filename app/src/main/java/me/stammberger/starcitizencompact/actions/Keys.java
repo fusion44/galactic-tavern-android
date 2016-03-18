@@ -45,6 +45,11 @@ public interface Keys {
     String SHIP_DATA_ALL = "ship_data_all";
 
     /**
+     * Key for Ship data object which has been updated
+     */
+    String SHIP_DATA_LIST = "ship_data_list";
+
+    /**
      * Key for the user handle
      */
     String USER_HANDLE = "user_handle";

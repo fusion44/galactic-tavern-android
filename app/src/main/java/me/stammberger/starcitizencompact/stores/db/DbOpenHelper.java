@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 
+import me.stammberger.starcitizencompact.stores.db.tables.FavoritesTable;
 import me.stammberger.starcitizencompact.stores.db.tables.commlink.CommLinkModelTable;
 import me.stammberger.starcitizencompact.stores.db.tables.commlink.ContentBlock1Table;
 import me.stammberger.starcitizencompact.stores.db.tables.commlink.ContentBlock2Table;
@@ -31,6 +32,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
         db.execSQL(ContentWrapperTable.getCreateTableQuery());
         db.execSQL(UserSearchHistoryEntryTable.getCreateTableQuery());
         db.execSQL(ForumModelTable.getCreateTableQuery());
+        db.execSQL(FavoritesTable.getCreateTableQuery());
     }
 
     @Override
@@ -42,5 +44,6 @@ public class DbOpenHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + ContentWrapperTable.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + UserSearchHistoryEntryTable.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + ForumModelTable.TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + FavoritesTable.TABLE);
     }
 }

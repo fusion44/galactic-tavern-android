@@ -14,12 +14,18 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.like.LikeButton;
+import com.like.OnLikeListener;
+
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import me.stammberger.starcitizencompact.R;
+import me.stammberger.starcitizencompact.SciApplication;
 import me.stammberger.starcitizencompact.core.Utility;
+import me.stammberger.starcitizencompact.models.favorites.Favorite;
 import me.stammberger.starcitizencompact.models.ship.Ship;
 import me.stammberger.starcitizencompact.models.ship.ShipData;
 import timber.log.Timber;
@@ -64,9 +70,28 @@ public class ShipListRecyclerViewAdapter extends RecyclerView.Adapter<ShipListRe
 
     @Override
     public void onBindViewHolder(final ViewHolder h, int position) {
-        h.bindView(mModels.get(position));
+        h.bindView(mModels.get(h.getAdapterPosition()));
         h.view.setOnClickListener((v -> mListener.onListFragmentInteraction(
-                mModels.get(position), h.shipBackdropImageView)));
+                mModels.get(h.getAdapterPosition()), h.shipBackdropImageView)));
+        h.shipFavButton.setOnLikeListener(new OnLikeListener() {
+            @Override
+            public void liked(LikeButton likeButton) {
+                Favorite f = new Favorite();
+                f.type = Favorite.TYPE_SHIP;
+                f.date = DateTime.now().getMillis();
+                f.reference = mModels.get(h.getAdapterPosition()).titlecontainer.title;
+                SciApplication.getInstance().getActionCreator().addFavorite(f);
+            }
+
+            @Override
+            public void unLiked(LikeButton likeButton) {
+                Favorite f = new Favorite();
+                f.type = Favorite.TYPE_SHIP;
+                f.date = DateTime.now().getMillis();
+                f.reference = mModels.get(h.getAdapterPosition()).titlecontainer.title;
+                SciApplication.getInstance().getActionCreator().removeFavorite(f);
+            }
+        });
     }
 
     @Override
@@ -112,6 +137,7 @@ public class ShipListRecyclerViewAdapter extends RecyclerView.Adapter<ShipListRe
         public final TextView shipMaxCargoTextView;
         public final TextView shipDescriptionTextView;
         public final ImageView shipBackdropImageView;
+        public final LikeButton shipFavButton;
         public Ship item;
 
         public ViewHolder(View view) {
@@ -123,6 +149,7 @@ public class ShipListRecyclerViewAdapter extends RecyclerView.Adapter<ShipListRe
             shipMaxCargoTextView = (TextView) view.findViewById(R.id.shipListItemMaxCargoTextView);
             shipDescriptionTextView = (TextView) view.findViewById(R.id.shipListItemDescriptionTextView);
             shipBackdropImageView = (ImageView) view.findViewById(R.id.shipListItemBackdropImageView);
+            shipFavButton = (LikeButton) view.findViewById(R.id.shipListItemFavButton);
         }
 
         @Override
@@ -152,6 +179,7 @@ public class ShipListRecyclerViewAdapter extends RecyclerView.Adapter<ShipListRe
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 shipBackdropImageView.setTransitionName(ship.shipimgsmall);
             }
+            shipFavButton.setLiked(item.favorite);
         }
     }
 

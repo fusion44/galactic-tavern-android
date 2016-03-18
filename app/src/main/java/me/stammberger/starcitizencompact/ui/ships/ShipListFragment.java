@@ -151,6 +151,15 @@ public class ShipListFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
 
     /**
+     * Called when ship data has been updated in the {@link ShipStore}
+     *
+     * @param changedShips List with the changed ships
+     */
+    public void updateShipData(List<Ship> changedShips) {
+        // Nothing to do here yet
+    }
+
+    /**
      * Implementation of the {@link ShipListRecyclerViewAdapter.OnListFragmentInteractionListener}
      * for reacting to clicks to the RecyclerView
      *

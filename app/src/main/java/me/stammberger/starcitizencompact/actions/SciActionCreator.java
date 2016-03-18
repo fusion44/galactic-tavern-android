@@ -5,10 +5,12 @@ import com.hardsoftstudio.rxflux.action.RxActionCreator;
 import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
 import com.hardsoftstudio.rxflux.util.SubscriptionManager;
 import com.pushtorefresh.storio.sqlite.impl.DefaultStorIOSQLite;
+import com.pushtorefresh.storio.sqlite.queries.DeleteQuery;
 import com.pushtorefresh.storio.sqlite.queries.Query;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import me.stammberger.starcitizencompact.R;
@@ -19,13 +21,17 @@ import me.stammberger.starcitizencompact.core.retrofit.ForumsApiService;
 import me.stammberger.starcitizencompact.core.retrofit.OrganizationApiService;
 import me.stammberger.starcitizencompact.core.retrofit.ShipApiService;
 import me.stammberger.starcitizencompact.core.retrofit.UserApiService;
+import me.stammberger.starcitizencompact.models.favorites.Favorite;
 import me.stammberger.starcitizencompact.models.forums.Forum;
 import me.stammberger.starcitizencompact.models.forums.ForumSectioned;
 import me.stammberger.starcitizencompact.models.forums.ForumThreadPost;
 import me.stammberger.starcitizencompact.models.ship.Ship;
 import me.stammberger.starcitizencompact.models.user.UserSearchHistoryEntry;
 import me.stammberger.starcitizencompact.stores.CommLinkStore;
+import me.stammberger.starcitizencompact.stores.ShipStore;
+import me.stammberger.starcitizencompact.stores.db.tables.FavoritesTable;
 import me.stammberger.starcitizencompact.stores.db.tables.user.UserSearchHistoryEntryTable;
+import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
@@ -133,21 +139,30 @@ public class SciActionCreator extends RxActionCreator implements Actions {
         RxAction action = newRxAction(GET_SHIP_DATA_ALL);
         if (hasRxAction(action)) return;
 
-        addRxAction(action, ShipApiService.Factory.getInstance().getShips()
-                .subscribeOn(Schedulers.io())
-                .map(shipData -> {
-                    for (Ship ship : shipData.ships) {
-                        shipData.shipMap.put(ship.titlecontainer.title, ship);
-                    }
-                    return shipData;
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(shipData -> {
-                    action.getData().put(Keys.SHIP_DATA_ALL, shipData);
-                    postRxAction(action);
-                }, throwable -> {
-                    postError(action, throwable);
-                }));
+        getFavoritesInternal(Favorite.TYPE_SHIP)
+                .observeOn(Schedulers.io())
+                .subscribe(favorites -> {
+                    // We first need all favorite ships before we can get the ship data,
+                    // as we have to set the models favorite attribute
+                    // TODO: A much much more elegant solution would be a Custom StorIO TypeMapping!
+                    addRxAction(action, ShipApiService.Factory.getInstance().getShips()
+                            .subscribeOn(Schedulers.io())
+                            .map(shipData -> {
+                                for (Ship ship : shipData.ships) {
+                                    if (favorites.containsKey(ship.titlecontainer.title))
+                                        ship.favorite = true;
+                                    shipData.shipMap.put(ship.titlecontainer.title, ship);
+                                }
+                                return shipData;
+                            })
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(shipData -> {
+                                action.getData().put(Keys.SHIP_DATA_ALL, shipData);
+                                postRxAction(action);
+                            }, throwable -> {
+                                postError(action, throwable);
+                            }));
+                });
     }
 
     /**
@@ -399,5 +414,128 @@ public class SciActionCreator extends RxActionCreator implements Actions {
                     Timber.d("Stacktrace \n %s", throwable.getCause().getStackTrace());
                     postError(action, throwable);
                 }));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addFavorite(Favorite favorite) {
+        DefaultStorIOSQLite storio = SciApplication.getInstance().getStorIOSQLite();
+
+        storio.put()
+                .object(favorite)
+                .prepare()
+                .asRxObservable()
+                .subscribeOn(Schedulers.io())
+                .subscribe(wrapperPutResults -> {
+                    if (favorite.type == Favorite.TYPE_SHIP) {
+                        // Update the Ship data model
+                        ShipStore shipStore = ShipStore.get(SciApplication.getInstance().getRxFlux().getDispatcher());
+                        Ship ship = shipStore.getShipById(favorite.reference);
+                        ship.favorite = true;
+
+                        // Post a new RxAction to notify all listeners to notify all
+                        // Stores and Dispatchers of the change
+                        RxAction a = newRxAction(Actions.SHIP_DATA_UPDATED);
+                        ArrayList<Ship> shipList = new ArrayList<>(1);
+                        shipList.add(ship);
+                        a.getData().put(Keys.SHIP_DATA_LIST, shipList);
+                        postRxAction(a);
+                    }
+                }, throwable -> {
+                    Timber.d("Error putting reference %s to DB", favorite.reference);
+                    Timber.d(throwable.getCause().toString());
+                    Timber.d(throwable.toString());
+                });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void getFavorites() {
+        DefaultStorIOSQLite storio = SciApplication.getInstance().getStorIOSQLite();
+        Query q = Query.builder()
+                .table(FavoritesTable.TABLE)
+                .build();
+
+        storio.get()
+                .listOfObjects(Favorite.class)
+                .withQuery(q)
+                .prepare()
+                .asRxObservable()
+                .observeOn(Schedulers.io())
+                .subscribe(favorites -> {
+                    Timber.d("Got %s faves", favorites.size());
+                }, throwable -> {
+                    Timber.d("Error getting favorites from DB");
+                    Timber.d(throwable.getCause().toString());
+                    Timber.d(throwable.toString());
+                });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeFavorite(Favorite favorite) {
+        DefaultStorIOSQLite storio = SciApplication.getInstance().getStorIOSQLite();
+        DeleteQuery q = DeleteQuery.builder()
+                .table(FavoritesTable.TABLE)
+                .where(FavoritesTable.COLUMN_TYPE + "=? and "
+                        + FavoritesTable.COLUMN_REFERENCE + "=?")
+                .whereArgs(favorite.type, favorite.reference)
+                .build();
+
+        storio.delete()
+                .byQuery(q)
+                .prepare()
+                .asRxSingle()
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(deleteResult -> {
+                    if (favorite.type == Favorite.TYPE_SHIP) {
+                        // Update the Ship data model
+                        ShipStore shipStore = ShipStore.get(SciApplication.getInstance().getRxFlux().getDispatcher());
+                        Ship ship = shipStore.getShipById(favorite.reference);
+                        ship.favorite = false;
+
+                        // Post a new RxAction to notify all listeners to notify all
+                        // Stores and Dispatchers of the change
+                        RxAction a = newRxAction(Actions.SHIP_DATA_UPDATED);
+                        ArrayList<Ship> shipList = new ArrayList<>(1);
+                        shipList.add(ship);
+                        a.getData().put(Keys.SHIP_DATA_LIST, shipList);
+                        postRxAction(a);
+                    }
+                });
+    }
+
+    /**
+     * This is for use the SciActionCreator only.
+     * This will also add the Favorite to the store
+     *
+     * @return An rx.Single for the favorites list
+     */
+    private Single<HashMap<String, Favorite>> getFavoritesInternal(int type) {
+        DefaultStorIOSQLite storio = SciApplication.getInstance().getStorIOSQLite();
+        Query q = Query.builder()
+                .table(FavoritesTable.TABLE)
+                .where(FavoritesTable.COLUMN_TYPE + "=?")
+                .whereArgs(type)
+                .build();
+
+        return storio.get()
+                .listOfObjects(Favorite.class)
+                .withQuery(q)
+                .prepare()
+                .asRxSingle()
+                .map(favorites -> {
+                    HashMap<String, Favorite> hm = new HashMap<>(favorites.size());
+                    for (Favorite favorite : favorites) {
+                        hm.put(favorite.reference, favorite);
+                    }
+                    return hm;
+                });
     }
 }
