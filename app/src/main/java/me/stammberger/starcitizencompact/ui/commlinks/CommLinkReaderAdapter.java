@@ -31,7 +31,6 @@ public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public CommLinkReaderAdapter(CommLinkModel model) {
         super();
         mCommLinkModel = model;
-        setHasStableIds(true);
     }
 
     @Override

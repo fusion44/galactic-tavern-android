@@ -16,6 +16,7 @@ import rx.Observable;
  */
 public interface CommLinkApiService {
     String BASE_URL = "http://fusion44.bitbucket.org/";
+    //String BASE_URL = "http://192.168.178.95:8000/";
 
     /**
      * Gets the content from the repository
