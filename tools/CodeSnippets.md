@@ -41,3 +41,35 @@ Add this to a layout:
         android:layout_marginTop="@dimen/divider_margin_vertical"
         android:background="@color/divider" />
 
+#### Retrofit API Service with Logging
+User something like this:
+``` java ```
+
+        /**
+         * Get the service instance with logging enabled.
+         *
+         * @return the api service with logging enabled if BuildConfig.DEBUG == true
+         */
+        public static synchronized ShipApiService getInstanceWithFullLogging() {
+            if (BuildConfig.DEBUG) {
+                if (mLoggingService == null) {
+                    HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+                    logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+                    OkHttpClient httpClient = new OkHttpClient().newBuilder().addInterceptor(logging).build();
+
+                    Retrofit retrofit = new Retrofit.Builder()
+                            .baseUrl(BASE_URL)
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                            .client(httpClient)
+                            .build();
+
+                    mLoggingService = retrofit.create(ShipApiService.class);
+                }
+            } else {
+                return getInstance();
+            }
+
+            return mLoggingService;
+        }
+    }

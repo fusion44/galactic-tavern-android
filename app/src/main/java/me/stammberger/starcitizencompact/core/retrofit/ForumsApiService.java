@@ -4,14 +4,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
 
-import me.stammberger.starcitizencompact.BuildConfig;
 import me.stammberger.starcitizencompact.models.forums.ForumThread;
 import me.stammberger.starcitizencompact.models.forums.ForumThreadPostData;
 import me.stammberger.starcitizencompact.models.forums.ForumThreadPosts;
 import me.stammberger.starcitizencompact.models.forums.ForumThreads;
 import me.stammberger.starcitizencompact.models.forums.Forums;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -69,7 +66,6 @@ public interface ForumsApiService {
      */
     class Factory {
         private static ForumsApiService mService;
-        private static ForumsApiService mLoggingService;
 
         /**
          * Get the service instance without logging enabled
@@ -102,35 +98,6 @@ public interface ForumsApiService {
 
             }
             return mService;
-        }
-
-        /**
-         * Get the service instance with logging enabled.
-         * Logging is enabled in DEBUG builds only
-         *
-         * @return the api service with logging enabled if BuildConfig.DEBUG == true
-         */
-        public static synchronized ForumsApiService getInstanceWithFullLogging() {
-            if (BuildConfig.DEBUG) {
-                if (mLoggingService == null) {
-                    HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-                    logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-                    OkHttpClient httpClient = new OkHttpClient().newBuilder().addInterceptor(logging).build();
-
-                    Retrofit retrofit = new Retrofit.Builder()
-                            .baseUrl(BASE_URL)
-                            .addConverterFactory(GsonConverterFactory.create())
-                            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                            .client(httpClient)
-                            .build();
-
-                    mLoggingService = retrofit.create(ForumsApiService.class);
-                }
-            } else {
-                return getInstance();
-            }
-
-            return mLoggingService;
         }
     }
 }

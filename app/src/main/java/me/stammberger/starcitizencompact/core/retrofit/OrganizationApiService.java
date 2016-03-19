@@ -1,9 +1,6 @@
 package me.stammberger.starcitizencompact.core.retrofit;
 
-import me.stammberger.starcitizencompact.BuildConfig;
 import me.stammberger.starcitizencompact.models.orgs.Organization;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -30,7 +27,6 @@ public interface OrganizationApiService {
      */
     class Factory {
         private static OrganizationApiService mService;
-        private static OrganizationApiService mLoggingService;
 
         /**
          * Get the service instance without logging enabled
@@ -49,35 +45,6 @@ public interface OrganizationApiService {
 
             }
             return mService;
-        }
-
-        /**
-         * Get the service instance with logging enabled.
-         * Logging is enabled in DEBUG builds only
-         *
-         * @return the api service with logging enabled if BuildConfig.DEBUG == true
-         */
-        public static synchronized OrganizationApiService getInstanceWithFullLogging() {
-            if (BuildConfig.DEBUG) {
-                if (mLoggingService == null) {
-                    HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-                    logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-                    OkHttpClient httpClient = new OkHttpClient().newBuilder().addInterceptor(logging).build();
-
-                    Retrofit retrofit = new Retrofit.Builder()
-                            .baseUrl(BASE_URL)
-                            .addConverterFactory(GsonConverterFactory.create())
-                            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                            .client(httpClient)
-                            .build();
-
-                    mLoggingService = retrofit.create(OrganizationApiService.class);
-                }
-            } else {
-                return getInstance();
-            }
-
-            return mLoggingService;
         }
     }
 }
