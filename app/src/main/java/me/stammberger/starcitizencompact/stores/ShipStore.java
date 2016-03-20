@@ -5,6 +5,9 @@ import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
 import com.hardsoftstudio.rxflux.store.RxStore;
 import com.hardsoftstudio.rxflux.store.RxStoreChange;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import me.stammberger.starcitizencompact.actions.Actions;
 import me.stammberger.starcitizencompact.actions.Keys;
 import me.stammberger.starcitizencompact.models.ship.Ship;
@@ -22,7 +25,8 @@ import me.stammberger.starcitizencompact.models.ship.ShipData;
 public class ShipStore extends RxStore implements ShipStoreInterface {
     public static final String ID = "ShipStore";
     private static ShipStore mInstance;
-    ShipData mShipData;
+    private ShipData mShipData;
+    private List<Ship> mFavoriteShips;
 
     /**
      * Private constructor. Use {@link #get(Dispatcher)} to retrieve an instance
@@ -74,20 +78,42 @@ public class ShipStore extends RxStore implements ShipStoreInterface {
     }
 
     /**
+     * Get all Ships the user has favored.
+     *
+     * @return A list with users favored Ships. Null if data has not been queried yet.
+     */
+    @Override
+    public List<Ship> getFavoriteShips() {
+        return mFavoriteShips;
+    }
+
+    /**
      * Method is called when the loading action has finished running.
      *
      * @param action RxAction that has finished loading. Must contain the {@link ShipData} object.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "Convert2streamapi"})
     @Override
     public void onRxAction(RxAction action) {
         switch (action.getType()) {
             case Actions.GET_SHIP_DATA_ALL:
                 mShipData = (ShipData) action.getData().get(Keys.SHIP_DATA_ALL);
+                mFavoriteShips = new ArrayList<>();
+                for (Ship ship : mShipData.ships) {
+                    if (ship.favorite) {
+                        mFavoriteShips.add(ship);
+                    }
+                }
                 break;
             case Actions.SHIP_DATA_UPDATED:
-                // Do nothing as the already existing objects will be altered directly
-                // by the SciActionCreator
+                // Update the favorites list
+                // TODO: Update this list within the {@link SciActionCreator} - off the UI thread
+                mFavoriteShips = new ArrayList<>();
+                for (Ship ship : mShipData.ships) {
+                    if (ship.favorite) {
+                        mFavoriteShips.add(ship);
+                    }
+                }
                 break;
             default:
                 // return without posting a change to the store.

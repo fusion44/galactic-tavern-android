@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,11 +69,10 @@ public class ShipFilterDialog extends DialogFragment implements View.OnClickList
         ShipStore shipStore =
                 ShipStore.get(SciApplication.getInstance().getRxFlux().getDispatcher());
 
+        Button btn;
+        setupFavoriteFilterBtn(inflater, currentFilter);
         for (String manufacturer : shipStore.getAllShips().manufacturers) {
-            Button btn = (Button) inflater.inflate(R.layout.fragment_ship_list_filter_item, null);
-            btn.setText(manufacturer);
-            btn.setTag(R.id.ship_list_filter_manufacturer_tag, manufacturer);
-            btn.setOnClickListener(this);
+            btn = inflateFilterButton(inflater, manufacturer);
 
             if (currentFilter != null && currentFilter.contains(manufacturer)) {
                 btn.setTag(R.id.ship_list_filter_type_tag, ITEM_FILTER);
@@ -81,7 +81,6 @@ public class ShipFilterDialog extends DialogFragment implements View.OnClickList
                 btn.setTag(R.id.ship_list_filter_type_tag, ITEM_AVAILABLE);
                 mFlowLayoutAvailableItems.addView(btn);
             }
-
         }
 
         checkNoneView();
@@ -111,6 +110,43 @@ public class ShipFilterDialog extends DialogFragment implements View.OnClickList
         return b.create();
     }
 
+    /**
+     * Inflate the Favorite button. This button is different from the other buttons which are
+     * for a single manufacturer each. The fav button possibly covers multiple manufacturers
+     * und thus must be treated differently when creating the list.
+     *
+     * @param inflater      The Android LayoutInflater instance
+     * @param currentFilter The current filter to check whether the Favorite filter is currently set
+     */
+    private void setupFavoriteFilterBtn(LayoutInflater inflater, ArrayList<String> currentFilter) {
+        Button btn = inflateFilterButton(inflater, getString(R.string.ship_filter_dialog_fav_button));
+
+        if (currentFilter != null &&
+                currentFilter.contains(getString(R.string.ship_filter_dialog_fav_button))) {
+            btn.setTag(R.id.ship_list_filter_type_tag, ITEM_FILTER);
+            mFlowLayoutFilterItems.addView(btn);
+        } else {
+            btn.setTag(R.id.ship_list_filter_type_tag, ITEM_AVAILABLE);
+            mFlowLayoutAvailableItems.addView(btn);
+        }
+    }
+
+    /**
+     * Shortcut for creating a filter button
+     *
+     * @param inflater     The Android LayoutInflater instance
+     * @param manufacturer Manufacturer name for the Button. This is also buttons display text
+     * @return The Button
+     */
+    @NonNull
+    private Button inflateFilterButton(LayoutInflater inflater, String manufacturer) {
+        Button btn = (Button) inflater.inflate(R.layout.fragment_ship_list_filter_item, null);
+        btn.setText(manufacturer);
+        btn.setTag(R.id.ship_list_filter_manufacturer_tag, manufacturer);
+        btn.setOnClickListener(this);
+        return btn;
+    }
+
     @Override
     public void onClick(View v) {
         if (v.getTag(R.id.ship_list_filter_type_tag).equals(ITEM_AVAILABLE)) {
@@ -126,6 +162,9 @@ public class ShipFilterDialog extends DialogFragment implements View.OnClickList
         checkNoneView();
     }
 
+    /**
+     * Checks if one of the lists is empty and thus an empty view must be displayed
+     */
     private void checkNoneView() {
         if (Utility.getViewsByTag(mFlowLayoutAvailableItems,
                 R.id.ship_list_filter_type_tag, ITEM_AVAILABLE).size() == 0) {

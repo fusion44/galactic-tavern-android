@@ -46,6 +46,7 @@
     <string name="alert_dialog_cancel">Cancel</string>
     <string name="ship_filter_dialog_current_filter">Filtered Manufacturers</string>
     <string name="ship_filter_dialog_available_items">Available Manufacturers</string>
+    <string name="ship_filter_dialog_fav_button">FAVORITES</string>
 
     <!-- Content descriptions -->
     <string name="content_desc_comm_link_backdrop_image">Comm link backdrop image</string>

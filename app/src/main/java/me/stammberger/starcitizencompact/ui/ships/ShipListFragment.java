@@ -243,18 +243,24 @@ public class ShipListFragment extends Fragment implements SwipeRefreshLayout.OnR
             return;
         }
 
-        ArrayList<Ship> filteredList = new ArrayList<>();
+        ArrayList<Ship> filteredShipList = new ArrayList<>();
+        boolean containsFavorites = filterList.contains(getString(R.string.ship_filter_dialog_fav_button));
+        if (containsFavorites) {
+            filteredShipList.addAll(mShipStore.getFavoriteShips());
+        }
+
         for (Ship ship : mShipStore.getAllShips().ships) {
             for (String filter : mCurrentFilterList) {
-                if (ship.titlecontainer.manufacturer.equals(filter)) {
-                    filteredList.add(ship);
+                if (ship.titlecontainer.manufacturer.equals(filter) &&
+                        !filteredShipList.contains(ship)) {
+                    filteredShipList.add(ship);
                     break;
                 }
             }
         }
 
         mShipListRecyclerViewAdapter = new ShipListRecyclerViewAdapter(
-                getContext(), filteredList, this, mIsLargeLayout);
+                getContext(), filteredShipList, this, mIsLargeLayout);
         mRecyclerView.setAdapter(mShipListRecyclerViewAdapter);
     }
 
