@@ -73,3 +73,10 @@ User something like this:
             return mLoggingService;
         }
     }
+
+#### Check whether current path is executed on the MainThread
+If the check returns true == running on main thread.
+More info on this [post](http://stackoverflow.com/questions/11411022/how-to-check-if-current-thread-is-not-main-thread)
+``` java ```
+
+    Looper.myLooper() == Looper.getMainLooper()

@@ -21,6 +21,7 @@ import me.stammberger.starcitizencompact.core.retrofit.ForumsApiService;
 import me.stammberger.starcitizencompact.core.retrofit.OrganizationApiService;
 import me.stammberger.starcitizencompact.core.retrofit.ShipApiService;
 import me.stammberger.starcitizencompact.core.retrofit.UserApiService;
+import me.stammberger.starcitizencompact.models.commlink.CommLinkModel;
 import me.stammberger.starcitizencompact.models.favorites.Favorite;
 import me.stammberger.starcitizencompact.models.forums.Forum;
 import me.stammberger.starcitizencompact.models.forums.ForumSectioned;
@@ -66,15 +67,20 @@ public class SciActionCreator extends RxActionCreator implements Actions {
             mCommLinkFetcher = new CommLinkFetcher();
         }
 
-        addRxAction(action, mCommLinkFetcher.getCommLink(id)
+        getFavoritesInternal(Favorite.TYPE_COMM_LINK, String.valueOf(id))
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(comm_link -> {
-                    action.getData().put(Keys.COMM_LINK, comm_link);
-                    postRxAction(action);
-                }, throwable -> {
-                    postError(action, throwable);
-                }));
+                .subscribe(favorite -> {
+                    addRxAction(action, mCommLinkFetcher.getCommLink(id)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(comm_link -> {
+                                action.getData().put(Keys.COMM_LINK, comm_link);
+                                postRxAction(action);
+                            }, throwable -> {
+                                postError(action, throwable);
+                            }));
+                });
+
     }
 
     /**
@@ -82,6 +88,7 @@ public class SciActionCreator extends RxActionCreator implements Actions {
      * Creates the CommLinkFetcher field and subscribes to its observable
      * Once the comm links are retrieved it posts a new {@link RxAction} to update {@link CommLinkStore}
      */
+    @SuppressWarnings("Convert2streamapi")
     @Override
     public void getCommLinks() {
         Timber.d("Starting fetch comm link action");
@@ -93,15 +100,24 @@ public class SciActionCreator extends RxActionCreator implements Actions {
             mCommLinkFetcher = new CommLinkFetcher();
         }
 
-        addRxAction(action, mCommLinkFetcher.getCommLinks()
+        getFavoritesInternal(Favorite.TYPE_COMM_LINK)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(comm_links -> {
-                    action.getData().put(Keys.COMM_LINKS, comm_links);
-                    postRxAction(action);
-                }, throwable -> {
-                    postError(action, throwable);
-                }));
+                .subscribe(favorites -> {
+                    addRxAction(action, mCommLinkFetcher.getCommLinks()
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(comm_links -> {
+                                for (CommLinkModel comm_link : comm_links) {
+                                    if (favorites.containsKey(String.valueOf(comm_link.getCommLinkId()))) {
+                                        comm_link.favorite = true;
+                                    }
+                                }
+                                action.getData().put(Keys.COMM_LINKS, comm_links);
+                                postRxAction(action);
+                            }, throwable -> {
+                                postError(action, throwable);
+                            }));
+                });
     }
 
     /**
@@ -428,6 +444,7 @@ public class SciActionCreator extends RxActionCreator implements Actions {
                 .prepare()
                 .asRxObservable()
                 .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(wrapperPutResults -> {
                     if (favorite.type == Favorite.TYPE_SHIP) {
                         // Update the Ship data model
@@ -441,6 +458,17 @@ public class SciActionCreator extends RxActionCreator implements Actions {
                         ArrayList<Ship> shipList = new ArrayList<>(1);
                         shipList.add(ship);
                         a.getData().put(Keys.SHIP_DATA_LIST, shipList);
+                        postRxAction(a);
+                    } else if (favorite.type == Favorite.TYPE_COMM_LINK) {
+                        CommLinkStore commLinkStore = CommLinkStore.get(SciApplication.getInstance().getRxFlux().getDispatcher());
+                        CommLinkModel cl = commLinkStore.getCommLink(Long.valueOf(favorite.reference));
+                        cl.favorite = true;
+
+                        // update the data object
+                        RxAction a = newRxAction(Actions.COMM_LINK_DATA_UPDATED);
+                        ArrayList<CommLinkModel> clList = new ArrayList<>(1);
+                        clList.add(cl);
+                        a.getData().put(Keys.COMM_LINKS, clList);
                         postRxAction(a);
                     }
                 }, throwable -> {
@@ -492,7 +520,8 @@ public class SciActionCreator extends RxActionCreator implements Actions {
                 .byQuery(q)
                 .prepare()
                 .asRxSingle()
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(deleteResult -> {
                     if (favorite.type == Favorite.TYPE_SHIP) {
                         // Update the Ship data model
@@ -506,6 +535,17 @@ public class SciActionCreator extends RxActionCreator implements Actions {
                         ArrayList<Ship> shipList = new ArrayList<>(1);
                         shipList.add(ship);
                         a.getData().put(Keys.SHIP_DATA_LIST, shipList);
+                        postRxAction(a);
+                    } else if (favorite.type == Favorite.TYPE_COMM_LINK) {
+                        CommLinkStore commLinkStore = CommLinkStore.get(SciApplication.getInstance().getRxFlux().getDispatcher());
+                        CommLinkModel cl = commLinkStore.getCommLink(Long.valueOf(favorite.reference));
+                        cl.favorite = false;
+
+                        // update the data object
+                        RxAction a = newRxAction(Actions.COMM_LINK_DATA_UPDATED);
+                        ArrayList<CommLinkModel> clList = new ArrayList<>(1);
+                        clList.add(cl);
+                        a.getData().put(Keys.COMM_LINKS, clList);
                         postRxAction(a);
                     }
                 });
@@ -537,5 +577,27 @@ public class SciActionCreator extends RxActionCreator implements Actions {
                     }
                     return hm;
                 });
+    }
+
+    /**
+     * Search for a favorite when the exact reference is known
+     *
+     * @param type  Type of the Favorite. For example {@link Favorite#TYPE_COMM_LINK}
+     * @param value Reference value of the Favorite
+     * @return @return An rx.Single for the favorites
+     */
+    private Single<Favorite> getFavoritesInternal(int type, String value) {
+        DefaultStorIOSQLite storio = SciApplication.getInstance().getStorIOSQLite();
+        Query q = Query.builder()
+                .table(FavoritesTable.TABLE)
+                .where(FavoritesTable.COLUMN_TYPE + "=? and " + FavoritesTable.COLUMN_REFERENCE + "=?")
+                .whereArgs(type, value)
+                .build();
+
+        return storio.get()
+                .object(Favorite.class)
+                .withQuery(q)
+                .prepare()
+                .asRxSingle();
     }
 }

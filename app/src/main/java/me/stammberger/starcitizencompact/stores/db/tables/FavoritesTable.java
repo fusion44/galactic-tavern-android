@@ -27,7 +27,7 @@ public class FavoritesTable {
                 + COLUMN_ID + " INTEGER NOT NULL PRIMARY KEY, "
                 + COLUMN_DATE + " LONG INTEGER NOT NULL, "
                 + COLUMN_TYPE + " INTEGER NOT NULL, "
-                + COLUMN_REFERENCE + " STRING NOT NULL"
+                + COLUMN_REFERENCE + " STRING UNIQUE NOT NULL"
                 + ");";
     }
 }

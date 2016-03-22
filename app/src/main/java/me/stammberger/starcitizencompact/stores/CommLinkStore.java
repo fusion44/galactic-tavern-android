@@ -108,6 +108,8 @@ public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
                 }
 
                 break;
+            case Actions.COMM_LINK_DATA_UPDATED:
+                break;
             default:
                 // return without posting a change to the store.
                 // The data we want wasn't contained in the action

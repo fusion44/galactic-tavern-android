@@ -4,6 +4,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.customtabs.CustomTabsIntent;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,15 +23,20 @@ import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
 import com.hardsoftstudio.rxflux.dispatcher.RxViewDispatch;
 import com.hardsoftstudio.rxflux.store.RxStoreChange;
 
+import org.joda.time.DateTime;
+
 import java.util.List;
 
 import me.stammberger.starcitizencompact.R;
 import me.stammberger.starcitizencompact.SciApplication;
 import me.stammberger.starcitizencompact.actions.Actions;
+import me.stammberger.starcitizencompact.actions.Keys;
+import me.stammberger.starcitizencompact.actions.SciActionCreator;
 import me.stammberger.starcitizencompact.core.chrome.CustomTabActivityHelper;
 import me.stammberger.starcitizencompact.core.chrome.WebviewFallback;
 import me.stammberger.starcitizencompact.models.commlink.CommLinkModel;
 import me.stammberger.starcitizencompact.models.commlink.Wrapper;
+import me.stammberger.starcitizencompact.models.favorites.Favorite;
 import me.stammberger.starcitizencompact.stores.CommLinkStore;
 
 /**
@@ -40,6 +47,7 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
     public static final String COMM_LINK_ITEM = "comm_link_item";
     private CommLinkModel mCommLink;
     private CommLinkStore mCommLinkStore;
+    private FloatingActionButton mFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +65,23 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
         mCommLinkStore = CommLinkStore.get(dispatcher);
         Long commLinkId = getIntent().getLongExtra(COMM_LINK_ITEM, -1);
         mCommLink = mCommLinkStore.getCommLink(commLinkId);
+
+        mFab = (FloatingActionButton) findViewById(R.id.share_fab);
+        mFab.setOnClickListener(v -> {
+            SciActionCreator actionCreator = SciApplication.getInstance().getActionCreator();
+            Favorite f = new Favorite();
+            f.type = Favorite.TYPE_COMM_LINK;
+            f.date = DateTime.now().getMillis();
+            f.reference = String.valueOf(mCommLink.getCommLinkId());
+
+            if (mCommLink.favorite) {
+                actionCreator.removeFavorite(f);
+            } else {
+                actionCreator.addFavorite(f);
+            }
+        });
+
+        updateFab();
 
         ImageView backdropView = (ImageView) findViewById(R.id.comm_link_backdrop);
         Glide.with(this)
@@ -82,11 +107,22 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
         }
     }
 
+    private void updateFab() {
+        if (mCommLink.favorite) {
+            mFab.setImageDrawable(ContextCompat.getDrawable(
+                    this, R.drawable.ic_star_gold_24dp));
+        } else {
+            mFab.setImageDrawable(ContextCompat.getDrawable(
+                    this, R.drawable.ic_star_black_24dp));
+        }
+    }
+
     /**
      * Called by RxFlux whenever a RxStore has received data.
      *
      * @param change The change model with the data
      */
+    @SuppressWarnings({"unchecked", "Convert2streamapi"})
     @Override
     public void onRxStoreChanged(RxStoreChange change) {
         switch (change.getStoreId()) {
@@ -97,6 +133,16 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
                                 .getCommLinkContentWrappers(mCommLink.getCommLinkId());
                         mCommLink.setWrappers(wrappers);
                         setupRecyclerView();
+                        break;
+                    case Actions.COMM_LINK_DATA_UPDATED:
+                        List<CommLinkModel> updatedModels =
+                                (List<CommLinkModel>) change.getRxAction()
+                                        .getData().get(Keys.COMM_LINKS);
+                        for (CommLinkModel updatedModel : updatedModels) {
+                            if (updatedModel == mCommLink) {
+                                updateFab();
+                            }
+                        }
                         break;
                 }
                 break;

@@ -64,6 +64,11 @@ public class CommLinkModel extends BaseModel {
     public List<Wrapper> wrappers = new ArrayList<>();
 
     /**
+     * Depicts whether the user has favorited this comm link or not
+     */
+    public boolean favorite = false;
+
+    /**
      * No args constructor for use in serialization
      */
     public CommLinkModel() {
