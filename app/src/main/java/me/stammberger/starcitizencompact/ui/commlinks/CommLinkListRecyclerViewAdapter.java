@@ -15,7 +15,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import me.stammberger.starcitizencompact.R;
 import me.stammberger.starcitizencompact.core.Utility;
@@ -29,11 +29,11 @@ import timber.log.Timber;
 public class CommLinkListRecyclerViewAdapter extends RecyclerView.Adapter<CommLinkListRecyclerViewAdapter.ViewHolder> implements RequestListener<String, GlideDrawable> {
 
     private final SpanSizeLookup mSpanSizeLookup = new SpanSizeLookup();
-    private final ArrayList<CommLinkModel> mValues;
     private final OnListFragmentInteractionListener mListener;
+    private List<CommLinkModel> mValues;
     private Context mContext;
 
-    public CommLinkListRecyclerViewAdapter(Context c, ArrayList<CommLinkModel> items,
+    public CommLinkListRecyclerViewAdapter(Context c, List<CommLinkModel> items,
                                            OnListFragmentInteractionListener listener) {
         mContext = c;
         mValues = items;
@@ -98,6 +98,11 @@ public class CommLinkListRecyclerViewAdapter extends RecyclerView.Adapter<CommLi
     @Override
     public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
         return false;
+    }
+
+    public void setItems(List<CommLinkModel> items) {
+        mValues.clear();
+        mValues.addAll(items);
     }
 
     /**

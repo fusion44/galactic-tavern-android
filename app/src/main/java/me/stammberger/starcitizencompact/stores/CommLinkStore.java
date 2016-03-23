@@ -30,6 +30,7 @@ public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
     private static CommLinkStore mInstance;
     private LinkedHashMap<Long, CommLinkModel> mCommLinks;
     private HashMap<Long, List<Wrapper>> mCommLinkContentWrappers;
+    private ArrayList<CommLinkModel> mFavorites = new ArrayList<>();
 
     /**
      * Private constructor. Use @CommLinkStore.get to retrieve an instance
@@ -84,6 +85,14 @@ public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<CommLinkModel> getFavorites() {
+        return mFavorites;
+    }
+
+    /**
      * Method is called when the loading action has finished running.
      *
      * @param action RxAction that has finished loading. Must contain the comm link data.
@@ -95,7 +104,11 @@ public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
             case Actions.GET_COMM_LINKS:
                 ArrayList<CommLinkModel> m = (ArrayList<CommLinkModel>) action.getData().get(Keys.COMM_LINKS);
                 for (int i = 0; i < m.size(); i++) {
-                    mCommLinks.put(m.get(i).commLinkId, m.get(i));
+                    CommLinkModel cl = m.get(i);
+                    mCommLinks.put(cl.commLinkId, cl);
+                    if (cl.favorite) {
+                        mFavorites.add(cl);
+                    }
                 }
                 break;
             case Actions.GET_COMM_LINK_CONTENT_WRAPPERS:
@@ -109,6 +122,16 @@ public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
 
                 break;
             case Actions.COMM_LINK_DATA_UPDATED:
+                ArrayList<CommLinkModel> models =
+                        (ArrayList<CommLinkModel>) action.getData().get(Keys.COMM_LINKS);
+                for (CommLinkModel model : models) {
+                    if (model.favorite & !mFavorites.contains(model)) {
+                        mFavorites.add(model);
+                    } else if (!model.favorite && mFavorites.contains(model)) {
+                        mFavorites.remove(model);
+                    }
+                }
+
                 break;
             default:
                 // return without posting a change to the store.

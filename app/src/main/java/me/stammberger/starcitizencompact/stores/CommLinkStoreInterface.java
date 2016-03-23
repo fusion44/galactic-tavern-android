@@ -29,4 +29,9 @@ public interface CommLinkStoreInterface {
      * @return The content wrappers for the comm link
      */
     List<Wrapper> getCommLinkContentWrappers(Long commLinkId);
+
+    /**
+     * @return A list with all favorite comm links
+     */
+    List<CommLinkModel> getFavorites();
 }

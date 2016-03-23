@@ -74,6 +74,7 @@
     <string name="title">Title</string>
     <string name="bio">Bio</string>
     <string name="unknown">Unknown</string>
+    <string name="filter">Filter</string>
 
     <!-- Error messages -->
     <string name="error_failed_to_load_comm_link_rss">Failed to load RSS feed. Please check connection</string>

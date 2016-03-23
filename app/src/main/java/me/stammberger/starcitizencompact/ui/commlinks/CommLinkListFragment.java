@@ -7,6 +7,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
@@ -34,6 +37,8 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
 
     private int mColumnCount = 2;
     private SuperRecyclerView mRecyclerView;
+    private boolean mShowingFilteredView = false;
+    private CommLinkListRecyclerViewAdapter mCommLinksAdapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -60,6 +65,7 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
         }
 
         setRetainInstance(true);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -89,6 +95,12 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
         return view;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.comm_link_list_fragment, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
     /**
      * Setup the RecyclerView's Adapter and animations
      *
@@ -99,15 +111,14 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
             throw new NullPointerException("Comm links are null");
         }
 
-        CommLinkListRecyclerViewAdapter commLinksAdapter
-                = new CommLinkListRecyclerViewAdapter(getContext(), commLinks, this);
+        mCommLinksAdapter = new CommLinkListRecyclerViewAdapter(getContext(), commLinks, this);
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), mColumnCount);
-        gridLayoutManager.setSpanSizeLookup(commLinksAdapter.getSpanSizeLookup());
+        gridLayoutManager.setSpanSizeLookup(mCommLinksAdapter.getSpanSizeLookup());
         mRecyclerView.setLayoutManager(gridLayoutManager);
 
         SlideInBottomAnimationAdapter slideInAdapter
-                = new SlideInBottomAnimationAdapter(commLinksAdapter);
+                = new SlideInBottomAnimationAdapter(mCommLinksAdapter);
 
         slideInAdapter.setDuration(500);
         slideInAdapter.setInterpolator(new DecelerateInterpolator());
@@ -146,6 +157,31 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
         Intent i = new Intent(this.getContext(), CommLinkReaderActivity.class);
         i.putExtra(CommLinkReaderActivity.COMM_LINK_ITEM, item.commLinkId);
         getActivity().startActivityForResult(i, READER_ACTIVITY_RESULT, options.toBundle());
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_comm_link_filter) {
+            toggleFilter();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void toggleFilter() {
+        CommLinkStore store = CommLinkStore.get(
+                SciApplication.getInstance().getRxFlux().getDispatcher());
+        Timber.d("sg");
+        if (!mShowingFilteredView) {
+            mCommLinksAdapter.setItems(store.getFavorites());
+            mRecyclerView.getAdapter().notifyDataSetChanged();
+            mShowingFilteredView = true;
+        } else {
+            mCommLinksAdapter.setItems(store.getCommLinks());
+            mRecyclerView.getAdapter().notifyDataSetChanged();
+            mShowingFilteredView = false;
+        }
     }
 
 
