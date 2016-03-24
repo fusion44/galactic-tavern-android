@@ -1,7 +1,6 @@
 package me.stammberger.starcitizencompact.core;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.pkmmte.pkrss.Article;
 import com.pkmmte.pkrss.Callback;
@@ -141,6 +140,7 @@ public class CommLinkFetcher implements Callback {
                     return article.getDate() > mLatestCommLinkDateInDb;
                 })
                 .map(this::getCommLinkModel)
+                .filter(commLinkModel1 -> commLinkModel1 != null)
                 .toList() // this will replace also the onCompleted call
                 .subscribe(commLinkModels -> {
                     SciApplication.getInstance().getStorIOSQLite()
@@ -165,15 +165,22 @@ public class CommLinkFetcher implements Callback {
      * @param a Article to create the CommLinkModel from
      * @return Article's CommlinkModel
      */
-    @NonNull
     private CommLinkModel getCommLinkModel(Article a) {
         int id = Utility.getId(a.getSource().toString());
         Timber.d("Getting model for comm link id %s from API", id);
 
-        CommLinkModel cm = CommLinkApiService.Factory.getInstance()
-                .getCommLink(id)
-                .toBlocking()
-                .first();
+        CommLinkModel cm;
+        try {
+            cm = CommLinkApiService.Factory.getInstance()
+                    .getCommLink(id)
+                    .toBlocking()
+                    .first();
+        } catch (Exception e) {
+            // TODO: notify API to update the commlinks as there is a new one available
+            // but hasn't been processed yet
+            Timber.d("%s", e.getMessage());
+            return null;
+        }
 
         DefaultStorIOSQLite storio = SciApplication.getInstance().getStorIOSQLite();
 
