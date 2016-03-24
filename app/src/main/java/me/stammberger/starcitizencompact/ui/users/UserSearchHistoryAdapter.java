@@ -18,9 +18,9 @@ import me.stammberger.starcitizencompact.core.Utility;
 import me.stammberger.starcitizencompact.models.user.UserSearchHistoryEntry;
 
 public class UserSearchHistoryAdapter extends RecyclerView.Adapter<UserSearchHistoryAdapter.HistoryEntryViewHolder> {
-    private final Context mContext;
     private final OnListFragmentInteractionListener mListener;
     ArrayList<UserSearchHistoryEntry> mEntries = new ArrayList<>();
+    private Context mContext;
 
     public UserSearchHistoryAdapter(Context c,
                                     ArrayList<UserSearchHistoryEntry> entries,
@@ -48,6 +48,26 @@ public class UserSearchHistoryAdapter extends RecyclerView.Adapter<UserSearchHis
     @Override
     public int getItemCount() {
         return mEntries.size();
+    }
+
+    /**
+     * Update currently displayed items
+     *
+     * @param successfulEntries The new items to display
+     */
+    public void setItems(ArrayList<UserSearchHistoryEntry> successfulEntries) {
+        mEntries = successfulEntries;
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Set the current context.
+     * Context might change during screen orientation change or similar.
+     *
+     * @param context Current context
+     */
+    public void setContext(Context context) {
+        mContext = context;
     }
 
     /**

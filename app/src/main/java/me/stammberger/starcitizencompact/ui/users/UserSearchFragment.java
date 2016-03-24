@@ -19,6 +19,7 @@ import me.stammberger.starcitizencompact.R;
 import me.stammberger.starcitizencompact.SciApplication;
 import me.stammberger.starcitizencompact.models.user.User;
 import me.stammberger.starcitizencompact.models.user.UserSearchHistoryEntry;
+import me.stammberger.starcitizencompact.stores.UserStore;
 
 /**
  * This Fragment handles all the UI for searching for a user.
@@ -28,6 +29,7 @@ public class UserSearchFragment extends Fragment implements FloatingSearchView.O
     RecyclerView mSuccessfulSearchHistoryRecyclerView;
     private User mUser;
     private ArrayList<UserSearchHistoryEntry> mUserSearchEntries;
+    private UserSearchHistoryAdapter mAdapter;
 
     public UserSearchFragment() {
         // Required empty public constructor
@@ -43,8 +45,6 @@ public class UserSearchFragment extends Fragment implements FloatingSearchView.O
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SciApplication.getInstance().getActionCreator().getUserSearchHistory();
-
         setRetainInstance(true);
     }
 
@@ -104,6 +104,26 @@ public class UserSearchFragment extends Fragment implements FloatingSearchView.O
 
     }
 
+    @Override
+    public void onResume() {
+        // We have to do this here because MainActivity will not forward the RxAction with the
+        // new search entries since it's overlaid with the UserDetailActivity
+        ArrayList<UserSearchHistoryEntry> userSearchHistory = UserStore.get(
+                SciApplication.getInstance().getRxFlux().getDispatcher()).getUserSearchHistory(10);
+        if (userSearchHistory.size() == 0) {
+            SciApplication.getInstance().getActionCreator().getUserSearchHistory();
+        } else {
+            setUserSearchHistory(userSearchHistory);
+        }
+
+        if (mAdapter != null) {
+            // update the context since it might have changed due to orientation change or similar
+            mAdapter.setContext(getContext());
+        }
+
+        super.onResume();
+    }
+
     /**
      * Sets the search history present on this installation. Necessary to fill both RecyclerViews
      * with content.
@@ -126,9 +146,16 @@ public class UserSearchFragment extends Fragment implements FloatingSearchView.O
         mSearchView.setAdapter(a);
 
         // This RecyclerView will only hold the successful searches.
-        a = new UserSearchHistoryAdapter(
-                getContext(), successfullEntries, this);
-        mSuccessfulSearchHistoryRecyclerView.setAdapter(a);
+        if (mAdapter == null) {
+            mAdapter = new UserSearchHistoryAdapter(
+                    getContext(), successfullEntries, this);
+        } else {
+            mAdapter.setItems(successfullEntries);
+        }
+
+        if (mSuccessfulSearchHistoryRecyclerView.getAdapter() == null) {
+            mSuccessfulSearchHistoryRecyclerView.setAdapter(mAdapter);
+        }
     }
 
     /**
