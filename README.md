@@ -1,4 +1,4 @@
-# Star Citizen Compact
+# Galactic Tavern for Star Citizen
 #### Description
 This is an app about the game Star Citizen by Cloud Imperium Games.
 

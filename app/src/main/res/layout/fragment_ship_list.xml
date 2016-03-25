@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/list"
-    android:name="me.stammberger.starcitizencompact.ui.ships.ShipListFragment"
+    android:name="me.stammberger.galactictavern.ui.ships.ShipListFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingEnd="@dimen/card_view_recycler_side_padding"

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Star Citizen Compact</string>
+    <string name="app_name">Galactic Tavern</string>
 
     <!-- Activity -->
     <string name="title_activity_comm_link_reader">CommLinkReaderActivity</string>

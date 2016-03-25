@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="me.stammberger.starcitizencompact">
+    package="me.stammberger.galactictavern">
 
     <application
-        android:name=".SciDebugApplication"
+        android:name=".GtDebugApplication"
         android:allowBackup="false"
         android:label="@string/app_name"
         tools:replace="android:name, android:allowBackup, android:label">

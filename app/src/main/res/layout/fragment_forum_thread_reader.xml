@@ -1,7 +1,7 @@
 <com.malinskiy.superrecyclerview.SuperRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/list"
-    android:name="me.stammberger.starcitizencompact.ui.forums.ForumThreadReaderFragment"
+    android:name="me.stammberger.galactictavern.ui.forums.ForumThreadReaderFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginLeft="16dp"
