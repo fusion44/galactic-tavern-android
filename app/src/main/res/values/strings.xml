@@ -27,7 +27,7 @@
     <!-- Navigation drawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="navigation_drawer_comm_link">Comm-link</string>
+    <string name="navigation_drawer_comm_link">Comm-Links</string>
     <string name="navigation_drawer_ships">Ships</string>
     <string name="navigation_drawer_users">Users</string>
     <string name="navigation_drawer_forums">Forums</string>

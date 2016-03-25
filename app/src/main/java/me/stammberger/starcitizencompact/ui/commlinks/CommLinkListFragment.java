@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import jp.wasabeef.recyclerview.animators.adapters.SlideInBottomAnimationAdapter;
 import me.stammberger.starcitizencompact.R;
@@ -106,7 +107,7 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
      *
      * @param commLinks Comm link list for the Adapter
      */
-    private void setupRecyclerView(ArrayList<CommLinkModel> commLinks) {
+    private void setupRecyclerView(List<CommLinkModel> commLinks) {
         if (commLinks == null) {
             throw new NullPointerException("Comm links are null");
         }
@@ -141,7 +142,12 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
      * @param commLinks The comm links for the Adapter
      */
     public void setCommLinks(ArrayList<CommLinkModel> commLinks) {
-        setupRecyclerView(calculateSpanCount(commLinks));
+        if (mShowingFilteredView) {
+            CommLinkStore cls = CommLinkStore.get(SciApplication.getInstance().getRxFlux().getDispatcher());
+            setupRecyclerView(calculateSpanCount(cls.getFavorites()));
+        } else {
+            setupRecyclerView(calculateSpanCount(commLinks));
+        }
     }
 
     /**
@@ -163,23 +169,40 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_comm_link_filter) {
-            toggleFilter();
+            if (toggleFilter()) {
+                item.setIcon(R.drawable.ic_star_gold_24dp);
+            } else {
+                item.setIcon(R.drawable.ic_star_black_24dp);
+            }
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void toggleFilter() {
+    /**
+     * Toggles the filter view
+     *
+     * @return True if filter is turned on, False if not
+     */
+    private boolean toggleFilter() {
         CommLinkStore store = CommLinkStore.get(
                 SciApplication.getInstance().getRxFlux().getDispatcher());
         if (!mShowingFilteredView) {
-            mCommLinksAdapter.setItems(store.getFavorites());
-            mRecyclerView.getAdapter().notifyDataSetChanged();
+            if (mCommLinksAdapter != null) {
+                mCommLinksAdapter.setItems(calculateSpanCount(store.getFavorites()));
+                mRecyclerView.getAdapter().notifyDataSetChanged();
+            }
+
             mShowingFilteredView = true;
+            return true;
         } else {
-            mCommLinksAdapter.setItems(store.getCommLinks());
-            mRecyclerView.getAdapter().notifyDataSetChanged();
+            if (mCommLinksAdapter != null) {
+                mCommLinksAdapter.setItems(calculateSpanCount(store.getCommLinks()));
+                mRecyclerView.getAdapter().notifyDataSetChanged();
+            }
+
             mShowingFilteredView = false;
+            return false;
         }
     }
 
@@ -192,7 +215,7 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
      * @param aList List of comm links
      * @return The sorted list
      */
-    private ArrayList<CommLinkModel> calculateSpanCount(ArrayList<CommLinkModel> aList) {
+    private List<CommLinkModel> calculateSpanCount(List<CommLinkModel> aList) {
         int currentColumn = 0;
 
         for (int i = 0; i < aList.size(); i++) {

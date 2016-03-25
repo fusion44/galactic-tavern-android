@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_comm_link_filter"
-        android:icon="@drawable/ic_filter"
+        android:icon="@drawable/ic_star_black_24dp"
         android:orderInCategory="100"
         android:title="@string/filter"
         app:showAsAction="always" />
