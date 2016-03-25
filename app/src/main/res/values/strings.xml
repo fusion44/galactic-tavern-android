@@ -62,8 +62,10 @@
     <string name="content_desc_forum_new_discussion_count_bubble">Forum new discussion count bubble</string>
     <string name="content_desc_forum_post_count_icon">Post count icon</string>
     <string name="content_desc_forum_view_count_icon">Thread view count icon</string>
+    <string name="content_desc_list_empty">List view is empty indicator</string>
 
     <!-- General UI -->
+    <string name="no_data">No data to show</string>
     <string name="loading">Still loading!!!!</string>
     <string name="none">None</string>
     <string name="country">Country</string>

@@ -11,7 +11,7 @@
     android:paddingRight="@dimen/card_view_recycler_side_padding"
     android:paddingStart="@dimen/card_view_recycler_side_padding"
     app:layoutManager="LinearLayoutManager"
-    app:layout_empty="@layout/fragment_ships_adapter_empty"
+    app:layout_empty="@layout/generic_adapter_empty_screen"
     app:mainLayoutId="@layout/layout_recyclerview_horizontalscroll"
     tools:context=".ui.ships.ShipListFragment"
     tools:listitem="@layout/fragment_ship_list_item" />

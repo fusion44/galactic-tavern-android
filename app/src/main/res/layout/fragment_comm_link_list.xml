@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager"
-    app:layout_empty="@layout/fragment_comm_link_adapter_empty"
+    app:layout_empty="@layout/generic_adapter_empty_screen"
     app:mainLayoutId="@layout/layout_recyclerview_horizontalscroll"
     tools:context=".ui.commlinks.CommLinkListFragment"
     tools:listitem="@layout/fragment_comm_link_item" />
