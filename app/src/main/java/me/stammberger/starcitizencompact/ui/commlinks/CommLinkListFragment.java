@@ -172,7 +172,6 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
     private void toggleFilter() {
         CommLinkStore store = CommLinkStore.get(
                 SciApplication.getInstance().getRxFlux().getDispatcher());
-        Timber.d("sg");
         if (!mShowingFilteredView) {
             mCommLinksAdapter.setItems(store.getFavorites());
             mRecyclerView.getAdapter().notifyDataSetChanged();
