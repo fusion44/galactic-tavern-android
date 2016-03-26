@@ -63,6 +63,8 @@
     <string name="content_desc_forum_post_count_icon">Post count icon</string>
     <string name="content_desc_forum_view_count_icon">Thread view count icon</string>
     <string name="content_desc_list_empty">List view is empty indicator</string>
+    <string name="content_desc_widget_date_text">Date of the comm link is %1$s</string>
+    <string name="content_desc_widget_comm_link_title">Comm link title is %1$s</string>
 
     <!-- General UI -->
     <string name="no_data">No data to show</string>
@@ -77,6 +79,9 @@
     <string name="bio">Bio</string>
     <string name="unknown">Unknown</string>
     <string name="filter">Filter</string>
+
+    <!-- Widget -->
+    <string name="widget_header_text">Comm Links</string>
 
     <!-- Error messages -->
     <string name="error_failed_to_load_comm_link_rss">Failed to load RSS feed. Please check connection</string>
