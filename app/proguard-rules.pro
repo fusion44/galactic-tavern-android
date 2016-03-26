@@ -31,3 +31,33 @@
   **[] $VALUES;
   public *;
 }
+
+# Butterknife
+-keep class butterknife.** { *; }
+-dontwarn butterknife.internal.**
+-keep class **$$ViewBinder { *; }
+
+-keepclasseswithmembernames class * {
+    @butterknife.* <fields>;
+}
+
+-keepclasseswithmembernames class * {
+    @butterknife.* <methods>;
+}
+
+# rounded image view
+-dontwarn com.squareup.picasso.**
+-dontwarn com.squareup.okhttp.**
+
+# SuperRecyclerView
+-dontwarn com.malinskiy.superrecyclerview.SwipeDismissRecyclerViewTouchListener*
+-keep class jp.wasabeef.recyclerview.animators.** { *; }
+
+# PkRSS
+-keep class com.pkmmte.pkrss.Callback{ *; }
+
+# Okio
+-dontwarn okio.**
+
+# FloatingSearchView
+-keep class com.mypopsy.widget.** { *; }

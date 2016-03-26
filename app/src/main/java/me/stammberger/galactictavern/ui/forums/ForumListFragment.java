@@ -16,7 +16,7 @@ import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
 import java.util.List;
 
-import jp.wasabeef.recyclerview.animators.adapters.SlideInBottomAnimationAdapter;
+import jp.wasabeef.recyclerview.adapters.SlideInBottomAnimationAdapter;
 import me.stammberger.galactictavern.GtApplication;
 import me.stammberger.galactictavern.R;
 import me.stammberger.galactictavern.models.forums.Forum;
