@@ -101,9 +101,6 @@ public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 mHasBackdrop = false;
                 this.backdropImageView.setVisibility(View.GONE);
             } else {
-                if (wrapper.getContentBlock2().headerImageType != ContentBlock2.TYPE_SINGLE) {
-                    throw new IllegalArgumentException("Content block 2 must be of type Single");
-                }
                 backdropImageView.setVisibility(View.VISIBLE);
             }
 
