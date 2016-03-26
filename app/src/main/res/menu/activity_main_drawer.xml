@@ -27,10 +27,6 @@
     <item android:title="@string/navigation_drawer_personal">
         <menu>
             <item
-                android:id="@+id/nav_favorites"
-                android:icon="@drawable/ic_star_black_24dp"
-                android:title="@string/navigation_drawer_favorites" />
-            <item
                 android:id="@+id/nav_settings"
                 android:icon="@drawable/ic_settings_black_24dp"
                 android:title="@string/navigation_drawer_settings" />

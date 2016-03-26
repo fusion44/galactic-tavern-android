@@ -2,6 +2,7 @@ package me.stammberger.galactictavern.ui;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -33,6 +34,7 @@ import me.stammberger.galactictavern.stores.ShipStore;
 import me.stammberger.galactictavern.stores.UserStore;
 import me.stammberger.galactictavern.ui.commlinks.CommLinkListFragment;
 import me.stammberger.galactictavern.ui.forums.ForumListFragment;
+import me.stammberger.galactictavern.ui.orgs.OrgsFragment;
 import me.stammberger.galactictavern.ui.ships.ShipListFragment;
 import me.stammberger.galactictavern.ui.users.UserSearchFragment;
 
@@ -109,6 +111,8 @@ public class MainActivity extends AppCompatActivity
                     openUsersFragment();
                 } else if (fragment.equals(ForumListFragment.class.getSimpleName())) {
                     openForumsFragment();
+                } else if (fragment.equals(OrgsFragment.class.getSimpleName())) {
+                    openOrgFragment();
                 }
             }
         } else {
@@ -121,6 +125,8 @@ public class MainActivity extends AppCompatActivity
                 openUsersFragment();
             } else if (f.equals(ForumListFragment.class.getSimpleName())) {
                 openForumsFragment();
+            } else if (f.equals(OrgsFragment.class.getSimpleName())) {
+                openOrgFragment();
             }
         }
     }
@@ -178,11 +184,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_forums) {
             openForumsFragment();
         } else if (id == R.id.nav_orgs) {
-
-        } else if (id == R.id.nav_favorites) {
-
+            openOrgFragment();
         } else if (id == R.id.nav_settings) {
-
+            openSettingsFragment();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -278,6 +282,33 @@ public class MainActivity extends AppCompatActivity
         }
 
         Prefs.putString(KEY_CURRENT_FRAGMENT, simpleClassName);
+    }
+
+    /**
+     * Creates and shows the {@link .orgs.OrgsFragment}
+     */
+    private void openOrgFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        String simpleClassName = OrgsFragment.class.getSimpleName();
+
+        mCurrentFragment = fragmentManager.findFragmentByTag(simpleClassName);
+        if (mCurrentFragment == null) {
+            mCurrentFragment = OrgsFragment.newInstance();
+        }
+
+        fragmentTransaction.replace(R.id.fragment_container, mCurrentFragment, simpleClassName);
+        fragmentTransaction.commit();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(R.string.navigation_drawer_organizations);
+        }
+
+        Prefs.putString(KEY_CURRENT_FRAGMENT, simpleClassName);
+    }
+
+    private void openSettingsFragment() {
+        Snackbar.make(findViewById(R.id.fragment_container),
+                "Settings fragment is yet implemented", Snackbar.LENGTH_SHORT).show();
     }
 
     @SuppressWarnings("unchecked")
