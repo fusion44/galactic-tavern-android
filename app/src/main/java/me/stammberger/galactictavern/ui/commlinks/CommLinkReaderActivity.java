@@ -66,6 +66,10 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
         Long commLinkId = getIntent().getLongExtra(COMM_LINK_ITEM, -1);
         mCommLink = mCommLinkStore.getCommLink(commLinkId);
 
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(mCommLink.getTitle());
+        }
+
         mFab = (FloatingActionButton) findViewById(R.id.share_fab);
         mFab.setOnClickListener(v -> {
             GtActionCreator actionCreator = GtApplication.getInstance().getActionCreator();
