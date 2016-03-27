@@ -93,12 +93,16 @@
             android:authorities="me.stammberger.galactictavern.stores.db.gt_provider"
             android:exported="false" />
 
-
         <service
             android:name=".ui.widgets.CommLinkRemoteViewsService"
             android:enabled="true"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <service
+            android:name=".core.CommLinkUpdaterService"
+            android:exported="false" />
+
     </application>
 
 </manifest>

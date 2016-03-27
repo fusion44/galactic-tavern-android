@@ -33,11 +33,26 @@ public class CommLinkFetcher implements Callback {
     private final AsyncSubject<ArrayList<CommLinkModel>> mCommLinkSubject;
     private final Context mContext;
     private long mLatestCommLinkDateInDb = 0;
+    private UpdateProgressCallback mCallback = null;
+    private boolean mBroadcastAfterRSSProcessing = true;
 
     public CommLinkFetcher() {
-        Timber.d("New CommLinkFetcher");
+        Timber.d("New CommLinkFetcher No Callback");
         mContext = GtApplication.getContext();
+        mCommLinkSubject = AsyncSubject.create();
+        startUpdate();
+    }
 
+    public CommLinkFetcher(UpdateProgressCallback callback, boolean broadcastAfterRSSProcessing) {
+        Timber.d("New CommLinkFetcher With Callback");
+        mContext = GtApplication.getContext();
+        mCallback = callback;
+        mCommLinkSubject = AsyncSubject.create();
+        mBroadcastAfterRSSProcessing = broadcastAfterRSSProcessing;
+        startUpdate();
+    }
+
+    private void startUpdate() {
         // get the latest from Database to check whether we have new comm links
         getLatestCommLinkFromDb()
                 .take(1)
@@ -51,14 +66,16 @@ public class CommLinkFetcher implements Callback {
                     Timber.d("Error retrieving latest comm link from database. Error: %s", throwable.toString());
                     fetchRSSFeed();
                 });
-
-        mCommLinkSubject = AsyncSubject.create();
     }
 
     /**
      * Start loading of the rss feed
      */
     private void fetchRSSFeed() {
+        if (mCallback != null) {
+            mCallback.onUpdateStarted();
+        }
+
         Timber.d("fetchRSSFeed");
         PkRSS.with(mContext)
                 .load("https://robertsspaceindustries.com/comm-link/rss")
@@ -94,6 +111,11 @@ public class CommLinkFetcher implements Callback {
      * This is a blocking call.
      */
     private void getAllCommLinksFromDb() {
+        if (!mBroadcastAfterRSSProcessing) {
+            Timber.d("Broadcast off");
+            return;
+        }
+
         Query q = Query.builder()
                 .table(CommLinkModelTable.TABLE)
                 .orderBy(CommLinkModelTable.COLUMN_PUBLISHED_DATE + " DESC")
@@ -128,8 +150,11 @@ public class CommLinkFetcher implements Callback {
     public void onLoaded(List<Article> newArticles) {
         Timber.d("PkRSS articles loaded");
         if (newArticles.get(0).getDate() <= mLatestCommLinkDateInDb) {
-            Timber.d("No new articles. Skip update and fetch from DB");
+            Timber.d("No new articles. Skip update.");
             getAllCommLinksFromDb();
+            if (mCallback != null) {
+                mCallback.onUpdateFinished(0);
+            }
             return;
         }
 
@@ -150,10 +175,15 @@ public class CommLinkFetcher implements Callback {
                             .asRxObservable()
                             .subscribe(commLinkModelPutResults -> {
                                 getAllCommLinksFromDb();
+                                if (mCallback != null) {
+                                    mCallback.onUpdateFinished(commLinkModelPutResults.results().size());
+                                }
                             }, throwable -> {
+                                onError();
                                 Timber.d("Error putting CommLinkModels into database: \n %s", throwable.getCause().toString());
                             });
                 }, throwable -> {
+                    onError();
                     Timber.d("Error1: %s", throwable.getCause());
                     Timber.d("onError: %s", throwable.toString());
                 });
@@ -291,5 +321,19 @@ public class CommLinkFetcher implements Callback {
                 .withGetResolver(new ContentWrapperGetResolver())
                 .prepare()
                 .asRxObservable();
+    }
+
+    private void onError() {
+        if (mCallback != null) {
+            mCallback.onUpdateError();
+        }
+    }
+
+    public interface UpdateProgressCallback {
+        void onUpdateStarted();
+
+        void onUpdateError();
+
+        void onUpdateFinished(Integer numDbUpdated);
     }
 }
