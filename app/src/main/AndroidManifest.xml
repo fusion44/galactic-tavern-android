@@ -110,6 +110,14 @@
             </intent-filter>
         </service>
 
+        <activity
+            android:name=".ui.prefs.SettingsActivity"
+            android:label="@string/navigation_drawer_settings"
+            android:parentActivityName=".ui.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="me.stammberger.galactictavern.ui.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -30,12 +30,13 @@ public class CommLinkUpdaterService extends GcmTaskService implements CommLinkFe
      * This task will survive reboots if android.permission.RECEIVE_BOOT_COMPLETED is granted
      *
      * @param context Current context
+     * @param newInterval Update interval in seconds
      */
-    public static void scheduleRepeatedUpdates(Context context) {
+    public static void scheduleRepeatedUpdates(Context context, int newInterval) {
         try {
             PeriodicTask periodic = new PeriodicTask.Builder()
                     .setService(CommLinkUpdaterService.class)
-                    .setPeriod(60 * 60 * 3) // run every 3 hours
+                    .setPeriod(newInterval) // run every x seconds
                     .setFlex(60 * 30) // task can run 30 minutes before schedule
                     .setTag(GCM_REPEAT_TAG)
                     .setPersisted(true) // Task will survive reboots
@@ -44,6 +45,7 @@ public class CommLinkUpdaterService extends GcmTaskService implements CommLinkFe
                     .setRequiresCharging(false)
                     .build();
             GcmNetworkManager.getInstance(context).schedule(periodic);
+            Timber.d("Polling for updates every %s seconds", newInterval);
         } catch (Exception e) {
             Timber.e("scheduling failed");
             e.printStackTrace();
@@ -51,6 +53,7 @@ public class CommLinkUpdaterService extends GcmTaskService implements CommLinkFe
     }
 
     public static void cancelUpdater(Context context) {
+        Timber.d("Canceling all comm link updates");
         GcmNetworkManager
                 .getInstance(context)
                 .cancelTask(GCM_REPEAT_TAG, CommLinkUpdaterService.class);

@@ -131,4 +131,27 @@
     <string name="ship_detail_card_hardpoints_c9">Class 9</string>
     <string name="ship_detail_card_modular_title">Additional</string>
 
+    <!-- Strings related to Settings -->
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+    <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string name="pref_sync_frequency_default_value" translatable="false">10800</string>
+    <string name="pref_key_comm_link_sync_frequency" translatable="false">comm_link_sync_frequency</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>3600</item>
+        <item>10800</item>
+        <item>21600</item>
+        <item>-1</item>
+    </string-array>
+
+    <string name="pref_header_notifications">Notifications</string>
+    <string name="pref_title_new_comm_link_notifications">New Comm-Link notifications</string>
+    <string name="pref_key_new_comm_link_notifications" translatable="false">new_comm_link_notifications</string>
+
+
 </resources>

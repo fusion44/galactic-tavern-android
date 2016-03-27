@@ -89,13 +89,16 @@ public class GtApplication extends Application {
         new Prefs.Builder()
                 .setContext(this)
                 .setMode(ContextWrapper.MODE_PRIVATE)
-                .setPrefsName(getPackageName())
                 .setUseDefaultSharedPreference(true)
                 .build();
 
-        mInstance = this;
+        if (!Prefs.contains(getString(R.string.pref_key_comm_link_sync_frequency))) {
+            Timber.d("CommLinkUpdaterServer is not yet set up -> setting to default values");
+            int interval = Integer.valueOf(getString(R.string.pref_sync_frequency_default_value));
+            CommLinkUpdaterService.scheduleRepeatedUpdates(this, interval);
+        }
 
-        CommLinkUpdaterService.scheduleRepeatedUpdates(this);
+        mInstance = this;
     }
 
     /**

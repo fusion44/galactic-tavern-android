@@ -1,8 +1,8 @@
 package me.stammberger.galactictavern.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -35,6 +35,7 @@ import me.stammberger.galactictavern.stores.UserStore;
 import me.stammberger.galactictavern.ui.commlinks.CommLinkListFragment;
 import me.stammberger.galactictavern.ui.forums.ForumListFragment;
 import me.stammberger.galactictavern.ui.orgs.OrgsFragment;
+import me.stammberger.galactictavern.ui.prefs.SettingsActivity;
 import me.stammberger.galactictavern.ui.ships.ShipListFragment;
 import me.stammberger.galactictavern.ui.users.UserSearchFragment;
 
@@ -188,7 +189,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_orgs) {
             openOrgFragment();
         } else if (id == R.id.nav_settings) {
-            openSettingsFragment();
+            openSettings();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -308,9 +309,9 @@ public class MainActivity extends AppCompatActivity
         Prefs.putString(KEY_CURRENT_FRAGMENT, simpleClassName);
     }
 
-    private void openSettingsFragment() {
-        Snackbar.make(findViewById(R.id.fragment_container),
-                "Settings fragment is yet implemented", Snackbar.LENGTH_SHORT).show();
+    private void openSettings() {
+        Intent i = new Intent(this, SettingsActivity.class);
+        startActivity(i);
     }
 
     @SuppressWarnings("unchecked")
