@@ -13,6 +13,7 @@ import com.pushtorefresh.storio.sqlite.impl.DefaultStorIOSQLite;
 import net.danlew.android.joda.JodaTimeAndroid;
 
 import me.stammberger.galactictavern.actions.GtActionCreator;
+import me.stammberger.galactictavern.core.CommLinkUpdaterService;
 import me.stammberger.galactictavern.models.commlink.CommLinkModel;
 import me.stammberger.galactictavern.models.commlink.CommLinkModelSQLiteTypeMapping;
 import me.stammberger.galactictavern.models.commlink.ContentBlock1;
@@ -93,6 +94,8 @@ public class GtApplication extends Application {
                 .build();
 
         mInstance = this;
+
+        CommLinkUpdaterService.scheduleRepeatedUpdates(this);
     }
 
     /**

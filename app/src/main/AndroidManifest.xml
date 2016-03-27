@@ -3,6 +3,8 @@
     package="me.stammberger.galactictavern">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- for CommLinkUpdaterService -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".GtApplication"
@@ -101,7 +103,12 @@
 
         <service
             android:name=".core.CommLinkUpdaterService"
-            android:exported="false" />
+            android:exported="true"
+            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
+            <intent-filter>
+                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
+            </intent-filter>
+        </service>
 
     </application>
 
