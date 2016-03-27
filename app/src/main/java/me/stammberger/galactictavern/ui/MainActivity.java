@@ -165,7 +165,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putString(KEY_CURRENT_FRAGMENT, mCurrentFragment.getTag());
+        if (mCurrentFragment != null) {
+            outState.putString(KEY_CURRENT_FRAGMENT, mCurrentFragment.getTag());
+        }
         super.onSaveInstanceState(outState);
     }
 
