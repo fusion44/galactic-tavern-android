@@ -5,9 +5,11 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.widget.RemoteViews;
 
 import me.stammberger.galactictavern.R;
+import me.stammberger.galactictavern.ui.commlinks.CommLinkReaderActivity;
 import timber.log.Timber;
 
 /**
@@ -20,14 +22,26 @@ public class CommLinkWidget extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
         CharSequence widgetText = context.getString(R.string.widget_header_text);
-        // Construct the RemoteViews object
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_comm_link);
-        views.setTextViewText(R.id.widgetHeader, widgetText);
 
-        views.setRemoteAdapter(R.id.widgetCommLinkList, new Intent(context, CommLinkRemoteViewsService.class));
+        // See documentation https://developer.android.com/guide/topics/appwidgets/
+        Intent intent = new Intent(context, CommLinkRemoteViewsService.class);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
+        RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.widget_comm_link);
+        rv.setTextViewText(R.id.widgetHeader, widgetText);
+        rv.setRemoteAdapter(R.id.widgetCommLinkList, intent);
+
+        // launch Activity intent
+        Intent activityIntent = new Intent(context, CommLinkReaderActivity.class);
+        activityIntent.setAction(CommLinkReaderActivity.ACTION_COMM_LINK_WIDGET_CLICK);
+        activityIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME))); // Why again? Typo in Android docs?
+        PendingIntent pi = PendingIntent.getActivity(context, 0, activityIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        rv.setPendingIntentTemplate(R.id.widgetCommLinkList, pi);
 
         // Instruct the widget manager to update the widget
-        appWidgetManager.updateAppWidget(appWidgetId, views);
+        appWidgetManager.updateAppWidget(appWidgetId, rv);
     }
 
     @Override
@@ -47,12 +61,6 @@ public class CommLinkWidget extends AppWidgetProvider {
     @Override
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
-    }
-
-    protected PendingIntent createPendingIntent(Context context, String action) {
-        Intent intent = new Intent(context, getClass());
-        intent.setAction(action);
-        return PendingIntent.getBroadcast(context, 0, intent, 0);
     }
 }
 

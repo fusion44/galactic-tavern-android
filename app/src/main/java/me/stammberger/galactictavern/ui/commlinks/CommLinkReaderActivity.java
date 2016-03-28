@@ -1,5 +1,6 @@
 package me.stammberger.galactictavern.ui.commlinks;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -44,7 +45,9 @@ import me.stammberger.galactictavern.stores.CommLinkStore;
  * with appropriate styling to make it visually pleasing and easy to read
  */
 public class CommLinkReaderActivity extends AppCompatActivity implements RxViewDispatch, RequestListener<String, GlideDrawable> {
-    public static final String COMM_LINK_ITEM = "comm_link_item";
+    public static final String ACTION_COMM_LINK_WIDGET_CLICK
+            = "me.stammberger.galactictavern.actions.ACTION_COMM_LINK_WIDGET_CLICK";
+    public static final String COMM_LINK_ITEM = "me.stammberger.galactictavern.COMM_LINK_ITEM";
     private CommLinkModel mCommLink;
     private CommLinkStore mCommLinkStore;
     private FloatingActionButton mFab;
@@ -59,15 +62,6 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-
-        Dispatcher dispatcher = GtApplication.getInstance().getRxFlux().getDispatcher();
-        mCommLinkStore = CommLinkStore.get(dispatcher);
-        Long commLinkId = getIntent().getLongExtra(COMM_LINK_ITEM, -1);
-        mCommLink = mCommLinkStore.getCommLink(commLinkId);
-
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(mCommLink.getTitle());
         }
 
         mFab = (FloatingActionButton) findViewById(R.id.share_fab);
@@ -85,29 +79,46 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
             }
         });
 
-        updateFab();
-
-        ImageView backdropView = (ImageView) findViewById(R.id.comm_link_backdrop);
-        Glide.with(this)
-                .load(mCommLink.getMainBackdrop())
-                .listener(this)
-                .into(backdropView);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            /**
-             * Wait until the image is fully loaded and start again in Glides {@link #onResourceReady(GlideDrawable, String, Target, boolean, boolean)}
-             * This is to make sure the transition is started only after the target image is loaded.
-             * The animation will always look correct this way.
-             */
-            supportPostponeEnterTransition();
-            backdropView.setTransitionName(mCommLink.getMainBackdrop());
-        }
-
-        if (mCommLink.getWrappers().size() == 0) {
-            GtApplication.getInstance().getActionCreator()
-                    .getCommLinkContentWrappers(mCommLink.getCommLinkId());
+        Intent i = getIntent();
+        if (i != null && i.getAction() != null &&
+                i.getAction().equals(ACTION_COMM_LINK_WIDGET_CLICK)) {
+            // If this is true, this instance is launched via a widget click -> use a standard Android loader for loading
+            Bundle extras = i.getExtras();
+            // TODO: implement the loader
         } else {
-            setupRecyclerView();
+            Dispatcher dispatcher = GtApplication.getInstance().getRxFlux().getDispatcher();
+            mCommLinkStore = CommLinkStore.get(dispatcher);
+            Long commLinkId = getIntent().getLongExtra(COMM_LINK_ITEM, -1);
+            mCommLink = mCommLinkStore.getCommLink(commLinkId);
+
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle(mCommLink.getTitle());
+            }
+
+            ImageView backdropView = (ImageView) findViewById(R.id.comm_link_backdrop);
+            Glide.with(this)
+                    .load(mCommLink.getMainBackdrop())
+                    .listener(this)
+                    .into(backdropView);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                /**
+                 * Wait until the image is fully loaded and start again in Glides {@link #onResourceReady(GlideDrawable, String, Target, boolean, boolean)}
+                 * This is to make sure the transition is started only after the target image is loaded.
+                 * The animation will always look correct this way.
+                 */
+                supportPostponeEnterTransition();
+                backdropView.setTransitionName(mCommLink.getMainBackdrop());
+            }
+
+            if (mCommLink.getWrappers().size() == 0) {
+                GtApplication.getInstance().getActionCreator()
+                        .getCommLinkContentWrappers(mCommLink.getCommLinkId());
+            } else {
+                setupRecyclerView();
+            }
+
+            updateFab();
         }
     }
 
