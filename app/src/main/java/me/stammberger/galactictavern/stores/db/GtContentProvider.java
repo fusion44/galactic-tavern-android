@@ -9,7 +9,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import me.stammberger.galactictavern.stores.db.tables.FavoritesTable;
 import me.stammberger.galactictavern.stores.db.tables.commlink.CommLinkModelTable;
+import me.stammberger.galactictavern.stores.db.tables.commlink.ContentBlock1Table;
+import me.stammberger.galactictavern.stores.db.tables.commlink.ContentBlock2Table;
+import me.stammberger.galactictavern.stores.db.tables.commlink.ContentBlock4Table;
+import me.stammberger.galactictavern.stores.db.tables.commlink.ContentWrapperTable;
 
 /**
  * Android Content provider.
@@ -20,14 +25,56 @@ public class GtContentProvider extends ContentProvider {
     @NonNull
     public static final String AUTHORITY = "me.stammberger.galactictavern.stores.db.gt_provider";
 
+    private static final String PATH_COMM_LINK = "comm-link";
+    public static final Uri URI_COMM_LINK = Uri.parse("content://" + AUTHORITY)
+            .buildUpon().appendPath(PATH_COMM_LINK).build();
+    private static final int URI_MATCHER_CODE_COMM_LINK = 1;
+
     private static final String PATH_COMM_LINKS = "comm-links";
     public static final Uri URI_COMM_LINKS = Uri.parse("content://" + AUTHORITY)
             .buildUpon().appendPath(PATH_COMM_LINKS).build();
-    private static final int URI_MATCHER_CODE_COMM_LINKS = 1;
-    private static final UriMatcher URI_MATCHER = new UriMatcher(1);
+    private static final int URI_MATCHER_CODE_COMM_LINKS = 2;
+
+    private static final String PATH_COMM_LINK_WRAPPER_IDS = "comm-link-wrapper-ids";
+    public static final Uri URI_COMM_LINK_WRAPPER_IDS = Uri.parse("content://" + AUTHORITY)
+            .buildUpon().appendPath(PATH_COMM_LINK_WRAPPER_IDS).build();
+    private static final int URI_MATCHER_CODE_COMM_LINK_WRAPPER_IDS = 3;
+
+    // Block 4
+    private static final String PATH_COMM_LINK_WRAPPER_BLOCK4 = "wrapper-block-4";
+    public static final Uri URI_COMM_LINK_WRAPPER_BLOCK4 = Uri.parse("content://" + AUTHORITY)
+            .buildUpon().appendPath(PATH_COMM_LINK_WRAPPER_BLOCK4).build();
+    private static final int URI_MATCHER_CODE_COMM_LINK_WRAPPER_BLOCK4 = 4;
+
+    // Block 2
+    private static final String PATH_COMM_LINK_WRAPPER_BLOCK2 = "wrapper-block-2";
+    public static final Uri URI_COMM_LINK_WRAPPER_BLOCK2 = Uri.parse("content://" + AUTHORITY)
+            .buildUpon().appendPath(PATH_COMM_LINK_WRAPPER_BLOCK2).build();
+    private static final int URI_MATCHER_CODE_COMM_LINK_WRAPPER_BLOCK2 = 5;
+
+    // Block 2
+    private static final String PATH_COMM_LINK_WRAPPER_BLOCK1 = "wrapper-block-1";
+    public static final Uri URI_COMM_LINK_WRAPPER_BLOCK1 = Uri.parse("content://" + AUTHORITY)
+            .buildUpon().appendPath(PATH_COMM_LINK_WRAPPER_BLOCK1).build();
+    private static final int URI_MATCHER_CODE_COMM_LINK_WRAPPER_BLOCK1 = 6;
+
+    // Favorites
+    private static final String PATH_FAVORITE = "favorite";
+    public static final Uri URI_FAVORITE = Uri.parse("content://" + AUTHORITY)
+            .buildUpon().appendPath(PATH_FAVORITE).build();
+    private static final int URI_MATCHER_CODE_FAVORITE = 7;
+
+
+    private static final UriMatcher URI_MATCHER = new UriMatcher(0);
 
     static {
+        URI_MATCHER.addURI(AUTHORITY, PATH_COMM_LINK, URI_MATCHER_CODE_COMM_LINK);
         URI_MATCHER.addURI(AUTHORITY, PATH_COMM_LINKS, URI_MATCHER_CODE_COMM_LINKS);
+        URI_MATCHER.addURI(AUTHORITY, PATH_COMM_LINK_WRAPPER_IDS, URI_MATCHER_CODE_COMM_LINK_WRAPPER_IDS);
+        URI_MATCHER.addURI(AUTHORITY, PATH_COMM_LINK_WRAPPER_BLOCK4, URI_MATCHER_CODE_COMM_LINK_WRAPPER_BLOCK4);
+        URI_MATCHER.addURI(AUTHORITY, PATH_COMM_LINK_WRAPPER_BLOCK2, URI_MATCHER_CODE_COMM_LINK_WRAPPER_BLOCK2);
+        URI_MATCHER.addURI(AUTHORITY, PATH_COMM_LINK_WRAPPER_BLOCK1, URI_MATCHER_CODE_COMM_LINK_WRAPPER_BLOCK1);
+        URI_MATCHER.addURI(AUTHORITY, PATH_FAVORITE, URI_MATCHER_CODE_FAVORITE);
     }
 
     SQLiteOpenHelper sqLiteOpenHelper;
@@ -48,6 +95,18 @@ public class GtContentProvider extends ContentProvider {
     @Override
     public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         switch (URI_MATCHER.match(uri)) {
+            case URI_MATCHER_CODE_COMM_LINK:
+                return sqLiteOpenHelper
+                        .getReadableDatabase()
+                        .query(
+                                CommLinkModelTable.TABLE,
+                                projection,
+                                selection,
+                                selectionArgs,
+                                null,
+                                null,
+                                sortOrder
+                        );
             case URI_MATCHER_CODE_COMM_LINKS:
                 return sqLiteOpenHelper
                         .getReadableDatabase()
@@ -60,7 +119,66 @@ public class GtContentProvider extends ContentProvider {
                                 null,
                                 sortOrder
                         );
-
+            case URI_MATCHER_CODE_COMM_LINK_WRAPPER_IDS:
+                return sqLiteOpenHelper
+                        .getReadableDatabase()
+                        .query(
+                                ContentWrapperTable.TABLE,
+                                projection,
+                                selection,
+                                selectionArgs,
+                                null,
+                                null,
+                                sortOrder
+                        );
+            case URI_MATCHER_CODE_COMM_LINK_WRAPPER_BLOCK4:
+                return sqLiteOpenHelper
+                        .getReadableDatabase()
+                        .query(
+                                ContentBlock4Table.TABLE,
+                                projection,
+                                selection,
+                                selectionArgs,
+                                null,
+                                null,
+                                sortOrder
+                        );
+            case URI_MATCHER_CODE_COMM_LINK_WRAPPER_BLOCK2:
+                return sqLiteOpenHelper
+                        .getReadableDatabase()
+                        .query(
+                                ContentBlock2Table.TABLE,
+                                projection,
+                                selection,
+                                selectionArgs,
+                                null,
+                                null,
+                                sortOrder
+                        );
+            case URI_MATCHER_CODE_COMM_LINK_WRAPPER_BLOCK1:
+                return sqLiteOpenHelper
+                        .getReadableDatabase()
+                        .query(
+                                ContentBlock1Table.TABLE,
+                                projection,
+                                selection,
+                                selectionArgs,
+                                null,
+                                null,
+                                sortOrder
+                        );
+            case URI_MATCHER_CODE_FAVORITE:
+                return sqLiteOpenHelper
+                        .getReadableDatabase()
+                        .query(
+                                FavoritesTable.TABLE,
+                                projection,
+                                selection,
+                                selectionArgs,
+                                null,
+                                null,
+                                sortOrder
+                        );
             default:
                 return null;
         }
