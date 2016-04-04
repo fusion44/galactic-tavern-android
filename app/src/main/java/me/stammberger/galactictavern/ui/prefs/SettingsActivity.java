@@ -179,6 +179,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             preference.getOnPreferenceChangeListener().onPreferenceChange(preference,
                     preference.getSharedPreferences().getString(preference.getKey(),
                             getString(R.string.pref_sync_frequency_default_value)));
+
+            findPreference(getString(R.string.pref_key_tracking))
+                    .setOnPreferenceChangeListener((pref, newValue) -> {
+                        GtApplication.getInstance().setTrackingEnabled((boolean) newValue);
+                        return true;
+                    });
         }
 
         @Override

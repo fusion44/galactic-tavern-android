@@ -46,9 +46,9 @@ import me.stammberger.galactictavern.ui.RxFluxActivity;
  */
 public class ForumThreadListActivity extends RxFluxActivity implements OnMoreListener {
     public static final String KEY_FORUM_ID = "forum_id";
-
     public static final String VIEWER_TYPE_WEB_VIEW = "web_view";
     public static final String VIEWER_TYPE_RECYCLER_VIEW = "recycler_view";
+    private static final String TRACKING_SCREEN_THREAD_LIST_ACTIVITY = "ForumThreadListActivity";
     public static String viewerType = VIEWER_TYPE_WEB_VIEW;
 
 
@@ -97,6 +97,12 @@ public class ForumThreadListActivity extends RxFluxActivity implements OnMoreLis
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
+    }
+
+    @Override
+    protected void onResume() {
+        GtApplication.getInstance().trackScreen(TRACKING_SCREEN_THREAD_LIST_ACTIVITY);
+        super.onResume();
     }
 
     @Override

@@ -9,4 +9,10 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_title_sync_frequency" />
 
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/pref_key_tracking"
+        android:summary="@string/pref_summary_tracking"
+        android:title="@string/pref_title_tracking_enabled" />
+
 </PreferenceScreen>

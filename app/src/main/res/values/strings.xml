@@ -132,7 +132,7 @@
     <string name="ship_detail_card_modular_title">Additional</string>
 
     <!-- Strings related to Settings -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
+    <string name="pref_header_data_sync">Data &amp; sync &amp; privacy</string>
     <string name="pref_title_sync_frequency">Sync frequency</string>
     <string name="pref_sync_frequency_default_value" translatable="false">10800</string>
     <string name="pref_key_comm_link_sync_frequency" translatable="false">comm_link_sync_frequency</string>
@@ -152,6 +152,9 @@
     <string name="pref_header_notifications">Notifications</string>
     <string name="pref_title_new_comm_link_notifications">New Comm-Link notifications</string>
     <string name="pref_key_new_comm_link_notifications" translatable="false">new_comm_link_notifications</string>
+    <string name="pref_key_tracking" translatable="false">pref_key_tracking_enabled</string>
+    <string name="pref_title_tracking_enabled">Anonymous usage statistics</string>
+    <string name="pref_summary_tracking">Help improve the application by allowing anonymous usage tracking</string>
 
 
 </resources>

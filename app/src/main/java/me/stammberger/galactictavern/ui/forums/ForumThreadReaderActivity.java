@@ -12,6 +12,7 @@ import com.malinskiy.superrecyclerview.OnMoreListener;
 
 import java.util.List;
 
+import me.stammberger.galactictavern.GtApplication;
 import me.stammberger.galactictavern.R;
 import me.stammberger.galactictavern.actions.Actions;
 import me.stammberger.galactictavern.actions.Keys;
@@ -26,6 +27,7 @@ import me.stammberger.galactictavern.ui.RxFluxActivity;
  * in a {@link ForumThreadListActivity}.
  */
 public class ForumThreadReaderActivity extends RxFluxActivity implements OnMoreListener {
+    private static final String TRACKING_SCREEN_THREAD_READER_ACTIVITY = "ForumThreadReaderActivity";
 
     private Fragment mFragment;
 
@@ -69,6 +71,12 @@ public class ForumThreadReaderActivity extends RxFluxActivity implements OnMoreL
                     .add(R.id.forumThreadReaderContainer, mFragment)
                     .commit();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        GtApplication.getInstance().trackScreen(TRACKING_SCREEN_THREAD_READER_ACTIVITY);
+        super.onResume();
     }
 
     @Override

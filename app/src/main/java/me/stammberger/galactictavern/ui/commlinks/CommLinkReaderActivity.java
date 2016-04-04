@@ -98,6 +98,7 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
             FavoritesTable.COLUMN_ID,
             FavoritesTable.COLUMN_REFERENCE
     };
+    private static final String TRACKING_SCREEN_COMM_LINK_READER_ACTIVITY = "CommLinkReaderActivity";
     private static final int LOADER_ID_COMM_LINK = 1336;
     private static final int LOADER_ID_WRAPPER_IDS = 1337;
     private static final int LOADER_ID_WRAPPER_BLOCK_4 = 1338;
@@ -146,6 +147,10 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
         Intent i = getIntent();
         if (i != null && i.getAction() != null &&
                 i.getAction().equals(ACTION_COMM_LINK_WIDGET_CLICK)) {
+            GtApplication.getInstance().trackEvent(
+                    TRACKING_SCREEN_COMM_LINK_READER_ACTIVITY,
+                    "openBy",
+                    "widget");
             // If this is true, this instance is launched via a widget click -> use a standard Android loader for loading
             Bundle extras = i.getExtras();
             mCommLinkId = extras.getInt(COMM_LINK_ITEM);
@@ -153,6 +158,10 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
             getLoaderManager().initLoader(LOADER_ID_WRAPPER_IDS, null, this);
             getLoaderManager().initLoader(LOADER_ID_FAVORITE, null, this);
         } else {
+            GtApplication.getInstance().trackEvent(
+                    TRACKING_SCREEN_COMM_LINK_READER_ACTIVITY,
+                    "openBy",
+                    "comm_link_list");
             Dispatcher dispatcher = GtApplication.getInstance().getRxFlux().getDispatcher();
             mCommLinkStore = CommLinkStore.get(dispatcher);
             Long commLinkId = getIntent().getLongExtra(COMM_LINK_ITEM, -1);
@@ -361,6 +370,12 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
         }
 
         return null;
+    }
+
+    @Override
+    protected void onResume() {
+        GtApplication.getInstance().trackScreen(TRACKING_SCREEN_COMM_LINK_READER_ACTIVITY);
+        super.onResume();
     }
 
     @Override

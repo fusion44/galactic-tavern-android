@@ -128,6 +128,7 @@ public class ForumListFragment extends Fragment implements SwipeRefreshLayout.On
     public void onListFragmentInteraction(Forum item) {
         Intent i = new Intent(getActivity(), ForumThreadListActivity.class);
         i.putExtra(ForumThreadListActivity.KEY_FORUM_ID, item.forumId);
+        GtApplication.getInstance().trackEvent("Forums", "open", item.forumId);
         startActivity(i);
     }
 }

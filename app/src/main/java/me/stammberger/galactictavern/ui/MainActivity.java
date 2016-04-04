@@ -48,6 +48,12 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
         , RxViewDispatch {
 
+    private static final String TRACKING_SCREEN_COMM_LINK_FRAGMENT = "CommLinkFragment";
+    private static final String TRACKING_SCREEN_SHIPS_FRAGMENT = "ShipsFragment";
+    private static final String TRACKING_SCREEN_USERS_FRAGMENT = "UsersFragment";
+    private static final String TRACKING_SCREEN_FORUMS_FRAGMENT = "ForumsFragment";
+    private static final String TRACKING_SCREEN_ORG_FRAGMENT = "OrgsFragment";
+
     private static final String KEY_CURRENT_FRAGMENT = "stores_registered";
     /**
      * Instance of {@link CommLinkStore} for retrieving comm links
@@ -130,6 +136,25 @@ public class MainActivity extends AppCompatActivity
                 openOrgFragment();
             }
         }
+    }
+
+
+    @Override
+    protected void onResume() {
+        String fragment = mCurrentFragment.getClass().getSimpleName();
+        if (fragment.equals(CommLinkListFragment.class.getSimpleName())) {
+            GtApplication.getInstance().trackScreen(TRACKING_SCREEN_COMM_LINK_FRAGMENT);
+        } else if (fragment.equals(ShipListFragment.class.getSimpleName())) {
+            GtApplication.getInstance().trackScreen(TRACKING_SCREEN_SHIPS_FRAGMENT);
+        } else if (fragment.equals(UserSearchFragment.class.getSimpleName())) {
+            GtApplication.getInstance().trackScreen(TRACKING_SCREEN_USERS_FRAGMENT);
+        } else if (fragment.equals(ForumListFragment.class.getSimpleName())) {
+            GtApplication.getInstance().trackScreen(TRACKING_SCREEN_FORUMS_FRAGMENT);
+        } else if (fragment.equals(OrgsFragment.class.getSimpleName())) {
+            GtApplication.getInstance().trackScreen(TRACKING_SCREEN_ORG_FRAGMENT);
+        }
+
+        super.onResume();
     }
 
     @Override
@@ -217,6 +242,7 @@ public class MainActivity extends AppCompatActivity
             getSupportActionBar().setTitle(R.string.navigation_drawer_comm_link);
         }
 
+        GtApplication.getInstance().trackScreen(TRACKING_SCREEN_COMM_LINK_FRAGMENT);
         Prefs.putString(KEY_CURRENT_FRAGMENT, simpleClassName);
     }
 
@@ -240,6 +266,7 @@ public class MainActivity extends AppCompatActivity
             getSupportActionBar().setTitle(R.string.navigation_drawer_ships);
         }
 
+        GtApplication.getInstance().trackScreen(TRACKING_SCREEN_SHIPS_FRAGMENT);
         Prefs.putString(KEY_CURRENT_FRAGMENT, simpleClassName);
     }
 
@@ -262,6 +289,7 @@ public class MainActivity extends AppCompatActivity
             getSupportActionBar().setTitle(R.string.navigation_drawer_users);
         }
 
+        GtApplication.getInstance().trackScreen(TRACKING_SCREEN_USERS_FRAGMENT);
         Prefs.putString(KEY_CURRENT_FRAGMENT, simpleClassName);
     }
 
@@ -284,6 +312,7 @@ public class MainActivity extends AppCompatActivity
             getSupportActionBar().setTitle(R.string.navigation_drawer_forums);
         }
 
+        GtApplication.getInstance().trackScreen(TRACKING_SCREEN_FORUMS_FRAGMENT);
         Prefs.putString(KEY_CURRENT_FRAGMENT, simpleClassName);
     }
 
@@ -306,6 +335,7 @@ public class MainActivity extends AppCompatActivity
             getSupportActionBar().setTitle(R.string.navigation_drawer_organizations);
         }
 
+        GtApplication.getInstance().trackScreen(TRACKING_SCREEN_ORG_FRAGMENT);
         Prefs.putString(KEY_CURRENT_FRAGMENT, simpleClassName);
     }
 

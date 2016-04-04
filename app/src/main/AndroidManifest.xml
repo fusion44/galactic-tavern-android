@@ -3,6 +3,7 @@
     package="me.stammberger.galactictavern">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- for CommLinkUpdaterService -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 

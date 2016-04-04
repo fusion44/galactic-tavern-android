@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.util.Log;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.hardsoftstudio.rxflux.RxFlux;
 import com.pixplicity.easyprefs.library.Prefs;
 import com.pushtorefresh.storio.sqlite.SQLiteTypeMapping;
@@ -62,6 +65,16 @@ public class GtApplication extends Application {
      */
     private DefaultStorIOSQLite mStorIOSQLite;
 
+    /**
+     * Google Analytics Tracker
+     */
+    private Tracker mTracker;
+
+    /**
+     * Shows whether tracking is enabled or not
+     */
+    private boolean mTrackingEnabled = false;
+
     public static GtApplication getInstance() {
         return mInstance;
     }
@@ -98,6 +111,9 @@ public class GtApplication extends Application {
             CommLinkUpdaterService.scheduleRepeatedUpdates(this, interval);
         }
 
+        mTrackingEnabled = Prefs.getBoolean(getString(R.string.pref_key_tracking), false);
+        setUpAnalytics();
+
         mInstance = this;
     }
 
@@ -132,6 +148,68 @@ public class GtApplication extends Application {
 
     public DefaultStorIOSQLite getStorIOSQLite() {
         return mStorIOSQLite;
+    }
+
+    /**
+     * Setup Google Analytics
+     */
+    private void setUpAnalytics() {
+        if (mTracker == null && mTrackingEnabled) {
+            GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+            // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
+            mTracker = analytics.newTracker(R.xml.global_tracker);
+        }
+    }
+
+    /**
+     * Gets the current tracking enabled state
+     *
+     * @return true if enabled, false otherwise
+     */
+    public boolean getTrackingEnabled() {
+        return mTrackingEnabled;
+    }
+
+    /**
+     * Sets whether user has enabled or disabled tracking
+     *
+     * @param trackingEnabled The tracking state
+     */
+    public void setTrackingEnabled(boolean trackingEnabled) {
+        mTrackingEnabled = trackingEnabled;
+        if (!trackingEnabled) {
+            mTracker = null;
+        } else {
+            setUpAnalytics();
+        }
+    }
+
+    /**
+     * Tracks the current screen name
+     *
+     * @param screenName the screen name
+     */
+    public void trackScreen(String screenName) {
+        if (mTrackingEnabled && mTracker != null) {
+            mTracker.setScreenName(screenName);
+            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        }
+    }
+
+    /**
+     * Tracks an Event
+     *
+     * @param category Event category
+     * @param action   Event action
+     */
+    public void trackEvent(String category, String action, String label) {
+        if (mTrackingEnabled && mTracker != null) {
+            mTracker.send(new HitBuilders.EventBuilder()
+                    .setCategory(category)
+                    .setAction(action)
+                    .setLabel(label)
+                    .build());
+        }
     }
 
     /**
