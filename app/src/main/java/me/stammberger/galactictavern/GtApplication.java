@@ -156,6 +156,7 @@ public class GtApplication extends Application {
     private void setUpAnalytics() {
         if (mTracker == null && mTrackingEnabled) {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+            analytics.enableAutoActivityReports(this);
             // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
             mTracker = analytics.newTracker(R.xml.global_tracker);
         }
