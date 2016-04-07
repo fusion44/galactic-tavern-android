@@ -154,7 +154,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         public boolean onOptionsItemSelected(MenuItem item) {
             int id = item.getItemId();
             if (id == android.R.id.home) {
-                boolean isLarge = getResources().getBoolean(R.bool.is_large_layout);
+                boolean isLarge = isXLargeTablet(getActivity());
                 if (isLarge) {
                     NavUtils.navigateUpFromSameTask(getActivity());
                 } else {
@@ -196,7 +196,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         public boolean onOptionsItemSelected(MenuItem item) {
             int id = item.getItemId();
             if (id == android.R.id.home) {
-                boolean isLarge = getResources().getBoolean(R.bool.is_large_layout);
+                boolean isLarge = isXLargeTablet(getActivity());
                 if (isLarge) {
                     NavUtils.navigateUpFromSameTask(getActivity());
                 } else {
