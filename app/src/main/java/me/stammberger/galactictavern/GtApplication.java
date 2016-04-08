@@ -107,8 +107,9 @@ public class GtApplication extends Application {
 
         if (!Prefs.contains(getString(R.string.pref_key_comm_link_sync_frequency))) {
             Timber.d("CommLinkUpdaterServer is not yet set up -> setting to default values");
-            int interval = Integer.valueOf(getString(R.string.pref_sync_frequency_default_value));
-            CommLinkUpdaterService.scheduleRepeatedUpdates(this, interval);
+            String interval = getString(R.string.pref_sync_frequency_default_value);
+            CommLinkUpdaterService.scheduleRepeatedUpdates(this, Integer.valueOf(interval));
+            Prefs.putString(getString(R.string.pref_key_comm_link_sync_frequency), interval);
         }
 
         mTrackingEnabled = Prefs.getBoolean(getString(R.string.pref_key_tracking), false);
