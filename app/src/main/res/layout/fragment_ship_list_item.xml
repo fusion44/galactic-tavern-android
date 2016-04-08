@@ -5,7 +5,7 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/card_view_margin_bottom"
     android:elevation="@dimen/card_view_rested_elevation_state"
     card_view:cardCornerRadius="@dimen/card_view_corner_radius">
@@ -21,7 +21,7 @@
 
             <ImageView
                 android:id="@+id/shipListItemBackdropImageView"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="@dimen/ship_item_height"
                 android:contentDescription="@string/content_desc_ship_backdrop"
                 android:scaleType="centerCrop"
@@ -30,7 +30,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|left"
+                android:layout_gravity="bottom|left|start"
                 android:orientation="vertical"
                 android:paddingEnd="@dimen/card_view_title_text_padding_sides"
                 android:paddingLeft="@dimen/card_view_title_text_padding_sides"
