@@ -1,8 +1,15 @@
 package me.stammberger.galactictavern.core;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.pixplicity.easyprefs.library.Prefs;
 
 import net.danlew.android.joda.DateUtils;
 
@@ -13,6 +20,9 @@ import java.util.Collections;
 import java.util.List;
 
 import me.stammberger.galactictavern.R;
+import me.stammberger.galactictavern.models.commlink.CommLinkModel;
+import me.stammberger.galactictavern.ui.MainActivity;
+import me.stammberger.galactictavern.ui.commlinks.CommLinkReaderActivity;
 import timber.log.Timber;
 
 /**
@@ -23,6 +33,74 @@ public class Utility {
      * The URL to rsi.com
      */
     public static final String RSI_BASE_URL = "https://robertsspaceindustries.com/";
+
+    /**
+     * The Notification ID for all notifications related to comm links
+     */
+    private static final int NOTIFICATION_ID_COMM_LINK = 2210;
+
+    public static void buildCommLinkNotification(Context context, List<CommLinkModel> commLinkModels) {
+        boolean showNotifications = Prefs.getBoolean(
+                context.getString(R.string.pref_key_new_comm_link_notifications),
+                true);
+
+        if (showNotifications) {
+            if (commLinkModels.size() == 1) {
+                // if show notifications is turned on and we have
+                // one new comm link -> use a detailed notification
+                CommLinkModel m = commLinkModels.get(0);
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+                builder.setSmallIcon(R.drawable.ic_comm_link_black_24dp);
+                builder.setContentTitle(m.getTitle());
+                builder.setContentText(m.getSummary());
+
+                Intent activityIntent = new Intent(context, CommLinkReaderActivity.class);
+                activityIntent.putExtra(CommLinkReaderActivity.COMM_LINK_ITEM, m.getCommLinkId());
+                activityIntent.setAction(CommLinkReaderActivity.ACTION_COMM_LINK_NOTIFICATION_CLICK);
+                PendingIntent pi = PendingIntent.getActivity(context, 0, activityIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+                builder.setContentIntent(pi);
+
+                Notification n = builder.build();
+                NotificationManagerCompat.from(context).notify(NOTIFICATION_ID_COMM_LINK, n);
+            } else if (commLinkModels.size() > 1) {
+                // if show notifications is turned on and we have
+                // more than one new comm link -> use an inbox style notification
+
+                NotificationCompat.InboxStyle inboxStyle =
+                        new NotificationCompat.InboxStyle();
+                inboxStyle.setBigContentTitle(
+                        context.getString(R.string.notification_big_content_title));
+                inboxStyle.setSummaryText(context.getString(
+                        R.string.notification_summary_text,
+                        commLinkModels.size()));
+                for (CommLinkModel model : commLinkModels) {
+                    inboxStyle.addLine(model.getTitle());
+                }
+
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+                builder.setSmallIcon(R.drawable.ic_comm_link_black_24dp);
+                builder.setStyle(inboxStyle);
+
+                Intent activityIntent = new Intent(context, MainActivity.class);
+                PendingIntent pi = PendingIntent.getActivity(
+                        context, 0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                builder.setContentIntent(pi);
+
+                Notification n = builder.build();
+                NotificationManagerCompat.from(context).notify(NOTIFICATION_ID_COMM_LINK, n);
+            }
+        }
+    }
+
+    /**
+     * Clears all current notifications
+     *
+     * @param context The current app context
+     */
+    public static void cancelNotifications(Context context) {
+        NotificationManagerCompat.from(context).cancelAll();
+    }
 
     /**
      * Extracts the comm link id from an url
@@ -139,7 +217,7 @@ public class Utility {
     /**
      * Converts a unix timestamp to a human readable String.
      * The output will be relative to current device time
-     *
+     * <p>
      * Input must be in milliseconds!
      * Unix timestamp is in seconds but Javas timestamp is in milliseconds!
      *

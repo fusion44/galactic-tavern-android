@@ -28,6 +28,7 @@ import me.stammberger.galactictavern.GtApplication;
 import me.stammberger.galactictavern.R;
 import me.stammberger.galactictavern.actions.Actions;
 import me.stammberger.galactictavern.actions.Keys;
+import me.stammberger.galactictavern.core.Utility;
 import me.stammberger.galactictavern.models.ship.Ship;
 import me.stammberger.galactictavern.stores.CommLinkStore;
 import me.stammberger.galactictavern.stores.ForumStore;
@@ -141,6 +142,8 @@ public class MainActivity extends AppCompatActivity
                 openOrgFragment();
             }
         }
+
+        Utility.cancelNotifications(this);
     }
 
 

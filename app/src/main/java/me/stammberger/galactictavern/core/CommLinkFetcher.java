@@ -177,6 +177,10 @@ public class CommLinkFetcher implements Callback {
                                 getAllCommLinksFromDb();
                                 if (mCallback != null) {
                                     mCallback.onUpdateFinished(commLinkModelPutResults.results().size());
+
+                                    // TODO: Add better way to find whether we run from
+                                    // a background thread than using the callback as a source
+                                    Utility.buildCommLinkNotification(mContext, commLinkModels);
                                 }
                             }, throwable -> {
                                 onError();

@@ -107,7 +107,7 @@ public class CommLinkRemoteViewsService extends RemoteViewsService {
             }
 
             Bundle extras = new Bundle();
-            extras.putInt(CommLinkReaderActivity.COMM_LINK_ITEM, data.getInt(INDEX_COMM_LINK_ID));
+            extras.putLong(CommLinkReaderActivity.COMM_LINK_ITEM, data.getLong(INDEX_COMM_LINK_ID));
             Intent fillInIntent = new Intent();
             fillInIntent.putExtras(extras);
             views.setOnClickFillInIntent(R.id.widgetItemTitleTextView, fillInIntent);

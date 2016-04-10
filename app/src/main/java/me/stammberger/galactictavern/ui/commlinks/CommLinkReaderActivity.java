@@ -2,7 +2,6 @@ package me.stammberger.galactictavern.ui.commlinks;
 
 import android.app.LoaderManager;
 import android.content.CursorLoader;
-import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -66,6 +65,8 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
         LoaderManager.LoaderCallbacks<Cursor> {
     public static final String ACTION_COMM_LINK_WIDGET_CLICK
             = "me.stammberger.galactictavern.actions.ACTION_COMM_LINK_WIDGET_CLICK";
+    public static final String ACTION_COMM_LINK_NOTIFICATION_CLICK
+            = "me.stammberger.galactictavern.actions.ACTION_COMM_LINK_NOTIFICATION_CLICK";
     public static final String COMM_LINK_ITEM = "me.stammberger.galactictavern.COMM_LINK_ITEM";
     /**
      * Loader implementation
@@ -108,7 +109,7 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
     private CommLinkModel mCommLink;
     private CommLinkStore mCommLinkStore;
     private FloatingActionButton mFab;
-    private int mCommLinkId;
+    private long mCommLinkId;
     private HashMap<String, Wrapper> mWrappersB4 = new HashMap<>();
     private HashMap<String, Wrapper> mWrappersB2 = new HashMap<>();
     private HashMap<String, Wrapper> mWrappersB1 = new HashMap<>();
@@ -130,30 +131,41 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
         }
 
         mFab = (FloatingActionButton) findViewById(R.id.share_fab);
-        mFab.setOnClickListener(v -> {
-            GtActionCreator actionCreator = GtApplication.getInstance().getActionCreator();
-            Favorite f = new Favorite();
-            f.type = Favorite.TYPE_COMM_LINK;
-            f.date = DateTime.now().getMillis();
-            f.reference = String.valueOf(mCommLink.getCommLinkId());
+        if (mFab != null) {
+            mFab.setOnClickListener(v -> {
+                GtActionCreator actionCreator = GtApplication.getInstance().getActionCreator();
+                Favorite f = new Favorite();
+                f.type = Favorite.TYPE_COMM_LINK;
+                f.date = DateTime.now().getMillis();
+                f.reference = String.valueOf(mCommLink.getCommLinkId());
 
-            if (mCommLink.favorite) {
-                actionCreator.removeFavorite(f);
+                if (mCommLink.favorite) {
+                    actionCreator.removeFavorite(f);
+                } else {
+                    actionCreator.addFavorite(f);
+                }
+            });
+        }
+
+        String action = getIntent().getAction();
+        if (action != null && (action.equals(ACTION_COMM_LINK_WIDGET_CLICK) ||
+                action.equals(ACTION_COMM_LINK_NOTIFICATION_CLICK))) {
+
+            if (action.equals(ACTION_COMM_LINK_WIDGET_CLICK)) {
+                GtApplication.getInstance().trackEvent(
+                        TRACKING_SCREEN_COMM_LINK_READER_ACTIVITY,
+                        "openBy",
+                        "widget");
             } else {
-                actionCreator.addFavorite(f);
+                GtApplication.getInstance().trackEvent(
+                        TRACKING_SCREEN_COMM_LINK_READER_ACTIVITY,
+                        "openBy",
+                        "notification");
             }
-        });
 
-        Intent i = getIntent();
-        if (i != null && i.getAction() != null &&
-                i.getAction().equals(ACTION_COMM_LINK_WIDGET_CLICK)) {
-            GtApplication.getInstance().trackEvent(
-                    TRACKING_SCREEN_COMM_LINK_READER_ACTIVITY,
-                    "openBy",
-                    "widget");
             // If this is true, this instance is launched via a widget click -> use a standard Android loader for loading
-            Bundle extras = i.getExtras();
-            mCommLinkId = extras.getInt(COMM_LINK_ITEM);
+            Bundle extras = getIntent().getExtras();
+            mCommLinkId = extras.getLong(COMM_LINK_ITEM);
             getLoaderManager().initLoader(LOADER_ID_COMM_LINK, null, this);
             getLoaderManager().initLoader(LOADER_ID_WRAPPER_IDS, null, this);
             getLoaderManager().initLoader(LOADER_ID_FAVORITE, null, this);
@@ -196,6 +208,8 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
 
             updateFab();
         }
+
+        Utility.cancelNotifications(this);
     }
 
     private void updateFab() {

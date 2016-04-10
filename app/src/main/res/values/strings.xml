@@ -157,4 +157,8 @@
     <string name="pref_summary_tracking">Help improve the application by allowing anonymous usage tracking</string>
 
     <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+
+    <!-- Strings related to notifications -->
+    <string name="notification_big_content_title">Comm link updates</string>
+    <string name="notification_summary_text">"You have %1$d unread Comm Links"</string>
 </resources>
