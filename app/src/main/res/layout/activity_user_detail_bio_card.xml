@@ -23,7 +23,8 @@
 
             <ImageView
                 android:id="@+id/userDetailTitleImageView"
-                style="@style/AppTheme.countryFlagImageStyle" />
+                style="@style/AppTheme.countryFlagImageStyle"
+                android:contentDescription="@string/content_desc_user_country_flag" />
 
             <TextView
                 android:id="@+id/userDetailTitleTextView"

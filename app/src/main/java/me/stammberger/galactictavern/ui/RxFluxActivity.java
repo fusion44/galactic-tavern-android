@@ -1,5 +1,6 @@
 package me.stammberger.galactictavern.ui;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -11,6 +12,7 @@ import com.hardsoftstudio.rxflux.store.RxStoreChange;
 import me.stammberger.galactictavern.GtApplication;
 
 
+@SuppressLint("Registered") // Never instantiated directly
 public class RxFluxActivity extends AppCompatActivity implements RxViewDispatch {
     protected RxFlux mRxFlux;
 

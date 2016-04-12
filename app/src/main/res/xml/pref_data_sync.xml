@@ -10,6 +10,7 @@
         android:title="@string/pref_title_sync_frequency" />
 
     <SwitchPreference
+        android:contentDescription="@string/content_desc_pref_usage_statistics"
         android:defaultValue="false"
         android:key="@string/pref_key_tracking"
         android:summary="@string/pref_summary_tracking"

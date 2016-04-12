@@ -167,7 +167,7 @@ public class ForumListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         public void bind(Forum forum) {
             item = forum;
-            titleTextView.setText(forum.forumTitle);
+            titleTextView.setText(forum.forumTitle.replace("&amp;", "&"));
             descriptionTextView.setText(forum.forumDescription);
 
             activityTextView.setText(mContext.getString(R.string.forum_activity_text,

@@ -1,6 +1,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <SwitchPreference
+        android:contentDescription="@string/content_desc_pref_comm_link_notifications"
         android:defaultValue="true"
         android:key="@string/pref_key_new_comm_link_notifications"
         android:title="@string/pref_title_new_comm_link_notifications" />

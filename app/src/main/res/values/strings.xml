@@ -161,4 +161,6 @@
     <!-- Strings related to notifications -->
     <string name="notification_big_content_title">Comm link updates</string>
     <string name="notification_summary_text">"You have %1$d unread Comm Links"</string>
+    <string name="content_desc_pref_comm_link_notifications">Turns notifications for comm links on and off</string>
+    <string name="content_desc_pref_usage_statistics">Turns collection of anonymous usage statistics on and off</string>
 </resources>
