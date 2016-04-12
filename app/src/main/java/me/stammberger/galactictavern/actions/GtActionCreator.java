@@ -381,10 +381,16 @@ public class GtActionCreator extends RxActionCreator implements Actions {
                 .subscribeOn(Schedulers.io())
                 .map(forumsObject -> forumsObject.data)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(forums -> {
+                .subscribe(threads -> {
+                    if (threads == null) {
+                        // if threads is null here create an empty list to indicate the end of the
+                        // data stream. There are no more forum threads.
+                        threads = new ArrayList<>(0);
+                    }
                     action.getData().put(Keys.FORUM_ID, forumId);
                     action.getData().put(Keys.PAGINATION_CURRENT_PAGE, page);
-                    action.getData().put(Keys.FORUM_THREADS_FOR_PAGE, forums);
+                    action.getData().put(Keys.FORUM_THREADS_FOR_PAGE, threads);
+
                     postRxAction(action);
                 }, throwable -> {
                     Timber.d("Error getting threads data for Forum %s", forumId);
