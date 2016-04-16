@@ -85,6 +85,8 @@
 
     <!-- Error messages -->
     <string name="error_failed_to_load_comm_link_rss">Failed to load RSS feed. Please check connection</string>
+    <string name="error_no_network_generic">Unable to connect to network</string>
+    <string name="error_no_network_activity_reader">No network available. Some images will not be shown.</string>
 
     <!-- Strings concerning Star Citizen -->
     <string name="sc_manufacturer_aegs" translatable="false">Aegis Dynamics</string>

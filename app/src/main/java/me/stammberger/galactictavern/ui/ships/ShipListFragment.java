@@ -2,6 +2,7 @@ package me.stammberger.galactictavern.ui.ships;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -23,6 +24,7 @@ import java.util.List;
 import jp.wasabeef.recyclerview.adapters.SlideInBottomAnimationAdapter;
 import me.stammberger.galactictavern.GtApplication;
 import me.stammberger.galactictavern.R;
+import me.stammberger.galactictavern.core.Utility;
 import me.stammberger.galactictavern.models.ship.Ship;
 import me.stammberger.galactictavern.models.ship.ShipData;
 import me.stammberger.galactictavern.stores.ShipStore;
@@ -90,14 +92,18 @@ public class ShipListFragment extends Fragment implements SwipeRefreshLayout.OnR
             mRecyclerView = (SuperRecyclerView) view;
             mShipStore = ShipStore.get(GtApplication.getInstance().getRxFlux().getDispatcher());
 
-
-            // Check if the store has the articles already loaded
-            ShipData shipData = mShipStore.getAllShips();
-            if (shipData.ships.size() == 0) {
-                // See comm link fragment for explanation
-                GtApplication.getInstance().getActionCreator().getAllShips();
+            if (!Utility.isNetworkAvailable(getActivity())) {
+                Snackbar.make(view, R.string.error_no_network_generic, Snackbar.LENGTH_LONG).show();
+                setShipData(new ShipData());
             } else {
-                setShipData(shipData);
+                // Check if the store has the articles already loaded
+                ShipData shipData = mShipStore.getAllShips();
+                if (shipData.ships.size() == 0) {
+                    // See comm link fragment for explanation
+                    GtApplication.getInstance().getActionCreator().getAllShips();
+                } else {
+                    setShipData(shipData);
+                }
             }
         }
         return view;

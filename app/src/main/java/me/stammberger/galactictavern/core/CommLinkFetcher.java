@@ -57,7 +57,6 @@ public class CommLinkFetcher implements Callback {
         getLatestCommLinkFromDb()
                 .take(1)
                 .subscribe(commLinkModel -> {
-                    Timber.d("calling fetch");
                     if (commLinkModel != null) {
                         mLatestCommLinkDateInDb = commLinkModel.getPublished();
                     }
@@ -74,6 +73,14 @@ public class CommLinkFetcher implements Callback {
     private void fetchRSSFeed() {
         if (mCallback != null) {
             mCallback.onUpdateStarted();
+        }
+
+        // if no network is available just get what's in the DB.
+        // User must be notified by the calling ui
+        if (!Utility.isNetworkAvailable(mContext)) {
+            Timber.d(mContext.getString(R.string.error_no_network_generic));
+            getAllCommLinksFromDb();
+            return;
         }
 
         Timber.d("fetchRSSFeed");

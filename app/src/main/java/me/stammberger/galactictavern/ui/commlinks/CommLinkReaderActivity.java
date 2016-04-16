@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +17,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -189,7 +191,7 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
                     .listener(this)
                     .into(backdropView);
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && Utility.isNetworkAvailable(this)) {
                 /**
                  * Wait until the image is fully loaded and start again in Glides {@link #onResourceReady(GlideDrawable, String, Target, boolean, boolean)}
                  * This is to make sure the transition is started only after the target image is loaded.
@@ -207,6 +209,13 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
             }
 
             updateFab();
+        }
+
+        if (!Utility.isNetworkAvailable(this)) {
+            View v = findViewById(R.id.article_card);
+            if (v != null) {
+                Snackbar.make(v, R.string.error_no_network_activity_reader, Snackbar.LENGTH_LONG).show();
+            }
         }
 
         Utility.cancelNotifications(this);

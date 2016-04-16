@@ -4,6 +4,8 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.view.View;
@@ -264,5 +266,20 @@ public class Utility {
             default:
                 return c.getString(R.string.unknown);
         }
+    }
+
+    /**
+     * Returns true if the network is available or about to become available.
+     *
+     * @param c Context used to get the ConnectivityManager
+     * @return true if the network is available
+     */
+    static public boolean isNetworkAvailable(Context c) {
+        ConnectivityManager cm =
+                (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
     }
 }
