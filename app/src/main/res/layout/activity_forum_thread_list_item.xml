@@ -13,6 +13,7 @@
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/forumThreadListAvatarImageView"
             style="@style/AppTheme.ForumThreadListItem.Avatar"
+            android:contentDescription="@string/content_desc_forum_user_avatar_image"
             tools:src="@drawable/ic_person_24dp" />
 
         <LinearLayout

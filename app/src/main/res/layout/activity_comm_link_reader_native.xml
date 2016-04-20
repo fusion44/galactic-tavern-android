@@ -76,10 +76,11 @@
     </android.support.percent.PercentFrameLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/share_fab"
+        android:id="@+id/favorite_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
+        android:contentDescription="@string/content_desc_favorite_comm_link"
         android:src="@drawable/star_off"
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|right|end" />

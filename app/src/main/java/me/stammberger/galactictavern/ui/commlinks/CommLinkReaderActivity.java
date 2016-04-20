@@ -132,7 +132,7 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        mFab = (FloatingActionButton) findViewById(R.id.share_fab);
+        mFab = (FloatingActionButton) findViewById(R.id.favorite_fab);
         if (mFab != null) {
             mFab.setOnClickListener(v -> {
                 GtActionCreator actionCreator = GtApplication.getInstance().getActionCreator();

@@ -57,14 +57,21 @@
     <string name="content_desc_ship_max_cargo_icon">Max cargo capacity icon</string>
     <string name="content_desc_ship_backdrop">Ship store front image</string>
     <string name="content_desc_ship_backdrop_image">Ship detail backdrop image</string>
+    <string name="content_desc_ship_favorite_button">Favorite current ship</string>
+    <string name="content_desc_manufacturer_filter_btn">Filter button for %1$s</string>
     <string name="content_desc_user_avatar">User avatar</string>
     <string name="content_desc_user_country_flag">Users country flag</string>
     <string name="content_desc_forum_new_discussion_count_bubble">Forum new discussion count bubble</string>
     <string name="content_desc_forum_post_count_icon">Post count icon</string>
     <string name="content_desc_forum_view_count_icon">Thread view count icon</string>
+    <string name="content_desc_forum_user_avatar_image">Forum user avatar image</string>
     <string name="content_desc_list_empty">List view is empty indicator</string>
     <string name="content_desc_widget_date_text">Date of the comm link is %1$s</string>
     <string name="content_desc_widget_comm_link_title">Comm link title is %1$s</string>
+    <string name="content_desc_pref_comm_link_notifications">Turns notifications for comm links on and off</string>
+    <string name="content_desc_pref_usage_statistics">Turns collection of anonymous usage statistics on and off</string>
+    <string name="content_desc_favorite_comm_link">Favorite current comm link</string>
+
 
     <!-- General UI -->
     <string name="no_data">No data to show</string>
@@ -163,6 +170,4 @@
     <!-- Strings related to notifications -->
     <string name="notification_big_content_title">Comm link updates</string>
     <string name="notification_summary_text">"You have %1$d unread Comm Links"</string>
-    <string name="content_desc_pref_comm_link_notifications">Turns notifications for comm links on and off</string>
-    <string name="content_desc_pref_usage_statistics">Turns collection of anonymous usage statistics on and off</string>
 </resources>

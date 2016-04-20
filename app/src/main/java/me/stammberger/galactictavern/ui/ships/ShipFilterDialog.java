@@ -142,6 +142,8 @@ public class ShipFilterDialog extends DialogFragment implements View.OnClickList
     private Button inflateFilterButton(LayoutInflater inflater, String manufacturer) {
         Button btn = (Button) inflater.inflate(R.layout.fragment_ship_list_filter_item, null);
         btn.setText(manufacturer);
+        btn.setContentDescription(getResources().getString(R.string.content_desc_manufacturer_filter_btn,
+                Utility.getFullManufacturerName(getActivity(), manufacturer)));
         btn.setTag(R.id.ship_list_filter_manufacturer_tag, manufacturer);
         btn.setOnClickListener(this);
         return btn;
