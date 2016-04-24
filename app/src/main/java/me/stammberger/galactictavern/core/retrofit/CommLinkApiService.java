@@ -12,7 +12,7 @@ import rx.Observable;
  * Retrofit interface for getting the custom comm link content
  */
 public interface CommLinkApiService {
-    String BASE_URL = "http://fusion44.bitbucket.org/";
+    String BASE_URL = "https://galactic-tavern.firebaseapp.com/";
     //String BASE_URL = "http://192.168.178.95:8000/";
 
     /**
@@ -21,7 +21,7 @@ public interface CommLinkApiService {
      * @param id of the comm link
      * @return Observable which will be called once done loading
      */
-    @GET("/sci/comm-links/{id}.json")
+    @GET("/v1/sci/comm-links/{id}.json")
     Observable<CommLinkModel> getCommLink(@Path("id") int id);
 
     /**
