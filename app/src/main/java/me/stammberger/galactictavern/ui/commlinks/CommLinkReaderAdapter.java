@@ -1,5 +1,9 @@
 package me.stammberger.galactictavern.ui.commlinks;
 
+import android.net.Uri;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -14,10 +18,13 @@ import com.bumptech.glide.Glide;
 
 import me.stammberger.galactictavern.R;
 import me.stammberger.galactictavern.core.Utility;
+import me.stammberger.galactictavern.core.chrome.CustomTabActivityHelper;
+import me.stammberger.galactictavern.core.chrome.WebviewFallback;
 import me.stammberger.galactictavern.models.commlink.CommLinkModel;
 import me.stammberger.galactictavern.models.commlink.ContentBlock2;
 import me.stammberger.galactictavern.models.commlink.Wrapper;
 import me.stammberger.galactictavern.ui.GlideImageGetter;
+import me.stammberger.galactictavern.ui.InterceptLinkMovementMethod;
 import timber.log.Timber;
 
 
@@ -25,12 +32,15 @@ import timber.log.Timber;
  * This Adapter is responsible for managing the Views in the CommLinkReader RecyclerView
  * It'll discern between {@link SingleViewHolder} and {@link SlideshowViewHolder} when creating and binding a view.
  */
-public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+        implements InterceptLinkMovementMethod.LinkClickedCallback {
     private final CommLinkModel mCommLinkModel;
+    private AppCompatActivity mActivity;
 
-    public CommLinkReaderAdapter(CommLinkModel model) {
+    public CommLinkReaderAdapter(CommLinkModel model, AppCompatActivity c) {
         super();
         mCommLinkModel = model;
+        mActivity = c;
     }
 
     @Override
@@ -40,7 +50,7 @@ public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             case ContentBlock2.TYPE_SINGLE:
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.activity_comm_link_reader_native_single, parent, false);
-                return new SingleViewHolder(view);
+                return new SingleViewHolder(view, this);
             case ContentBlock2.TYPE_SLIDESHOW:
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.activity_comm_link_reader_native_slideshow, parent, false);
@@ -68,6 +78,37 @@ public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         return mCommLinkModel.wrappers.size();
     }
 
+    @Override
+    public void onLinkClick(String url) {
+        if (url.startsWith("https://forums.robertsspaceindustries.com/discussion/")) {
+            String[] split = url.replace("https://forums.robertsspaceindustries.com/discussion/", "").split("/");
+            if (split.length > 0) {
+                Long discussionId = Long.valueOf(split[0]);
+                Timber.d("%s", discussionId);
+            } else {
+                Timber.d("Error parsing discussion id from url %s", url);
+            }
+        } else {
+            // simple check whether this is a usable link
+            if (url.contains("robertsspaceindustries")) {
+                CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+                CustomTabActivityHelper.openCustomTab(
+                        mActivity,
+                        customTabsIntent,
+                        Uri.parse(url),
+                        new WebviewFallback());
+            } else {
+                // TODO: Check whether the links can be repaired
+                View v = mActivity.findViewById(R.id.article_card);
+                if (v != null) {
+                    Snackbar.make(v, mActivity.getString(R.string.error_malformed_link),
+                            Snackbar.LENGTH_SHORT)
+                            .show();
+                }
+            }
+        }
+    }
+
     /**
      * VewHolder which holds the text blocks
      */
@@ -79,12 +120,14 @@ public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         public Wrapper model;
         private boolean mHasBackdrop = true;
 
-        public SingleViewHolder(View view) {
+        public SingleViewHolder(View view, InterceptLinkMovementMethod.LinkClickedCallback callback) {
             super(view);
             this.view = view;
             this.headerTextView = (TextView) view.findViewById(R.id.commLinkWrapperHeaderText);
             this.backdropImageView = (ImageView) view.findViewById(R.id.commLinkWrapperBackdrop);
             this.contentTextView = (TextView) view.findViewById(R.id.commLinkWrapperTextBody);
+            this.contentTextView.setMovementMethod(
+                    InterceptLinkMovementMethod.getInstance(callback));
         }
 
 

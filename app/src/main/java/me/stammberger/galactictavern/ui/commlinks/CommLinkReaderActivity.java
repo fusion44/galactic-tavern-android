@@ -186,10 +186,12 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
             }
 
             ImageView backdropView = (ImageView) findViewById(R.id.comm_link_backdrop);
-            Glide.with(this)
-                    .load(mCommLink.getMainBackdrop())
-                    .listener(this)
-                    .into(backdropView);
+            if (backdropView != null) {
+                Glide.with(this)
+                        .load(mCommLink.getMainBackdrop())
+                        .listener(this)
+                        .into(backdropView);
+            }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && Utility.isNetworkAvailable(this)) {
                 /**
@@ -198,7 +200,9 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
                  * The animation will always look correct this way.
                  */
                 supportPostponeEnterTransition();
-                backdropView.setTransitionName(mCommLink.getMainBackdrop());
+                if (backdropView != null) {
+                    backdropView.setTransitionName(mCommLink.getMainBackdrop());
+                }
             }
 
             if (mCommLink.getWrappers().size() == 0) {
@@ -293,12 +297,14 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
      * Sets RecyclerView up once the comm link and its parts are loaded
      */
     private void setupRecyclerView() {
-        CommLinkReaderAdapter cmra = new CommLinkReaderAdapter(mCommLink);
+        CommLinkReaderAdapter cmra = new CommLinkReaderAdapter(mCommLink, this);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.commLinkContentRecyclerView);
-        recyclerView.setAdapter(cmra);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        cmra.notifyDataSetChanged();
+        if (recyclerView != null) {
+            recyclerView.setAdapter(cmra);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+            cmra.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -412,9 +418,11 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
             mCommLink.mainBackdrop = data.getString(1);
 
             ImageView backdropView = (ImageView) findViewById(R.id.comm_link_backdrop);
-            Glide.with(this)
-                    .load(mCommLink.mainBackdrop)
-                    .into(backdropView);
+            if (backdropView != null) {
+                Glide.with(this)
+                        .load(mCommLink.mainBackdrop)
+                        .into(backdropView);
+            }
 
             mCommLinkFinishedLoading = true;
             Timber.d("");
