@@ -9,14 +9,17 @@ import com.pushtorefresh.storio.sqlite.queries.DeleteQuery;
 import com.pushtorefresh.storio.sqlite.queries.Query;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
 import me.stammberger.galactictavern.GtApplication;
 import me.stammberger.galactictavern.R;
-import me.stammberger.galactictavern.core.CommLinkFetcher;
+import me.stammberger.galactictavern.Secrets;
 import me.stammberger.galactictavern.core.Utility;
+import me.stammberger.galactictavern.core.retrofit.CommLinkApiService;
+import me.stammberger.galactictavern.core.retrofit.CommLinkWrapperApiService;
 import me.stammberger.galactictavern.core.retrofit.ForumsApiService;
 import me.stammberger.galactictavern.core.retrofit.OrganizationApiService;
 import me.stammberger.galactictavern.core.retrofit.ShipApiService;
@@ -42,9 +45,6 @@ import timber.log.Timber;
  * Responsible for managing all actions used in the application
  */
 public class GtActionCreator extends RxActionCreator implements Actions {
-    private static final int MAX_USER_SEARCH_ENTRIES = 10;
-    private CommLinkFetcher mCommLinkFetcher;
-
     /**
      * @param dispatcher {@link Dispatcher}
      * @param manager    {@link SubscriptionManager}
@@ -63,47 +63,38 @@ public class GtActionCreator extends RxActionCreator implements Actions {
         final RxAction action = newRxAction(GET_COMM_LINK, id);
         if (hasRxAction(action)) return;
 
-        if (mCommLinkFetcher == null) {
-            mCommLinkFetcher = new CommLinkFetcher();
-        }
-
         getFavoritesInternal(Favorite.TYPE_COMM_LINK, String.valueOf(id))
                 .subscribeOn(Schedulers.io())
                 .subscribe(favorite -> {
-                    addRxAction(action, mCommLinkFetcher.getCommLink(id)
+                    addRxAction(action, CommLinkApiService.Factory.getInstance().getCommLink(
+                            Secrets.GT_API_SECRET, id)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(comm_link -> {
                                 action.getData().put(Keys.COMM_LINK, comm_link);
                                 postRxAction(action);
-                            }, throwable -> {
-                                postError(action, throwable);
-                            }));
+                            }, throwable -> postError(action, throwable)));
                 });
 
     }
 
     /**
-     * Initiates the get comm link retrieval through {@link GtActionCreator#mCommLinkFetcher}
-     * Creates the CommLinkFetcher field and subscribes to its observable
+     * Initiates the get comm link fetching through the API
      * Once the comm links are retrieved it posts a new {@link RxAction} to update {@link CommLinkStore}
      */
     @SuppressWarnings("Convert2streamapi")
     @Override
-    public void getCommLinks() {
+    public void getCommLinks(Long lastCommLinkId, int maxResults) {
         Timber.d("Starting fetch comm link action");
 
         final RxAction action = newRxAction(GET_COMM_LINKS);
         if (hasRxAction(action)) return;
 
-        if (mCommLinkFetcher == null) {
-            mCommLinkFetcher = new CommLinkFetcher();
-        }
-
         getFavoritesInternal(Favorite.TYPE_COMM_LINK)
                 .subscribeOn(Schedulers.io())
                 .subscribe(favorites -> {
-                    addRxAction(action, mCommLinkFetcher.getCommLinks()
+                    addRxAction(action, CommLinkApiService.Factory.getInstanceWithFullLogging().getCommLinks(
+                            Secrets.GT_API_SECRET, lastCommLinkId, maxResults)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(comm_links -> {
@@ -112,7 +103,8 @@ public class GtActionCreator extends RxActionCreator implements Actions {
                                         comm_link.favorite = true;
                                     }
                                 }
-                                action.getData().put(Keys.COMM_LINKS, comm_links);
+                                action.getData().put(Keys.COMM_LINKS,
+                                        new ArrayList<>(Arrays.asList(comm_links)));
                                 postRxAction(action);
                             }, throwable -> {
                                 postError(action, throwable);
@@ -121,8 +113,7 @@ public class GtActionCreator extends RxActionCreator implements Actions {
     }
 
     /**
-     * Initiates the process to get the content wrappers for a specific comm link from the using
-     * {@link CommLinkFetcher#getCommLinkContentWrappers(Long)}.
+     * Initiates the process to get the content wrappers for a specific comm link.
      *
      * @param id The comm link id
      */
@@ -131,11 +122,7 @@ public class GtActionCreator extends RxActionCreator implements Actions {
         final RxAction action = newRxAction(GET_COMM_LINK_CONTENT_WRAPPERS, Keys.COMM_LINK_ID, id);
         if (hasRxAction(action)) return;
 
-        if (mCommLinkFetcher == null) {
-            mCommLinkFetcher = new CommLinkFetcher();
-        }
-
-        addRxAction(action, mCommLinkFetcher.getCommLinkContentWrappers(id)
+        addRxAction(action, CommLinkWrapperApiService.Factory.getInstance().getCommLinkWrappers(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(parts -> {

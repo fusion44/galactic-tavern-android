@@ -1,3 +1,4 @@
+/app/src/main/java/me/stammberger/galactictavern/Secrets.java
 *.iml
 .gradle
 /local.properties

@@ -1,1 +1,1 @@
-include ':app', ':pkrss-debug'
+include ':app'

@@ -63,7 +63,7 @@ public interface Actions {
     /**
      * Fetches all comm links available
      */
-    void getCommLinks();
+    void getCommLinks(Long lastCommLinkId, int maxResults);
 
     /**
      * Fetches all {@link .models.commlink.Wrapper} for a particular comm link
@@ -90,7 +90,7 @@ public interface Actions {
     void getUserSearchHistory();
 
     /**
-     * Pushes a new search entry to the DB. No more than {@value GtActionCreator#MAX_USER_SEARCH_ENTRIES} entries will be stored.
+     * Pushes a new search entry to the DB.
      * Last entry will be discarded.
      *
      * @param e the {@link UserSearchHistoryEntry} object

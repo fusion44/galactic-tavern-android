@@ -20,10 +20,9 @@ import timber.log.Timber;
  * When the API is ready, the App will be notified by a GCM message when a new comm link is released.
  * This is a workaround until then.
  */
-public class CommLinkUpdaterService extends GcmTaskService implements CommLinkFetcher.UpdateProgressCallback {
+public class CommLinkUpdaterService extends GcmTaskService {
     public static final String GCM_REPEAT_TAG = "repeat|[7200,1800]";
     private CountDownLatch keepAliveLatch = new CountDownLatch(1);
-    private CommLinkFetcher mCommLinkFetcher;
 
     /**
      * Schedules an update for every 3 hours.
@@ -72,29 +71,6 @@ public class CommLinkUpdaterService extends GcmTaskService implements CommLinkFe
     }
 
     private void handleActionUpdateCommLinks() {
-        if (mCommLinkFetcher == null) {
-            mCommLinkFetcher = new CommLinkFetcher(this, false);
-            try {
-                keepAliveLatch.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
-    @Override
-    public void onUpdateStarted() {
-    }
-
-    @Override
-    public void onUpdateError() {
-        Timber.d("Error during fetch. Stopping Service");
-        keepAliveLatch.countDown();
-    }
-
-    @Override
-    public void onUpdateFinished(Integer numDbUpdated) {
-        Timber.d("Updated %s Articles", numDbUpdated);
-        keepAliveLatch.countDown();
     }
 }

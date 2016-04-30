@@ -38,7 +38,6 @@ public class CommLinkListRecyclerViewAdapter extends RecyclerView.Adapter<CommLi
         mContext = c;
         mValues = items;
         mListener = listener;
-        setHasStableIds(true);
     }
 
     @Override
@@ -100,9 +99,10 @@ public class CommLinkListRecyclerViewAdapter extends RecyclerView.Adapter<CommLi
         return false;
     }
 
-    public void setItems(List<CommLinkModel> items) {
-        mValues.clear();
+    public void addItems(List<CommLinkModel> items) {
+        int lastPos = mValues.size();
         mValues.addAll(items);
+        notifyItemRangeInserted(lastPos, items.size());
     }
 
     /**

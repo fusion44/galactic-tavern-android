@@ -22,6 +22,7 @@ import com.hardsoftstudio.rxflux.dispatcher.RxViewDispatch;
 import com.hardsoftstudio.rxflux.store.RxStoreChange;
 import com.pixplicity.easyprefs.library.Prefs;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import me.stammberger.galactictavern.GtApplication;
@@ -29,6 +30,7 @@ import me.stammberger.galactictavern.R;
 import me.stammberger.galactictavern.actions.Actions;
 import me.stammberger.galactictavern.actions.Keys;
 import me.stammberger.galactictavern.core.Utility;
+import me.stammberger.galactictavern.models.commlink.CommLinkModel;
 import me.stammberger.galactictavern.models.ship.Ship;
 import me.stammberger.galactictavern.stores.CommLinkStore;
 import me.stammberger.galactictavern.stores.ForumStore;
@@ -361,7 +363,9 @@ public class MainActivity extends AppCompatActivity
                     case Actions.GET_COMM_LINKS:
                         if (mCurrentFragment != null && mCurrentFragment instanceof CommLinkListFragment) {
                             CommLinkListFragment f = (CommLinkListFragment) mCurrentFragment;
-                            f.setCommLinks(mCommLinkStore.getCommLinks());
+                            ArrayList<CommLinkModel> o = (ArrayList<CommLinkModel>)
+                                    change.getRxAction().getData().get(Keys.COMM_LINKS);
+                            f.addCommLinks(o);
                         }
                         break;
                 }

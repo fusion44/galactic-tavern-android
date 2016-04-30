@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 
+import com.malinskiy.superrecyclerview.OnMoreListener;
 import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ import timber.log.Timber;
  * Container fragment for the comm link RecyclerView
  */
 public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,
-        CommLinkListRecyclerViewAdapter.OnListFragmentInteractionListener {
+        CommLinkListRecyclerViewAdapter.OnListFragmentInteractionListener, OnMoreListener {
 
     private static final String ARG_COLUMN_COUNT = "column-count";
     private static final int READER_ACTIVITY_RESULT = 0;
@@ -42,6 +43,8 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
     private SuperRecyclerView mRecyclerView;
     private boolean mShowingFilteredView = false;
     private CommLinkListRecyclerViewAdapter mCommLinksAdapter;
+    private long mLastCommLinkId = 0;
+    private int mMaxResults = 15;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -79,6 +82,7 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
         // Set the adapter
         if (view instanceof SuperRecyclerView) {
             mRecyclerView = (SuperRecyclerView) view;
+            mRecyclerView.setOnMoreListener(this);
             CommLinkStore commLinkStore = CommLinkStore.get(GtApplication.getInstance().getRxFlux().getDispatcher());
 
             // Check if the store has the articles already loaded
@@ -90,9 +94,9 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
                 // MainActivity.onRxStoreChanged with the data
                 // The articles will then be RxStoreChange argument of onRxStoreChange
                 // https://raw.githubusercontent.com/lgvalle/lgvalle.github.io/master/public/images/flux-graph-complete.png
-                GtApplication.getInstance().getActionCreator().getCommLinks();
+                GtApplication.getInstance().getActionCreator().getCommLinks(mLastCommLinkId, mMaxResults);
             } else {
-                setCommLinks(commLinks);
+                addCommLinks(commLinks);
             }
         }
         return view;
@@ -114,19 +118,24 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
             throw new NullPointerException("Comm links are null");
         }
 
-        mCommLinksAdapter = new CommLinkListRecyclerViewAdapter(getContext(), commLinks, this);
+        if (mLastCommLinkId == 0) {
+            mCommLinksAdapter = new CommLinkListRecyclerViewAdapter(getContext(), commLinks, this);
 
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), mColumnCount);
-        gridLayoutManager.setSpanSizeLookup(mCommLinksAdapter.getSpanSizeLookup());
-        mRecyclerView.setLayoutManager(gridLayoutManager);
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), mColumnCount);
+            gridLayoutManager.setSpanSizeLookup(mCommLinksAdapter.getSpanSizeLookup());
+            mRecyclerView.setLayoutManager(gridLayoutManager);
 
-        SlideInBottomAnimationAdapter slideInAdapter
-                = new SlideInBottomAnimationAdapter(mCommLinksAdapter);
+            SlideInBottomAnimationAdapter slideInAdapter
+                    = new SlideInBottomAnimationAdapter(mCommLinksAdapter);
 
-        slideInAdapter.setDuration(500);
-        slideInAdapter.setInterpolator(new DecelerateInterpolator());
+            slideInAdapter.setDuration(500);
+            slideInAdapter.setInterpolator(new DecelerateInterpolator());
 
-        mRecyclerView.setAdapter(slideInAdapter);
+            mRecyclerView.setAdapter(slideInAdapter);
+        } else {
+            mCommLinksAdapter.addItems(commLinks);
+            mRecyclerView.setLoadingMore(false);
+        }
     }
 
     /**
@@ -148,17 +157,18 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
     }
 
     /**
-     * Set comm links after construction of the fragment
+     * Add comm links after construction of the fragment
      *
-     * @param commLinks The comm links for the Adapter
+     * @param commLinks New comm links for the Adapter
      */
-    public void setCommLinks(ArrayList<CommLinkModel> commLinks) {
+    public void addCommLinks(ArrayList<CommLinkModel> commLinks) {
         if (mShowingFilteredView) {
             CommLinkStore cls = CommLinkStore.get(GtApplication.getInstance().getRxFlux().getDispatcher());
             setupRecyclerView(calculateSpanCount(cls.getFavorites()));
         } else {
             setupRecyclerView(calculateSpanCount(commLinks));
         }
+        mLastCommLinkId = commLinks.get(commLinks.size() - 1).commLinkId;
     }
 
     /**
@@ -200,7 +210,7 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
                 GtApplication.getInstance().getRxFlux().getDispatcher());
         if (!mShowingFilteredView) {
             if (mCommLinksAdapter != null) {
-                mCommLinksAdapter.setItems(calculateSpanCount(store.getFavorites()));
+                mCommLinksAdapter.addItems(calculateSpanCount(store.getFavorites()));
                 mRecyclerView.getAdapter().notifyDataSetChanged();
             }
 
@@ -208,7 +218,7 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
             return true;
         } else {
             if (mCommLinksAdapter != null) {
-                mCommLinksAdapter.setItems(calculateSpanCount(store.getCommLinks()));
+                mCommLinksAdapter.addItems(calculateSpanCount(store.getCommLinks()));
                 mRecyclerView.getAdapter().notifyDataSetChanged();
             }
 
@@ -269,5 +279,10 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
         }
 
         return aList;
+    }
+
+    @Override
+    public void onMoreAsked(int overallItemsCount, int itemsBeforeMore, int maxLastVisiblePosition) {
+        GtApplication.getInstance().getActionCreator().getCommLinks(mLastCommLinkId, mMaxResults);
     }
 }
