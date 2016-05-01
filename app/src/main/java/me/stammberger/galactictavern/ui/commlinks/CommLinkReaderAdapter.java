@@ -63,6 +63,15 @@ public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     @Override
+    public int getItemViewType(int position) {
+        if (mCommLinkModel.wrappers.get(position).getContentBlock2() != null) {
+            return mCommLinkModel.wrappers.get(position).getContentBlock2().headerImageType;
+        } else {
+            return ContentBlock2.TYPE_SINGLE;
+        }
+    }
+
+    @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof SingleViewHolder) {
             SingleViewHolder vh = (SingleViewHolder) holder;

@@ -25,6 +25,7 @@ import me.stammberger.galactictavern.core.retrofit.OrganizationApiService;
 import me.stammberger.galactictavern.core.retrofit.ShipApiService;
 import me.stammberger.galactictavern.core.retrofit.UserApiService;
 import me.stammberger.galactictavern.models.commlink.CommLinkModel;
+import me.stammberger.galactictavern.models.commlink.ContentBlock2;
 import me.stammberger.galactictavern.models.commlink.Wrapper;
 import me.stammberger.galactictavern.models.favorites.Favorite;
 import me.stammberger.galactictavern.models.forums.Forum;
@@ -75,7 +76,15 @@ public class GtActionCreator extends RxActionCreator implements Actions {
 
         Observable.zip(commLinkObservable, wrappersObservable, favoriteObservable,
                 (Func3<CommLinkModel, List<Wrapper>, Favorite, Object>) (commLinkModel, wrappers1, favorite) -> {
-                    Timber.d("%s", favorite);
+                    for (Wrapper wrapper : wrappers1) {
+                        if (wrapper.getContentBlock2() != null &&
+                                wrapper.getContentBlock2().headerImageType == ContentBlock2.TYPE_SLIDESHOW) {
+                            int size = wrapper.getContentBlock2().getHeaderImages().size();
+                            wrapper.getContentBlock2().getHeaderImages().remove(size - 1);
+                            wrapper.getContentBlock2().getHeaderImages().remove(0);
+                        }
+                    }
+
                     if (favorite != null) {
                         commLinkModel.favorite = true;
                     }
@@ -134,6 +143,14 @@ public class GtActionCreator extends RxActionCreator implements Actions {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(parts -> {
+                    for (Wrapper wrapper : parts) {
+                        if (wrapper.getContentBlock2() != null &&
+                                wrapper.getContentBlock2().headerImageType == ContentBlock2.TYPE_SLIDESHOW) {
+                            int size = wrapper.getContentBlock2().getHeaderImages().size();
+                            wrapper.getContentBlock2().getHeaderImages().remove(size - 1);
+                            wrapper.getContentBlock2().getHeaderImages().remove(0);
+                        }
+                    }
                     action.getData().put(Keys.COMM_LINK_CONTENT_WRAPPERS, new ArrayList<>(parts));
                     GtActionCreator.this.postRxAction(action);
                 }, throwable -> {

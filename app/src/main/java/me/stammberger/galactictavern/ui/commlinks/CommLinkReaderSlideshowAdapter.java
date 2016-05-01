@@ -15,6 +15,7 @@ import com.bumptech.glide.request.target.Target;
 import java.util.List;
 
 import me.stammberger.galactictavern.R;
+import me.stammberger.galactictavern.core.Utility;
 import timber.log.Timber;
 
 /**
@@ -35,7 +36,6 @@ public class CommLinkReaderSlideshowAdapter extends RecyclerView.Adapter<CommLin
     public CommLinkReaderSlideshowAdapter(Context context) {
         super();
         this.context = context;
-        setHasStableIds(true);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class CommLinkReaderSlideshowAdapter extends RecyclerView.Adapter<CommLin
     public void onBindViewHolder(ImageViewHolder holder, int position) {
         holder.link = links.get(position);
         Glide.with(context)
-                .load(holder.link)
+                .load(Utility.RSI_BASE_URL + holder.link.replace("source", "slideshow"))
                 .listener(this)
                 .into(holder.imageView);
 

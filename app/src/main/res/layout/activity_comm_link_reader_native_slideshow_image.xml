@@ -5,4 +5,4 @@
     android:layout_height="match_parent"
     android:adjustViewBounds="true"
     android:contentDescription="@string/content_desc_comm_link_slide_show_item"
-    android:scaleType="centerCrop" />
+    android:scaleType="fitCenter" />
