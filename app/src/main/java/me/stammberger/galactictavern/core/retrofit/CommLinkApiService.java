@@ -7,7 +7,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 import rx.Observable;
-import rx.Single;
 
 /**
  * Retrofit interface for getting the custom comm link content
@@ -40,7 +39,7 @@ public interface CommLinkApiService {
      * @return a Single with the {@link CommLinkModel}
      */
     @GET("/v1/get_comm_link")
-    Single<CommLinkModel> getCommLink(
+    Observable<CommLinkModel> getCommLink(
             @Query("secret") String secret,
             @Query("id") long id);
 

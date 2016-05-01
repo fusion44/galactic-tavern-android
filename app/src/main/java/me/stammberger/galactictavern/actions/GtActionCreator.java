@@ -25,6 +25,7 @@ import me.stammberger.galactictavern.core.retrofit.OrganizationApiService;
 import me.stammberger.galactictavern.core.retrofit.ShipApiService;
 import me.stammberger.galactictavern.core.retrofit.UserApiService;
 import me.stammberger.galactictavern.models.commlink.CommLinkModel;
+import me.stammberger.galactictavern.models.commlink.Wrapper;
 import me.stammberger.galactictavern.models.favorites.Favorite;
 import me.stammberger.galactictavern.models.forums.Forum;
 import me.stammberger.galactictavern.models.forums.ForumSectioned;
@@ -35,8 +36,10 @@ import me.stammberger.galactictavern.stores.CommLinkStore;
 import me.stammberger.galactictavern.stores.ShipStore;
 import me.stammberger.galactictavern.stores.db.tables.FavoritesTable;
 import me.stammberger.galactictavern.stores.db.tables.user.UserSearchHistoryEntryTable;
+import rx.Observable;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func3;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
@@ -60,22 +63,27 @@ public class GtActionCreator extends RxActionCreator implements Actions {
      */
     @Override
     public void getCommLink(Long id) {
-        final RxAction action = newRxAction(GET_COMM_LINK, id);
+        final RxAction action = newRxAction(GET_COMM_LINK, Keys.COMM_LINK_ID, id);
         if (hasRxAction(action)) return;
 
-        getFavoritesInternal(Favorite.TYPE_COMM_LINK, String.valueOf(id))
-                .subscribeOn(Schedulers.io())
-                .subscribe(favorite -> {
-                    addRxAction(action, CommLinkApiService.Factory.getInstance().getCommLink(
-                            Secrets.GT_API_SECRET, id)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(comm_link -> {
-                                action.getData().put(Keys.COMM_LINK, comm_link);
-                                postRxAction(action);
-                            }, throwable -> postError(action, throwable)));
-                });
+        Observable<CommLinkModel> commLinkObservable =
+                CommLinkApiService.Factory.getInstance().getCommLink(Secrets.GT_API_SECRET, id);
+        Observable<List<Wrapper>> wrappersObservable =
+                CommLinkWrapperApiService.Factory.getInstance().getCommLinkWrappers(id);
+        Observable<Favorite> favoriteObservable =
+                getFavoritesInternal(Favorite.TYPE_COMM_LINK, String.valueOf(id));
 
+        Observable.zip(commLinkObservable, wrappersObservable, favoriteObservable,
+                (Func3<CommLinkModel, List<Wrapper>, Favorite, Object>) (commLinkModel, wrappers1, favorite) -> {
+                    Timber.d("%s", favorite);
+                    if (favorite != null) {
+                        commLinkModel.favorite = true;
+                    }
+                    commLinkModel.wrappers = wrappers1;
+                    action.getData().put(Keys.COMM_LINK, commLinkModel);
+                    postRxAction(action);
+                    return commLinkModel;
+                });
     }
 
     /**
@@ -579,7 +587,7 @@ public class GtActionCreator extends RxActionCreator implements Actions {
      * @param value Reference value of the Favorite
      * @return @return An rx.Single for the favorites
      */
-    private Single<Favorite> getFavoritesInternal(int type, String value) {
+    private Observable<Favorite> getFavoritesInternal(int type, String value) {
         DefaultStorIOSQLite storio = GtApplication.getInstance().getStorIOSQLite();
         Query q = Query.builder()
                 .table(FavoritesTable.TABLE)
@@ -591,6 +599,6 @@ public class GtActionCreator extends RxActionCreator implements Actions {
                 .object(Favorite.class)
                 .withQuery(q)
                 .prepare()
-                .asRxSingle();
+                .asRxObservable();
     }
 }
