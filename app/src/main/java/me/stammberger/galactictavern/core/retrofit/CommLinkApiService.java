@@ -1,9 +1,6 @@
 package me.stammberger.galactictavern.core.retrofit;
 
-import me.stammberger.galactictavern.BuildConfig;
 import me.stammberger.galactictavern.models.commlink.CommLinkModel;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -16,9 +13,9 @@ import rx.Single;
  * Retrofit interface for getting the custom comm link content
  */
 public interface CommLinkApiService {
-    //String BASE_URL = "https://galactictavern.appspot.com";
+    String BASE_URL = "https://galactictavern.appspot.com";
     //String BASE_URL = "http://192.168.178.95:8080/";
-    String BASE_URL = "http://10.0.2.2:8080/";
+    //String BASE_URL = "http://10.0.2.2:8080/"; // connect from emulator to server on host machine
 
     /**
      * Gets the content from the repository
@@ -52,7 +49,6 @@ public interface CommLinkApiService {
      */
     class Factory {
         private static CommLinkApiService mService;
-        private static CommLinkApiService mLoggingService;
 
         /**
          * Get the service instance without logging enabled
@@ -71,29 +67,6 @@ public interface CommLinkApiService {
 
             }
             return mService;
-        }
-
-        public static synchronized CommLinkApiService getInstanceWithFullLogging() {
-            if (BuildConfig.DEBUG) {
-                if (mLoggingService == null) {
-                    HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-                    logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-                    OkHttpClient httpClient = new OkHttpClient().newBuilder().addInterceptor(logging).build();
-
-                    Retrofit retrofit = new Retrofit.Builder()
-                            .baseUrl(BASE_URL)
-                            .addConverterFactory(GsonConverterFactory.create())
-                            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                            .client(httpClient)
-                            .build();
-
-                    mLoggingService = retrofit.create(CommLinkApiService.class);
-                }
-            } else {
-                return getInstance();
-            }
-
-            return mLoggingService;
         }
     }
 }

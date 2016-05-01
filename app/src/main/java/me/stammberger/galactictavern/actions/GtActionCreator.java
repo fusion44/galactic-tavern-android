@@ -93,7 +93,7 @@ public class GtActionCreator extends RxActionCreator implements Actions {
         getFavoritesInternal(Favorite.TYPE_COMM_LINK)
                 .subscribeOn(Schedulers.io())
                 .subscribe(favorites -> {
-                    addRxAction(action, CommLinkApiService.Factory.getInstanceWithFullLogging().getCommLinks(
+                    addRxAction(action, CommLinkApiService.Factory.getInstance().getCommLinks(
                             Secrets.GT_API_SECRET, lastCommLinkId, maxResults)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
