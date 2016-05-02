@@ -1,6 +1,7 @@
 package me.stammberger.galactictavern.ui.commlinks;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,10 +13,12 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import me.stammberger.galactictavern.R;
 import me.stammberger.galactictavern.core.Utility;
+import me.stammberger.galactictavern.ui.FullScreenImageGallery;
 import timber.log.Timber;
 
 /**
@@ -43,18 +46,32 @@ public class CommLinkReaderSlideshowAdapter extends RecyclerView.Adapter<CommLin
         Timber.d("onCreateViewHolder");
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.activity_comm_link_reader_native_slideshow_image, parent, false);
+        view.setOnClickListener(v -> {
+            Intent intent = new Intent(context, FullScreenImageGallery.class);
+
+            ArrayList<String> fullist = new ArrayList<>(links.size());
+            for (String link : links) {
+                fullist.add(Utility.RSI_BASE_URL + link);
+            }
+
+            intent.putStringArrayListExtra(FullScreenImageGallery.KEY_IMAGES, fullist);
+            intent.putExtra(FullScreenImageGallery.KEY_POSITION, (Integer) v.getTag(R.id.drawable_callback_tag));
+            intent.putExtra(FullScreenImageGallery.KEY_TITLE, "Comm Link");
+
+            context.startActivity(intent);
+        });
         return new ImageViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ImageViewHolder holder, int position) {
         holder.link = links.get(position);
+        String url = Utility.RSI_BASE_URL + holder.link.replace("source", "slideshow");
         Glide.with(context)
-                .load(Utility.RSI_BASE_URL + holder.link.replace("source", "slideshow"))
+                .load(url)
                 .listener(this)
                 .into(holder.imageView);
-
-        Timber.d("Binding  %s", links.get(position));
+        holder.imageView.setTag(R.id.drawable_callback_tag, position);
     }
 
     @Override

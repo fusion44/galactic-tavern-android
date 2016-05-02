@@ -81,6 +81,11 @@
                 android:value="me.stammberger.galactictavern.ui.forums.ForumThreadListActivity" />
         </activity>
 
+        <activity
+            android:name=".ui.FullScreenImageGallery"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
         <receiver android:name=".ui.widgets.CommLinkWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

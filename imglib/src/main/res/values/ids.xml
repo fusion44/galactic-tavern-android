@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="current_item_tag" type="id">tag_current_item</item>
+</resources>
