@@ -98,11 +98,7 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
             // Comm link not loaded yet. Probably coming from widget or notification
             GtApplication.getInstance().getActionCreator()
                     .getCommLink(mCommLinkId);
-        } else if (mCommLink.wrappers.size() == 0) {
-            GtApplication.getInstance().getActionCreator()
-                    .getCommLinkContentWrappers(mCommLinkId);
         } else {
-            // both comm link and its wrapper have been loaded -> seupUi()
             setupUi();
         }
 

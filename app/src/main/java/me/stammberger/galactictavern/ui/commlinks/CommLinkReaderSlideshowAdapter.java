@@ -69,6 +69,7 @@ public class CommLinkReaderSlideshowAdapter extends RecyclerView.Adapter<CommLin
         String url = Utility.RSI_BASE_URL + holder.link.replace("source", "slideshow");
         Glide.with(context)
                 .load(url)
+                .placeholder(R.drawable.placeholder_image)
                 .listener(this)
                 .into(holder.imageView);
         holder.imageView.setTag(R.id.drawable_callback_tag, position);
