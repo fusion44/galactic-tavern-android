@@ -2,6 +2,7 @@ package com.veinhorn.scrollgalleryview;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -45,6 +46,7 @@ public class ImageFragment extends Fragment {
 
         loadImageToView();
 
+        setRetainInstance(true);
         return rootView;
     }
 
@@ -70,10 +72,8 @@ public class ImageFragment extends Fragment {
         if (isViewPagerActive()) {
             outState.putBoolean(Constants.IS_LOCKED, viewPager.isLocked());
         }
-        try {
+        if (!(backgroundImage.getDrawable() instanceof TransitionDrawable)) {
             outState.putParcelable(Constants.IMAGE, ((BitmapDrawable) backgroundImage.getDrawable()).getBitmap());
-        } catch (ClassCastException e) {
-            outState.remove(Constants.IMAGE);
         }
 
         outState.putBoolean(Constants.ZOOM, photoViewAttacher != null);
