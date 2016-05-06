@@ -1,11 +1,15 @@
 package me.stammberger.galactictavern.ui;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -28,6 +32,7 @@ import me.stammberger.galactictavern.R;
 import me.stammberger.galactictavern.actions.Actions;
 import me.stammberger.galactictavern.actions.Keys;
 import me.stammberger.galactictavern.core.Utility;
+import me.stammberger.galactictavern.core.gcm.GcmRegistrationIntentService;
 import me.stammberger.galactictavern.models.commlink.CommLinkModel;
 import me.stammberger.galactictavern.models.ship.Ship;
 import me.stammberger.galactictavern.stores.CommLinkStore;
@@ -90,6 +95,11 @@ public class MainActivity extends AppCompatActivity
      */
     private Fragment mCurrentFragment;
 
+    /**
+     * Listens for changes to the GCM device registration state
+     */
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
+    private boolean mIsReceiverRegistered;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,9 +150,30 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
+        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                boolean sentToken = Prefs.getBoolean(
+                        GcmRegistrationIntentService.DEVICE_REGISTRATION_TOKEN_SENT, false);
+                // TODO: Handle incoming messages if UI is active
+            }
+        };
+
+        if (Utility.checkPlayServices(this)) {
+            Intent intent = new Intent(this, GcmRegistrationIntentService.class);
+            startService(intent);
+        }
+
         Utility.cancelNotifications(this);
     }
 
+    private void registerReceiver() {
+        if (!mIsReceiverRegistered) {
+            LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                    new IntentFilter(GcmRegistrationIntentService.DEVICE_REGISTRATION_COMPLETE));
+            mIsReceiverRegistered = true;
+        }
+    }
 
     @Override
     protected void onResume() {
@@ -158,8 +189,15 @@ public class MainActivity extends AppCompatActivity
         } else if (fragment.equals(OrgsFragment.class.getSimpleName())) {
             GtApplication.getInstance().trackScreen(TRACKING_SCREEN_ORG_FRAGMENT);
         }
-
+        registerReceiver();
         super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+        mIsReceiverRegistered = false;
+        super.onPause();
     }
 
     @Override

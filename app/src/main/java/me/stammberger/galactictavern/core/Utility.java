@@ -6,11 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.pixplicity.easyprefs.library.Prefs;
 
 import net.danlew.android.joda.DateUtils;
@@ -40,6 +43,11 @@ public class Utility {
      * The Notification ID for all notifications related to comm links
      */
     private static final int NOTIFICATION_ID_COMM_LINK = 2210;
+
+    /**
+     * Request ID for resolving case play services not installed
+     */
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 986;
 
     public static void buildCommLinkNotification(Context context, List<CommLinkModel> commLinkModels) {
         boolean showNotifications = Prefs.getBoolean(
@@ -281,5 +289,26 @@ public class Utility {
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
+    }
+
+
+    /**
+     * Check the device to make sure it has the Google Play Services APK. If
+     * it doesn't, display a dialog that allows users to download the APK from
+     * the Google Play Store or enable it in the device's system settings.
+     */
+    public static boolean checkPlayServices(FragmentActivity activity) {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(activity);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(activity, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
+                        .show();
+            } else {
+                Timber.d("Device not supported");
+            }
+            return false;
+        }
+        return true;
     }
 }
