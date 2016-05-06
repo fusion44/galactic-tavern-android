@@ -28,7 +28,7 @@ public class CommLinkUpdaterService extends GcmTaskService {
      * Schedules an update for every 3 hours.
      * This task will survive reboots if android.permission.RECEIVE_BOOT_COMPLETED is granted
      *
-     * @param context Current context
+     * @param context     Current context
      * @param newInterval Update interval in seconds
      */
     public static void scheduleRepeatedUpdates(Context context, int newInterval) {

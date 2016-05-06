@@ -1,4 +1,3 @@
-
 package me.stammberger.galactictavern.models.commlink;
 
 import com.google.gson.annotations.Expose;

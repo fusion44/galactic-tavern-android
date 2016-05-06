@@ -178,7 +178,7 @@ public class ForumThreadListActivity extends RxFluxActivity implements OnMoreLis
                     Bundle arguments = new Bundle();
                     arguments.putLong(ForumThreadReaderFragment.ARG_THREAD_ID, holder.forumThread.threadId);
                     Fragment fragment;
-                    if(viewerType.equals(VIEWER_TYPE_WEB_VIEW)) {
+                    if (viewerType.equals(VIEWER_TYPE_WEB_VIEW)) {
                         fragment = new ForumThreadReaderWebViewFragment();
                     } else {
                         fragment = new ForumThreadReaderFragment();
