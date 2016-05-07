@@ -98,10 +98,13 @@ public class GtActionCreator extends RxActionCreator implements Actions {
     /**
      * Initiates the get comm link fetching through the API
      * Once the comm links are retrieved it posts a new {@link RxAction} to update {@link CommLinkStore}
+     *
+     * @param lastCommLinkPublished Published date of the last received comm link
+     * @param maxResults            Maximum number of results returned by the API
      */
     @SuppressWarnings("Convert2streamapi")
     @Override
-    public void getCommLinks(Long lastCommLinkId, int maxResults) {
+    public void getCommLinks(Long lastCommLinkPublished, int maxResults) {
         Timber.d("Starting fetch comm link action");
 
         final RxAction action = newRxAction(GET_COMM_LINKS);
@@ -111,7 +114,7 @@ public class GtActionCreator extends RxActionCreator implements Actions {
                 .subscribeOn(Schedulers.io())
                 .subscribe(favorites -> {
                     addRxAction(action, CommLinkApiService.Factory.getInstance().getCommLinks(
-                            Secrets.GT_API_SECRET, lastCommLinkId, maxResults)
+                            Secrets.GT_API_SECRET, lastCommLinkPublished, maxResults)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(comm_links -> {

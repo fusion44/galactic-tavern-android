@@ -19,16 +19,16 @@ public interface CommLinkApiService {
     /**
      * Gets the content from the repository
      *
-     * @param secret       the API secret
-     * @param lastCommLink of the last loaded comm link. Zero if none where loaded yet.
-     *                     Used for pagination. API will load comm links older than this one.
-     * @param maxResults   Max results returned
+     * @param secret                the API secret
+     * @param lastCommLinkPublished Published time of the last received comm link
+     *                              Used for pagination. API will load comm links older than this one.
+     * @param maxResults            Max results returned
      * @return Observable which will be called once done loading
      */
     @GET("/v1/get_comm_links")
     Observable<CommLinkModel[]> getCommLinks(
             @Query("secret") String secret,
-            @Query("last_comm_link") long lastCommLink,
+            @Query("last_comm_link") long lastCommLinkPublished,
             @Query("max_results") int maxResults);
 
     /**

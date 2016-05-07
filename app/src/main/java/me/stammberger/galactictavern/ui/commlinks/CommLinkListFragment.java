@@ -43,7 +43,7 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
     private SuperRecyclerView mRecyclerView;
     private boolean mShowingFilteredView = false;
     private CommLinkListRecyclerViewAdapter mCommLinksAdapter;
-    private long mLastCommLinkId = 0;
+    private long mLastCommLinkPublished = 0;
     private int mMaxResults = 15;
 
     /**
@@ -94,7 +94,7 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
                 // MainActivity.onRxStoreChanged with the data
                 // The articles will then be RxStoreChange argument of onRxStoreChange
                 // https://raw.githubusercontent.com/lgvalle/lgvalle.github.io/master/public/images/flux-graph-complete.png
-                GtApplication.getInstance().getActionCreator().getCommLinks(mLastCommLinkId, mMaxResults);
+                GtApplication.getInstance().getActionCreator().getCommLinks(mLastCommLinkPublished, mMaxResults);
             } else {
                 addCommLinks(commLinks);
             }
@@ -118,7 +118,7 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
             throw new NullPointerException("Comm links are null");
         }
 
-        if (mLastCommLinkId == 0) {
+        if (mLastCommLinkPublished == 0) {
             mCommLinksAdapter = new CommLinkListRecyclerViewAdapter(getContext(), commLinks, this);
 
             GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), mColumnCount);
@@ -168,7 +168,7 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
         } else {
             setupRecyclerView(calculateSpanCount(commLinks));
         }
-        mLastCommLinkId = commLinks.get(commLinks.size() - 1).commLinkId;
+        mLastCommLinkPublished = commLinks.get(commLinks.size() - 1).published;
     }
 
     /**
@@ -283,6 +283,6 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
 
     @Override
     public void onMoreAsked(int overallItemsCount, int itemsBeforeMore, int maxLastVisiblePosition) {
-        GtApplication.getInstance().getActionCreator().getCommLinks(mLastCommLinkId, mMaxResults);
+        GtApplication.getInstance().getActionCreator().getCommLinks(mLastCommLinkPublished, mMaxResults);
     }
 }
