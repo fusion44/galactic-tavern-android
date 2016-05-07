@@ -67,8 +67,15 @@ public class GcmRegistrationIntentService extends IntentService {
      * @param token The new token.
      */
     private void sendRegistrationToServer(String token) throws Exception {
+        // http://stackoverflow.com/questions/3213205/how-to-detect-system-information-like-os-or-device-type
+        String s = "Device-infos:";
+        s += "\n OS Version: " + System.getProperty("os.version") + "(" + android.os.Build.VERSION.INCREMENTAL + ")";
+        s += "\n OS API Level: " + android.os.Build.VERSION.SDK_INT;
+        s += "\n Device: " + android.os.Build.DEVICE;
+        s += "\n Model (and Product): " + android.os.Build.MODEL + " (" + android.os.Build.PRODUCT + ")";
+
         StandardResponse resp = GcmApiService.Factory.getInstance()
-                .registerDevice(Secrets.GT_API_SECRET, token).toBlocking().first();
+                .registerDevice(Secrets.GT_API_SECRET, token, s).toBlocking().first();
         if (!resp.successful) {
             throw new Exception("Failed to complete token refresh: " + resp.err, null);
         }

@@ -24,7 +24,8 @@ public interface GcmApiService {
     @POST("/v1/gcm_backend/register_device")
     Observable<StandardResponse> registerDevice(
             @Query("secret") String secret,
-            @Query("token") String token);
+            @Query("token") String token,
+            @Query("device_info") String info);
 
     /**
      * Unregisters the device with the service
