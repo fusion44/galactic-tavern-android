@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity
     private static final String TRACKING_SCREEN_USERS_FRAGMENT = "UsersFragment";
     private static final String TRACKING_SCREEN_FORUMS_FRAGMENT = "ForumsFragment";
     private static final String TRACKING_SCREEN_ORG_FRAGMENT = "OrgsFragment";
+    private static final String TRACKING_SCREEN_MAPS_FRAGMENT = "MapsFragment";
 
     private static final String KEY_CURRENT_FRAGMENT = "stores_registered";
     /**
@@ -177,17 +178,19 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-        String fragment = mCurrentFragment.getClass().getSimpleName();
-        if (fragment.equals(CommLinkListFragment.class.getSimpleName())) {
-            GtApplication.getInstance().trackScreen(TRACKING_SCREEN_COMM_LINK_FRAGMENT);
-        } else if (fragment.equals(ShipListFragment.class.getSimpleName())) {
-            GtApplication.getInstance().trackScreen(TRACKING_SCREEN_SHIPS_FRAGMENT);
-        } else if (fragment.equals(UserSearchFragment.class.getSimpleName())) {
-            GtApplication.getInstance().trackScreen(TRACKING_SCREEN_USERS_FRAGMENT);
-        } else if (fragment.equals(ForumListFragment.class.getSimpleName())) {
-            GtApplication.getInstance().trackScreen(TRACKING_SCREEN_FORUMS_FRAGMENT);
-        } else if (fragment.equals(OrgsFragment.class.getSimpleName())) {
-            GtApplication.getInstance().trackScreen(TRACKING_SCREEN_ORG_FRAGMENT);
+        if (mCurrentFragment != null) {
+            String fragment = mCurrentFragment.getClass().getSimpleName();
+            if (fragment.equals(CommLinkListFragment.class.getSimpleName())) {
+                GtApplication.getInstance().trackScreen(TRACKING_SCREEN_COMM_LINK_FRAGMENT);
+            } else if (fragment.equals(ShipListFragment.class.getSimpleName())) {
+                GtApplication.getInstance().trackScreen(TRACKING_SCREEN_SHIPS_FRAGMENT);
+            } else if (fragment.equals(UserSearchFragment.class.getSimpleName())) {
+                GtApplication.getInstance().trackScreen(TRACKING_SCREEN_USERS_FRAGMENT);
+            } else if (fragment.equals(ForumListFragment.class.getSimpleName())) {
+                GtApplication.getInstance().trackScreen(TRACKING_SCREEN_FORUMS_FRAGMENT);
+            } else if (fragment.equals(OrgsFragment.class.getSimpleName())) {
+                GtApplication.getInstance().trackScreen(TRACKING_SCREEN_ORG_FRAGMENT);
+            }
         }
         registerReceiver();
         super.onResume();
@@ -256,6 +259,8 @@ public class MainActivity extends AppCompatActivity
             openForumsFragment();
         } else if (id == R.id.nav_orgs) {
             openOrgFragment();
+        } else if (id == R.id.nav_starmap) {
+            openStarmapFragment();
         } else if (id == R.id.nav_settings) {
             openSettings();
         }
@@ -379,6 +384,29 @@ public class MainActivity extends AppCompatActivity
         }
 
         GtApplication.getInstance().trackScreen(TRACKING_SCREEN_ORG_FRAGMENT);
+        Prefs.putString(KEY_CURRENT_FRAGMENT, simpleClassName);
+    }
+
+    /**
+     * Creates and shows the {@link .MapsFragment}
+     */
+    private void openStarmapFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        String simpleClassName = MapFragment.class.getSimpleName();
+
+        mCurrentFragment = fragmentManager.findFragmentByTag(simpleClassName);
+        if (mCurrentFragment == null) {
+            mCurrentFragment = MapFragment.newInstance();
+        }
+
+        fragmentTransaction.replace(R.id.fragment_container, mCurrentFragment, simpleClassName);
+        fragmentTransaction.commit();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(R.string.navigation_drawer_starmap);
+        }
+
+        GtApplication.getInstance().trackScreen(TRACKING_SCREEN_MAPS_FRAGMENT);
         Prefs.putString(KEY_CURRENT_FRAGMENT, simpleClassName);
     }
 

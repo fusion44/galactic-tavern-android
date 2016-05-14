@@ -32,6 +32,7 @@
     <string name="navigation_drawer_users">Users</string>
     <string name="navigation_drawer_forums">Forums</string>
     <string name="navigation_drawer_organizations">Organizations</string>
+    <string name="navigation_drawer_starmap">Star Map</string>
     <string name="navigation_drawer_personal">Personal</string>
     <string name="navigation_drawer_favorites">Favorites</string>
     <string name="navigation_drawer_settings">Settings</string>
