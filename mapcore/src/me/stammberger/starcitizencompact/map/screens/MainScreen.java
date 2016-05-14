@@ -2,6 +2,7 @@ package me.stammberger.starcitizencompact.map.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -54,8 +55,15 @@ public class MainScreen extends BaseScreen {
     private int mSelectedSystemIndex = -1;
     private ArrayList<TunnelsResultset> mSelectedExitTunnels = new ArrayList<TunnelsResultset>();
     private ArrayList<TunnelsResultset> mSelectedEntryTunnels = new ArrayList<TunnelsResultset>();
+    private GtStarMap.SystemSelectedCallback mSelectedCallback;
+    private FPSLogger mFPSLogger = new FPSLogger();
 
-    public MainScreen() {
+    public MainScreen(GtStarMap.SystemSelectedCallback callback) {
+        mSelectedCallback = callback;
+        if (callback == null) {
+            throw new NullPointerException("SystemSelectedCallback must not be null");
+        }
+
         mShapeRenderer = new ShapeRenderer();
         mTouchPos = new Vector3();
 
@@ -230,6 +238,7 @@ public class MainScreen extends BaseScreen {
         mTouchPos = mCam.unproject(new Vector3(x, y, 0));
         for (SystemsResultset s : GtStarMap.mapData.data.systems.resultset) {
             if (s.contains(mTouchPos.x, mTouchPos.y)) {
+                mSelectedCallback.onSystemSelected(s);
                 setSelectedSystem(s);
                 return true;
             }

@@ -11,6 +11,8 @@ import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 
 import me.stammberger.galactictavern.R;
 import me.stammberger.starcitizencompact.map.GtStarMap;
+import me.stammberger.starcitizencompact.map.data.SystemsResultset;
+import timber.log.Timber;
 
 /**
  * Fragment for displaying starmap data.
@@ -18,7 +20,7 @@ import me.stammberger.starcitizencompact.map.GtStarMap;
  * Use the {@link MapFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MapFragment extends AndroidFragmentApplication implements GtStarMap.StatusCallback {
+public class MapFragment extends AndroidFragmentApplication implements GtStarMap.StatusCallback, GtStarMap.SystemSelectedCallback {
     public View mLoadingIndicator;
 
     public MapFragment() {
@@ -39,7 +41,7 @@ public class MapFragment extends AndroidFragmentApplication implements GtStarMap
         View v = inflater.inflate(R.layout.fragment_map, container, false);
         FrameLayout starMapView = (FrameLayout) v.findViewById(R.id.starMapFrameLayout);
         mLoadingIndicator = v.findViewById(R.id.loadingIndicator);
-        GtStarMap gtStarMap = new GtStarMap(this);
+        GtStarMap gtStarMap = new GtStarMap(this, this);
         View view = initializeForView(gtStarMap);
         starMapView.addView(view);
         return v;
@@ -58,5 +60,10 @@ public class MapFragment extends AndroidFragmentApplication implements GtStarMap
 
     @Override
     public void onError(String error) {
+    }
+
+    @Override
+    public void onSystemSelected(SystemsResultset s) {
+        Timber.d("Selected system %s", s.code);
     }
 }

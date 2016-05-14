@@ -29,16 +29,18 @@ public class GtStarMap extends Game implements GestureDetector.GestureListener {
     public static Vector2 origin;
     BaseScreen mCurrentScreen;
     GestureDetector mGestureDetector;
-    StatusCallback mCallback;
+    StatusCallback mStatusCallback;
+    SystemSelectedCallback mSystemSelectedCallback;
 
-    public GtStarMap(StatusCallback callback) {
+    public GtStarMap(StatusCallback callback, SystemSelectedCallback systemSelectedCallback) {
         super();
 
-        if (callback == null) {
-            throw new NullPointerException("Statuscallback must not be null");
+        if (callback == null || systemSelectedCallback == null) {
+            throw new NullPointerException("Callback must not be null");
         }
 
-        mCallback = callback;
+        mStatusCallback = callback;
+        mSystemSelectedCallback = systemSelectedCallback;
     }
 
     public static String fromStream(InputStream in) throws IOException {
@@ -55,8 +57,8 @@ public class GtStarMap extends Game implements GestureDetector.GestureListener {
 
     @Override
     public void create() {
-        mCallback.onStartedLoading();
-        mCurrentScreen = new MainScreen();
+        mStatusCallback.onStartedLoading();
+        mCurrentScreen = new MainScreen(mSystemSelectedCallback);
         setScreen(mCurrentScreen);
 
         try {
@@ -98,7 +100,7 @@ public class GtStarMap extends Game implements GestureDetector.GestureListener {
         mGestureDetector = new GestureDetector(this);
         Gdx.input.setInputProcessor(mGestureDetector);
 
-        mCallback.onFinishedLoading();
+        mStatusCallback.onFinishedLoading();
     }
 
     @Override
@@ -153,6 +155,10 @@ public class GtStarMap extends Game implements GestureDetector.GestureListener {
         void onFinishedLoading();
 
         void onError(String error);
+    }
+
+    public interface SystemSelectedCallback {
+        void onSystemSelected(SystemsResultset s);
     }
 
     class ThumbnailsDeserializer implements JsonDeserializer<Thumbnail> {
