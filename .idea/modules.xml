@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/GalacticTavern.iml" filepath="$PROJECT_DIR$/GalacticTavern.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/imglib/imglib.iml" filepath="$PROJECT_DIR$/imglib/imglib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mapcore/mapcore.iml" filepath="$PROJECT_DIR$/mapcore/mapcore.iml" />
     </modules>
   </component>
 </project>

@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 import com.hardsoftstudio.rxflux.action.RxError;
 import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
 import com.hardsoftstudio.rxflux.dispatcher.RxViewDispatch;
@@ -53,8 +54,8 @@ import me.stammberger.galactictavern.ui.users.UserSearchFragment;
  * pass those on to the currently displayed {@link Fragment}
  */
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener
-        , RxViewDispatch {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        RxViewDispatch, AndroidFragmentApplication.Callbacks {
 
     private static final String TRACKING_SCREEN_COMM_LINK_FRAGMENT = "CommLinkFragment";
     private static final String TRACKING_SCREEN_SHIPS_FRAGMENT = "ShipsFragment";
@@ -134,6 +135,8 @@ public class MainActivity extends AppCompatActivity
                     openForumsFragment();
                 } else if (fragment.equals(OrgsFragment.class.getSimpleName())) {
                     openOrgFragment();
+                } else if (fragment.equals(MapFragment.class.getSimpleName())) {
+                    openMapFragment();
                 }
             }
         } else {
@@ -148,6 +151,8 @@ public class MainActivity extends AppCompatActivity
                 openForumsFragment();
             } else if (f.equals(OrgsFragment.class.getSimpleName())) {
                 openOrgFragment();
+            } else if (f.equals(MapFragment.class.getSimpleName())) {
+                openMapFragment();
             }
         }
 
@@ -190,6 +195,8 @@ public class MainActivity extends AppCompatActivity
                 GtApplication.getInstance().trackScreen(TRACKING_SCREEN_FORUMS_FRAGMENT);
             } else if (fragment.equals(OrgsFragment.class.getSimpleName())) {
                 GtApplication.getInstance().trackScreen(TRACKING_SCREEN_ORG_FRAGMENT);
+            } else if (fragment.equals(MapFragment.class.getSimpleName())) {
+                GtApplication.getInstance().trackScreen(TRACKING_SCREEN_MAPS_FRAGMENT);
             }
         }
         registerReceiver();
@@ -260,7 +267,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_orgs) {
             openOrgFragment();
         } else if (id == R.id.nav_starmap) {
-            openStarmapFragment();
+            openMapFragment();
         } else if (id == R.id.nav_settings) {
             openSettings();
         }
@@ -390,7 +397,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Creates and shows the {@link .MapsFragment}
      */
-    private void openStarmapFragment() {
+    private void openMapFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         String simpleClassName = MapFragment.class.getSimpleName();
@@ -510,5 +517,9 @@ public class MainActivity extends AppCompatActivity
 
         mForumsStore = ForumStore.get(dispatcher);
         mForumsStore.register();
+    }
+
+    @Override
+    public void exit() {
     }
 }

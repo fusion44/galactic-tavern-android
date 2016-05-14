@@ -1,1 +1,1 @@
-include ':app', ':imglib'
+include ':app', ':imglib', ':mapcore'

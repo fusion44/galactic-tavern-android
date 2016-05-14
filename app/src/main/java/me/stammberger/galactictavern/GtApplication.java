@@ -3,6 +3,7 @@ package me.stammberger.galactictavern;
 import android.app.Application;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.support.multidex.MultiDex;
 import android.util.Log;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -116,6 +117,12 @@ public class GtApplication extends Application {
         setUpAnalytics();
 
         mInstance = this;
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 
     /**
