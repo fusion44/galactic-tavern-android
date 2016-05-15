@@ -26,6 +26,7 @@ public class ParallaxBackground {
     public Array<ParallaxLayer> layers;
     private Matrix4 cachedProjectionView;
     private Vector3 cachedPos;
+    private Vector3 offset;
     private float cachedZoom;
 
     /**
@@ -49,7 +50,26 @@ public class ParallaxBackground {
     private void initialize() {
         layers = new Array<ParallaxLayer>();
         cachedPos = new Vector3();
+        offset = new Vector3();
         cachedProjectionView = new Matrix4();
+    }
+
+    /**
+     * Get the fixed offset
+     *
+     * @return The current offset
+     */
+    public Vector3 getOffset() {
+        return offset;
+    }
+
+    /**
+     * Set a fixed offset for all layers
+     *
+     * @param vec The offset
+     */
+    public void setOffset(Vector3 vec) {
+        offset = vec;
     }
 
     /**
@@ -84,7 +104,7 @@ public class ParallaxBackground {
                 float currentY = (layer.getTileModeY().equals(TileMode.single) ? 0 : ((int) ((worldCamera.position.y - worldCamera.viewportHeight * .5f * worldCamera.zoom) / layer.getHeight())) * layer.getHeight()) - (((1 - layer.getParallaxRatio().y) % 1) * worldCamera.viewportHeight * .5f);
                 do {
                     if (!((worldCamera.position.x - worldCamera.viewportWidth * worldCamera.zoom * .5f > currentX + layer.getWidth()) || (worldCamera.position.x + worldCamera.viewportWidth * worldCamera.zoom * .5f < currentX) || (worldCamera.position.y - worldCamera.viewportHeight * worldCamera.zoom * .5f > currentY + layer.getHeight()) || (worldCamera.position.y + worldCamera.viewportHeight * worldCamera.zoom * .5f < currentY)))
-                        layer.draw(batch, currentX, currentY);
+                        layer.draw(batch, currentX + offset.x, currentY + offset.y);
                     currentY += layer.getHeight();
                     if (layer.getTileModeY().equals(TileMode.single))
                         break;
