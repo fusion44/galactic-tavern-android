@@ -3,7 +3,6 @@ package me.stammberger.galactictavern.ui.maps;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +14,11 @@ import android.widget.TextView;
 
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 
+import me.stammberger.galactictavern.GtApplication;
 import me.stammberger.galactictavern.R;
+import me.stammberger.galactictavern.stores.StarmapStore;
 import me.stammberger.starcitizencompact.map.GtStarMap;
+import me.stammberger.starcitizencompact.map.data.StarMapData;
 
 /**
  * Fragment for displaying starmap data.
@@ -24,9 +26,12 @@ import me.stammberger.starcitizencompact.map.GtStarMap;
  * Use the {@link MapFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MapFragment extends AndroidFragmentApplication implements GtStarMap.StatusCallback, GtStarMap.SystemSelectedCallback {
+public class MapFragment extends AndroidFragmentApplication implements GtStarMap.SystemSelectedCallback {
     public View mLoadingIndicator;
     private PopupWindow mCurrentPopupWindow;
+    private StarMapData mBootUpData;
+    private FrameLayout mStarMapView;
+    private GtStarMap mGtStarMap;
 
     public MapFragment() {
     }
@@ -44,27 +49,27 @@ public class MapFragment extends AndroidFragmentApplication implements GtStarMap
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
-        FrameLayout starMapView = (FrameLayout) v.findViewById(R.id.starMapFrameLayout);
+        mStarMapView = (FrameLayout) v.findViewById(R.id.starMapFrameLayout);
         mLoadingIndicator = v.findViewById(R.id.loadingIndicator);
-        GtStarMap gtStarMap = new GtStarMap(this, this);
-        View view = initializeForView(gtStarMap);
-        starMapView.addView(view);
+        mGtStarMap = new GtStarMap(this);
+        View view = initializeForView(mGtStarMap);
+        mStarMapView.addView(view);
+
+        mBootUpData = StarmapStore.get(GtApplication.getInstance().getRxFlux().getDispatcher())
+                .getBootUpData();
+        if (mBootUpData.data == null) {
+            GtApplication.getInstance().getActionCreator().getStarMapBootUpData();
+        } else {
+            setupStarMap();
+        }
         return v;
     }
 
-    @Override
-    public void onStartedLoading() {
-    }
-
-    @Override
-    public void onFinishedLoading() {
-        Handler mainHandler = new Handler(getActivity().getMainLooper());
-        Runnable myRunnable = () -> mLoadingIndicator.setVisibility(View.GONE);
-        mainHandler.post(myRunnable);
-    }
-
-    @Override
-    public void onError(String error) {
+    private void setupStarMap() {
+        if (mBootUpData != null) {
+            mLoadingIndicator.setVisibility(View.GONE);
+            mGtStarMap.setBootupData(mBootUpData);
+        }
     }
 
     @Override
@@ -115,5 +120,10 @@ public class MapFragment extends AndroidFragmentApplication implements GtStarMap
                 mCurrentPopupWindow = null;
             }
         });
+    }
+
+    public void setStarMapData(StarMapData starmapData) {
+        this.mBootUpData = starmapData;
+        setupStarMap();
     }
 }

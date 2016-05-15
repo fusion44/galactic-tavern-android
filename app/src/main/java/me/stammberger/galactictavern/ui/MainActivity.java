@@ -40,6 +40,7 @@ import me.stammberger.galactictavern.stores.CommLinkStore;
 import me.stammberger.galactictavern.stores.ForumStore;
 import me.stammberger.galactictavern.stores.OrganizationStore;
 import me.stammberger.galactictavern.stores.ShipStore;
+import me.stammberger.galactictavern.stores.StarmapStore;
 import me.stammberger.galactictavern.stores.UserStore;
 import me.stammberger.galactictavern.ui.commlinks.CommLinkListFragment;
 import me.stammberger.galactictavern.ui.forums.ForumListFragment;
@@ -76,7 +77,6 @@ public class MainActivity extends AppCompatActivity
      */
     private ShipStore mShipStore;
 
-
     /**
      * Instance of {@link UserStore} for retrieving user data
      */
@@ -86,6 +86,11 @@ public class MainActivity extends AppCompatActivity
      * Instance of {@link OrganizationStore} for retrieving organization data
      */
     private OrganizationStore mOrganizationStore;
+
+    /**
+     * Instance of {@link StarmapStore} for retrieving starmap data
+     */
+    private StarmapStore mStarmapStore;
 
     /**
      * Instance of {@link ForumStore} for retrieving forum data
@@ -482,6 +487,16 @@ public class MainActivity extends AppCompatActivity
                             f.setForums(mForumsStore.getForums());
                         }
                 }
+                break;
+            case StarmapStore.ID:
+                switch (change.getRxAction().getType()) {
+                    case Actions.GET_STARMAP_BOOT_UP_DATA:
+                        if (mCurrentFragment != null && mCurrentFragment instanceof MapFragment) {
+                            MapFragment f = (MapFragment) mCurrentFragment;
+                            f.setStarMapData(mStarmapStore.getBootUpData());
+                        }
+                }
+                break;
         }
     }
 
@@ -518,6 +533,9 @@ public class MainActivity extends AppCompatActivity
 
         mForumsStore = ForumStore.get(dispatcher);
         mForumsStore.register();
+
+        mStarmapStore = StarmapStore.get(dispatcher);
+        mStarmapStore.register();
     }
 
     @Override

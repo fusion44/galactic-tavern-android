@@ -54,6 +54,11 @@ public interface Actions {
     String GET_FORUM_THREAD_POSTS = "get_forum_thread_posts";
 
     /**
+     * Action id for retrieving the star map boot-up data
+     */
+    String GET_STARMAP_BOOT_UP_DATA = "get_starmap_boot_up_data";
+
+    /**
      * Fetches a single comm link
      *
      * @param id the comm link id. Note this is not the SQLite id
@@ -103,6 +108,11 @@ public interface Actions {
      * @param id of the organization
      */
     void getOrganizationById(String id);
+
+    /**
+     * Gets basic boot-up data for displaying the starmap
+     */
+    void getStarMapBootUpData();
 
     /**
      * Get all forum names and the basic forum data

@@ -4,103 +4,51 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Type;
-import java.net.URL;
 
 import me.stammberger.starcitizencompact.map.data.StarMapData;
-import me.stammberger.starcitizencompact.map.data.SystemsResultset;
-import me.stammberger.starcitizencompact.map.data.Thumbnail;
-import me.stammberger.starcitizencompact.map.screens.BaseScreen;
 import me.stammberger.starcitizencompact.map.screens.MainScreen;
 
 public class GtStarMap extends Game implements GestureDetector.GestureListener {
-    public static StarMapData mapData;
-    public static Vector2 origin;
-    BaseScreen mCurrentScreen;
+    MainScreen mCurrentScreen;
     GestureDetector mGestureDetector;
-    StatusCallback mStatusCallback;
     SystemSelectedCallback mSystemSelectedCallback;
+    private StarMapData mMapData = null;
 
-    public GtStarMap(StatusCallback callback, SystemSelectedCallback systemSelectedCallback) {
+    public GtStarMap(SystemSelectedCallback systemSelectedCallback) {
         super();
 
-        if (callback == null || systemSelectedCallback == null) {
+        if (systemSelectedCallback == null) {
             throw new NullPointerException("Callback must not be null");
         }
 
-        mStatusCallback = callback;
         mSystemSelectedCallback = systemSelectedCallback;
     }
 
-    public static String fromStream(InputStream in) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-        StringBuilder out = new StringBuilder();
-        String newLine = System.getProperty("line.separator");
-        String line;
-        while ((line = reader.readLine()) != null) {
-            out.append(line);
-            out.append(newLine);
+    public void setBootupData(StarMapData data) {
+        /**
+         * {@link #create()} is called on LibDGX's thread and might be called later than
+         * the boot up data is available. If this happens {@link mCurrentScreen} might be null
+         * and the data needs to be temporarily saved until {@link #create()} is called.
+         */
+        if (mCurrentScreen != null) {
+            mCurrentScreen.setMapData(data);
+        } else {
+            mMapData = data;
         }
-        return out.toString();
     }
 
     @Override
     public void create() {
-        mStatusCallback.onStartedLoading();
         mCurrentScreen = new MainScreen(mSystemSelectedCallback);
-        setScreen(mCurrentScreen);
-
-        try {
-            InputStream connection =
-                    new URL("http://fusion44.bitbucket.org/sci/starmap/bootup.json").openStream();
-            String json = fromStream(connection);
-            GsonBuilder builder = new GsonBuilder();
-            builder.registerTypeAdapter(Thumbnail.class, new ThumbnailsDeserializer());
-            Gson gson = builder.create();
-            mapData = gson.fromJson(json, StarMapData.class);
-
-            origin = new Vector2();
-            for (SystemsResultset s : mapData.data.systems.resultset) {
-                origin.add(s.positionX, s.positionY);
-            }
-
-            origin.x = origin.x / mapData.data.systems.rowcount;
-            origin.y = origin.y / mapData.data.systems.rowcount;
-
-            Vector2 dist = new Vector2();
-            for (SystemsResultset s : mapData.data.systems.resultset) {
-                dist.x = s.positionX - origin.x;
-                dist.y = s.positionY - origin.y;
-
-                dist.scl(80);
-
-                s.positionX = dist.x + origin.x;
-                s.positionY = dist.y + origin.y;
-
-                mapData.data.systemHashMap.put(s.id, s);
-
-                s.generateBoundingCircle();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (mMapData != null) {
+            mCurrentScreen.setMapData(mMapData);
+            // don't keep unnecessary references
+            mMapData = null;
         }
-
+        setScreen(mCurrentScreen);
 
         mGestureDetector = new GestureDetector(this);
         Gdx.input.setInputProcessor(mGestureDetector);
-
-        mStatusCallback.onFinishedLoading();
     }
 
     @Override
@@ -149,14 +97,6 @@ public class GtStarMap extends Game implements GestureDetector.GestureListener {
         return mCurrentScreen.pinch(initialPointer1, initialPointer2, pointer1, pointer2);
     }
 
-    public interface StatusCallback {
-        void onStartedLoading();
-
-        void onFinishedLoading();
-
-        void onError(String error);
-    }
-
     /**
      * Callback for when user selects a specific system
      */
@@ -177,14 +117,5 @@ public class GtStarMap extends Game implements GestureDetector.GestureListener {
          * @param y          Touch position y in pixels
          */
         void onSystemSelected(String systemCode, int x, int y);
-    }
-
-    class ThumbnailsDeserializer implements JsonDeserializer<Thumbnail> {
-        @Override
-        public Thumbnail deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-                throws JsonParseException {
-            // TODO: handle gracefully
-            return new Thumbnail();
-        }
     }
 }

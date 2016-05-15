@@ -1,5 +1,6 @@
 package me.stammberger.galactictavern.actions;
 
+import com.badlogic.gdx.math.Vector2;
 import com.hardsoftstudio.rxflux.action.RxAction;
 import com.hardsoftstudio.rxflux.action.RxActionCreator;
 import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
@@ -23,6 +24,7 @@ import me.stammberger.galactictavern.core.retrofit.CommLinkWrapperApiService;
 import me.stammberger.galactictavern.core.retrofit.ForumsApiService;
 import me.stammberger.galactictavern.core.retrofit.OrganizationApiService;
 import me.stammberger.galactictavern.core.retrofit.ShipApiService;
+import me.stammberger.galactictavern.core.retrofit.StarMapService;
 import me.stammberger.galactictavern.core.retrofit.UserApiService;
 import me.stammberger.galactictavern.models.commlink.CommLinkModel;
 import me.stammberger.galactictavern.models.commlink.ContentBlock2;
@@ -37,6 +39,7 @@ import me.stammberger.galactictavern.stores.CommLinkStore;
 import me.stammberger.galactictavern.stores.ShipStore;
 import me.stammberger.galactictavern.stores.db.tables.FavoritesTable;
 import me.stammberger.galactictavern.stores.db.tables.user.UserSearchHistoryEntryTable;
+import me.stammberger.starcitizencompact.map.data.SystemsResultset;
 import rx.Observable;
 import rx.Single;
 import rx.android.schedulers.AndroidSchedulers;
@@ -300,6 +303,57 @@ public class GtActionCreator extends RxActionCreator implements Actions {
                     postRxAction(action);
                 }, throwable -> {
                     Timber.d("Error getting organization with id %s", id);
+                    Timber.d(throwable.getCause().toString());
+                    postError(action, throwable);
+                }));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void getStarMapBootUpData() {
+        RxAction action = newRxAction(Actions.GET_STARMAP_BOOT_UP_DATA);
+
+        if (hasRxAction(action)) return;
+
+        addRxAction(action, StarMapService.Factory.getInstance().getBootupData()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(starMapData -> {
+                    // calculate the star map origin (center point) for applying a scale factor later on
+                    Vector2 origin = new Vector2();
+                    for (SystemsResultset s : starMapData.data.systems.resultset) {
+                        origin.add(s.positionX, s.positionY);
+                    }
+
+                    origin.x = origin.x / starMapData.data.systems.rowcount;
+                    origin.y = origin.y / starMapData.data.systems.rowcount;
+                    starMapData.data.origin = origin;
+
+                    Vector2 dist = new Vector2();
+                    for (SystemsResultset s : starMapData.data.systems.resultset) {
+                        // calculate distance between starmap origin and system
+                        dist.x = s.positionX - origin.x;
+                        dist.y = s.positionY - origin.y;
+
+                        // scale the distance by factor x
+                        dist.scl(80);
+
+                        // set systems origin to the scaled distance relative to starmap origin
+                        s.positionX = dist.x + origin.x;
+                        s.positionY = dist.y + origin.y;
+
+                        // Add the system to a HashMap so we can retrieve single systems by id
+                        starMapData.data.systemHashMap.put(s.id, s);
+
+                        s.generateBoundingCircle();
+                    }
+
+                    action.getData().put(Keys.STARMAP_BOOTUP_DATA, starMapData);
+                    postRxAction(action);
+                }, throwable -> {
+                    Timber.d("Error getting Starmap boot up data");
                     Timber.d(throwable.getCause().toString());
                     postError(action, throwable);
                 }));

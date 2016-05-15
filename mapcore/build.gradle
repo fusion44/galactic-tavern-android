@@ -25,6 +25,5 @@ dependencies {
     compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
     compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
 
-    compile 'io.reactivex:rxjava:1.1.1'
     compile 'com.google.code.gson:gson:2.6.2'
 }

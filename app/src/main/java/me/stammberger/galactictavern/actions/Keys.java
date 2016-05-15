@@ -104,4 +104,8 @@ public interface Keys {
      */
     String FORUM_THREAD_POSTS_FOR_PAGE = "forum_threads_for_page";
 
+    /**
+     * Key for requesting {@link me.stammberger.starcitizencompact.map.data.StarMapData}
+     */
+    String STARMAP_BOOTUP_DATA = "starmap_bootup_data";
 }

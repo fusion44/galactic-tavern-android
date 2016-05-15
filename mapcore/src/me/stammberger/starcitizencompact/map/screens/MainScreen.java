@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.stammberger.starcitizencompact.map.GtStarMap;
+import me.stammberger.starcitizencompact.map.data.StarMapData;
 import me.stammberger.starcitizencompact.map.data.SystemsResultset;
 import me.stammberger.starcitizencompact.map.data.TunnelsResultset;
 
@@ -57,12 +58,13 @@ public class MainScreen extends BaseScreen {
     private ArrayList<TunnelsResultset> mSelectedEntryTunnels = new ArrayList<TunnelsResultset>();
     private GtStarMap.SystemSelectedCallback mSelectedCallback;
     private FPSLogger mFPSLogger = new FPSLogger();
+    private StarMapData mMapData;
 
     public MainScreen(GtStarMap.SystemSelectedCallback callback) {
-        mSelectedCallback = callback;
         if (callback == null) {
             throw new NullPointerException("SystemSelectedCallback must not be null");
         }
+        mSelectedCallback = callback;
 
         mShapeRenderer = new ShapeRenderer();
         mTouchPos = new Vector3();
@@ -99,6 +101,10 @@ public class MainScreen extends BaseScreen {
         mParallaxBackground.addLayers(layer);
     }
 
+    public void setMapData(StarMapData data) {
+        mMapData = data;
+    }
+
     @Override
     public void show() {
 
@@ -117,7 +123,7 @@ public class MainScreen extends BaseScreen {
         mSpriteBatch.end();
 
 
-        if (GtStarMap.mapData.data != null) {
+        if (mMapData != null) {
             renderSelected();
 
             mShapeRenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -125,15 +131,15 @@ public class MainScreen extends BaseScreen {
             mShapeRenderer.setColor(mTunnelColor);
             SystemsResultset from;
             SystemsResultset to;
-            for (TunnelsResultset s : GtStarMap.mapData.data.tunnels.resultset) {
-                from = GtStarMap.mapData.data.systemHashMap.get(s.entry.starSystemId);
-                to = GtStarMap.mapData.data.systemHashMap.get(s.exit.starSystemId);
+            for (TunnelsResultset s : mMapData.data.tunnels.resultset) {
+                from = mMapData.data.systemHashMap.get(s.entry.starSystemId);
+                to = mMapData.data.systemHashMap.get(s.exit.starSystemId);
                 mShapeRenderer.line(from.positionX, from.positionY, to.positionX, to.positionY);
             }
             mShapeRenderer.end();
 
             mShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-            for (SystemsResultset s : GtStarMap.mapData.data.systems.resultset) {
+            for (SystemsResultset s : mMapData.data.systems.resultset) {
                 mShapeRenderer.setColor(mSystemHandleOutlineColor);
                 mShapeRenderer.circle(s.positionX, s.positionY, systemBackgroundRadius);
 
@@ -142,11 +148,11 @@ public class MainScreen extends BaseScreen {
             }
 
             mShapeRenderer.setColor(Color.BLUE);
-            mShapeRenderer.circle(GtStarMap.origin.x, GtStarMap.origin.y, systemBackgroundRadius);
+            mShapeRenderer.circle(mMapData.data.origin.x, mMapData.data.origin.y, systemBackgroundRadius);
             mShapeRenderer.end();
 
             mSpriteBatch.begin();
-            for (SystemsResultset s : GtStarMap.mapData.data.systems.resultset) {
+            for (SystemsResultset s : mMapData.data.systems.resultset) {
                 mFontGlyphlayout.setText(mFont, s.name);
                 mFont.draw(mSpriteBatch,
                         s.name,
@@ -167,15 +173,15 @@ public class MainScreen extends BaseScreen {
         SystemsResultset from;
         SystemsResultset to;
         for (TunnelsResultset s : mSelectedEntryTunnels) {
-            from = GtStarMap.mapData.data.systemHashMap.get(s.entry.starSystemId);
-            to = GtStarMap.mapData.data.systemHashMap.get(s.exit.starSystemId);
+            from = mMapData.data.systemHashMap.get(s.entry.starSystemId);
+            to = mMapData.data.systemHashMap.get(s.exit.starSystemId);
             mShapeRenderer.line(from.positionX, from.positionY, to.positionX, to.positionY);
         }
 
         mShapeRenderer.setColor(mSelectedExitTunnelColor);
         for (TunnelsResultset s : mSelectedExitTunnels) {
-            from = GtStarMap.mapData.data.systemHashMap.get(s.entry.starSystemId);
-            to = GtStarMap.mapData.data.systemHashMap.get(s.exit.starSystemId);
+            from = mMapData.data.systemHashMap.get(s.entry.starSystemId);
+            to = mMapData.data.systemHashMap.get(s.exit.starSystemId);
             mShapeRenderer.line(from.positionX, from.positionY, to.positionX, to.positionY);
         }
         mShapeRenderer.end();
@@ -240,7 +246,7 @@ public class MainScreen extends BaseScreen {
         mSelectedCallback.onTap(x_screen, y_screen);
 
         mTouchPos = mCam.unproject(new Vector3(x, y, 0));
-        for (SystemsResultset s : GtStarMap.mapData.data.systems.resultset) {
+        for (SystemsResultset s : mMapData.data.systems.resultset) {
             if (s.contains(mTouchPos.x, mTouchPos.y)) {
                 mSelectedCallback.onSystemSelected(s.code, x_screen, y_screen);
                 setSelectedSystem(s);
@@ -253,8 +259,8 @@ public class MainScreen extends BaseScreen {
     }
 
     private void setSelectedSystem(SystemsResultset s) {
-        List<SystemsResultset> systems = GtStarMap.mapData.data.systems.resultset;
-        List<TunnelsResultset> tunnels = GtStarMap.mapData.data.tunnels.resultset;
+        List<SystemsResultset> systems = mMapData.data.systems.resultset;
+        List<TunnelsResultset> tunnels = mMapData.data.tunnels.resultset;
 
         resetSelection();
 
@@ -274,8 +280,8 @@ public class MainScreen extends BaseScreen {
     }
 
     private void resetSelection() {
-        List<SystemsResultset> systems = GtStarMap.mapData.data.systems.resultset;
-        List<TunnelsResultset> tunnels = GtStarMap.mapData.data.tunnels.resultset;
+        List<SystemsResultset> systems = mMapData.data.systems.resultset;
+        List<TunnelsResultset> tunnels = mMapData.data.tunnels.resultset;
         if (mSelectedSystem != null) {
             systems.add(mSelectedSystemIndex, mSelectedSystem);
             tunnels.addAll(mSelectedEntryTunnels);

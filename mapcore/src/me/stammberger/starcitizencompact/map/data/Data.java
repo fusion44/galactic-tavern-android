@@ -1,5 +1,6 @@
 package me.stammberger.starcitizencompact.map.data;
 
+import com.badlogic.gdx.math.Vector2;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -25,5 +26,8 @@ public class Data {
     @SerializedName("systems")
     @Expose
     public Systems systems;
-    public HashMap<Integer, SystemsResultset> systemHashMap = new HashMap<Integer, SystemsResultset>();
+
+    public HashMap<Integer, SystemsResultset> systemHashMap = new HashMap();
+
+    public Vector2 origin;
 }
