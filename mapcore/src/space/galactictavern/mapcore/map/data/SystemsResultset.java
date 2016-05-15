@@ -41,7 +41,7 @@ public class SystemsResultset {
     public Thumbnail thumbnail;
     @SerializedName("aggregated_size")
     @Expose
-    public String aggregatedSize;
+    public Double aggregatedSize;
     @SerializedName("name")
     @Expose
     public String name;

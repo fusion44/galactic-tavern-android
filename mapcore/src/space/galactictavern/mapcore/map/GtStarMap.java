@@ -112,10 +112,10 @@ public class GtStarMap extends Game implements GestureDetector.GestureListener {
         /**
          * Will be called on new selection
          *
-         * @param systemCode The selected system
-         * @param x          Touch position x in pixels
-         * @param y          Touch position y in pixels
+         * @param systemId of the selected system
+         * @param x        Touch position x in pixels
+         * @param y        Touch position y in pixels
          */
-        void onSystemSelected(String systemCode, int x, int y);
+        void onSystemSelected(int systemId, int x, int y);
     }
 }

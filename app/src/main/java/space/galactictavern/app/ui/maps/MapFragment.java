@@ -2,7 +2,9 @@ package space.galactictavern.app.ui.maps;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +21,7 @@ import space.galactictavern.app.R;
 import space.galactictavern.app.stores.StarmapStore;
 import space.galactictavern.mapcore.map.GtStarMap;
 import space.galactictavern.mapcore.map.data.StarMapData;
+import space.galactictavern.mapcore.map.data.SystemsResultset;
 
 /**
  * Fragment for displaying starmap data.
@@ -73,7 +76,7 @@ public class MapFragment extends AndroidFragmentApplication implements GtStarMap
     }
 
     @Override
-    public void onSystemSelected(String systemCode, int x, int y) {
+    public void onSystemSelected(int systemId, int x, int y) {
         getActivity().runOnUiThread(() -> {
             if (mCurrentPopupWindow != null) {
                 mCurrentPopupWindow.dismiss();
@@ -87,14 +90,21 @@ public class MapFragment extends AndroidFragmentApplication implements GtStarMap
             Button button = (Button) popView.findViewById(R.id.systemPopupOpenDetailViewButton);
             button.setOnClickListener(v -> {
                 Intent i = new Intent(getActivity(), SystemDetailSlidingActivity.class);
-                i.putExtra(SystemDetailSlidingActivity.SYSTEM_CODE, systemCode);
+                i.putExtra(SystemDetailSlidingActivity.SYSTEM_CODE, systemId);
                 startActivity(i);
             });
+
+            SystemsResultset system = mBootUpData.data.systemHashMap.get(systemId);
             TextView tv = (TextView) popView.findViewById(R.id.systemPopupNameDetailTextView);
-            tv.setText(systemCode);
-            mCurrentPopupWindow = new PopupWindow(
-                    popView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
-            mCurrentPopupWindow.setAnimationStyle(R.style.AppTheme_PopupWindowAnimation);
+            tv.setText(system.name);
+            tv = (TextView) popView.findViewById(R.id.systemPopupAffiliationTextView);
+            tv.setText(system.affiliation.get(0).name);
+            tv.setBackgroundColor(Color.parseColor(system.affiliation.get(0).color));
+            tv = (TextView) popView.findViewById(R.id.systemPopupAggregatedSize);
+            tv.setText(getString(R.string.dist_light_years, system.aggregatedSize));
+            tv = (TextView) popView.findViewById(R.id.systemPopupDescriptionTextView);
+            tv.setMovementMethod(new ScrollingMovementMethod());
+            tv.setText(system.description);
 
             // offset the popupwindow based on whether the selected system
             // is positioned on the left or right side of the screen
@@ -106,8 +116,13 @@ public class MapFragment extends AndroidFragmentApplication implements GtStarMap
                 x2 = x + offset;
             }
 
+            mCurrentPopupWindow = new PopupWindow(popView);
+            mCurrentPopupWindow.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+            mCurrentPopupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+            mCurrentPopupWindow.setAnimationStyle(R.style.AppTheme_PopupWindowAnimation);
             mCurrentPopupWindow.setFocusable(false);
             mCurrentPopupWindow.setOutsideTouchable(false);
+            mCurrentPopupWindow.update();
             mCurrentPopupWindow.showAtLocation(getView(), Gravity.CENTER, x2, y);
         });
     }

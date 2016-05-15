@@ -248,7 +248,7 @@ public class MainScreen extends BaseScreen {
         mTouchPos = mCam.unproject(new Vector3(x, y, 0));
         for (SystemsResultset s : mMapData.data.systems.resultset) {
             if (s.contains(mTouchPos.x, mTouchPos.y)) {
-                mSelectedCallback.onSystemSelected(s.code, x_screen, y_screen);
+                mSelectedCallback.onSystemSelected(s.id, x_screen, y_screen);
                 setSelectedSystem(s);
                 return true;
             }

@@ -37,6 +37,9 @@
     <string name="navigation_drawer_favorites">Favorites</string>
     <string name="navigation_drawer_settings">Settings</string>
 
+    <!-- Unit conversions -->
+    <string name="dist_light_years">%.0fAU</string>
+
     <!-- Actions -->
     <string name="action_open_in_browser">Open in browser</string>
     <string name="action_ship_list_filter">Filter</string>
@@ -88,6 +91,8 @@
     <string name="unknown">Unknown</string>
     <string name="filter">Filter</string>
     <string name="view_details">View Details</string>
+    <string name="size">Size</string>
+    <string name="affiliation">Affiliation</string>
 
     <!-- Widget -->
     <string name="widget_header_text">Comm Links</string>
