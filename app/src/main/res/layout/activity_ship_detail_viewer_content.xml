@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     app:behavior_overlapTop="@dimen/card_view_appbar_layout_overlap"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="me.stammberger.galactictavern.ui.ships.ShipDetailViewerActivity"
+    tools:context="space.galactictavern.app.ui.ships.ShipDetailViewerActivity"
     tools:showIn="@layout/activity_ship_detail_viewer">
 
     <android.support.percent.PercentFrameLayout

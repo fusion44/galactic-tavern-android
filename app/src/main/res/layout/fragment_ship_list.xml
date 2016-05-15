@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/list"
-    android:name="me.stammberger.galactictavern.ui.ships.ShipListFragment"
+    android:name="space.galactictavern.app.ui.ships.ShipListFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingEnd="@dimen/card_view_recycler_side_padding"
@@ -13,5 +13,5 @@
     app:layoutManager="LinearLayoutManager"
     app:layout_empty="@layout/generic_adapter_empty_screen"
     app:mainLayoutId="@layout/layout_recyclerview_horizontalscroll"
-    tools:context=".ui.ships.ShipListFragment"
+    tools:context="space.galactictavern.app.ui.ships.ShipListFragment"
     tools:listitem="@layout/fragment_ship_list_item" />

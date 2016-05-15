@@ -2,10 +2,10 @@
 <com.malinskiy.superrecyclerview.SuperRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/list"
-    android:name="me.stammberger.galactictavern.ui.forums.ForumListFragment"
+    android:name="space.galactictavern.app.ui.forums.ForumListFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
-    tools:context=".ui.forums.ForumThreadListActivity"
+    tools:context="space.galactictavern.app.ui.forums.ForumThreadListActivity"
     tools:listitem="@layout/activity_forum_thread_list_item" />

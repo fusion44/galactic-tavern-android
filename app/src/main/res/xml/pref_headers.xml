@@ -3,12 +3,12 @@
     <!-- These settings headers are only used on tablets. -->
 
     <header
-        android:fragment="me.stammberger.galactictavern.ui.prefs.SettingsActivity$NotificationPreferenceFragment"
+        android:fragment="space.galactictavern.app.ui.prefs.SettingsActivity$NotificationPreferenceFragment"
         android:icon="@drawable/ic_notifications_black_24dp"
         android:title="@string/pref_header_notifications" />
 
     <header
-        android:fragment="me.stammberger.galactictavern.ui.prefs.SettingsActivity$DataSyncPreferenceFragment"
+        android:fragment="space.galactictavern.app.ui.prefs.SettingsActivity$DataSyncPreferenceFragment"
         android:icon="@drawable/ic_sync_black_24dp"
         android:title="@string/pref_header_data_sync" />
 

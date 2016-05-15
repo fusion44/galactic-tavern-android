@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.maps.MapFragment">
+    tools:context="space.galactictavern.app.ui.maps.MapFragment">
 
     <FrameLayout
         android:id="@+id/starMapFrameLayout"

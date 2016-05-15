@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.commlinks.CommLinkReaderActivity">
+    tools:context="space.galactictavern.app.ui.commlinks.CommLinkReaderActivity">
     <item
         android:id="@+id/action_open_browser"
         android:orderInCategory="100"

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="me.stammberger.galactictavern">
+    package="space.galactictavern.app">
 
     <application
-        android:name=".GtDebugApplication"
+        android:name="space.galactictavern.app.GtDebugApplication"
         android:allowBackup="false"
         android:label="@string/app_name"
         tools:replace="android:name, android:allowBackup, android:label">
 
         <activity
-            android:name=".ui.MainActivity"
+            android:name="space.galactictavern.app.ui.MainActivity"
             android:label="@string/app_name"
             tools:replace="android:name, android:label" />
     </application>

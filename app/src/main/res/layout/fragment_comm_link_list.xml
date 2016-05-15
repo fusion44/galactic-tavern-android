@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/list"
-    android:name="me.stammberger.galactictavern.ui.CommLinkListFragment"
+    android:name="space.galactictavern.app.ui.CommLinkListFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager"
     app:layout_empty="@layout/generic_adapter_empty_screen"
     app:mainLayoutId="@layout/layout_recyclerview_horizontalscroll"
-    tools:context=".ui.commlinks.CommLinkListFragment"
+    tools:context="space.galactictavern.app.ui.commlinks.CommLinkListFragment"
     tools:listitem="@layout/fragment_comm_link_item" />
