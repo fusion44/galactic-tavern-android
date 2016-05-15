@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -28,10 +29,10 @@ import space.galactictavern.mapcore.map.data.TunnelsResultset;
 
 public class MainScreen extends BaseScreen {
     private final float mViewportWidth = 1000f;
-    private final float mMaxZoom = 8.5f;
-    private final float mMinZoom = 0.5f;
-    private final int systemBackgroundRadius = 50;
-    private final int systemBackgroundRadiusSelected = 75;
+    private final float mMaxZoom = 12.5f;
+    private final float mMinZoom = 2.5f;
+    private final int systemBackgroundRadius = 70;
+    private final int systemBackgroundRadiusSelected = 95;
     private final Color mSystemHandleBackgroundColor = Color.valueOf("04454CFF");
     private final Color mSystemHandleOutlineColor = Color.valueOf("42EDFFFF");
     private final Color mTunnelColor = Color.valueOf("0A55B1FF");
@@ -88,13 +89,19 @@ public class MainScreen extends BaseScreen {
         }
         mCam.update();
 
-        mFont = new BitmapFont(Gdx.files.internal("TestFont.fnt"), Gdx.files.internal("TestFont.png"), false);
-        mFont.getData().setScale(2);
-
-        mFontSelected = new BitmapFont(Gdx.files.internal("TestFont.fnt"), Gdx.files.internal("TestFont.png"), false);
-        mFontSelected.getData().setScale(4);
-
+        createFonts();
         mFontGlyphlayout = new GlyphLayout();
+    }
+
+
+    private void createFonts() {
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Roboto-Bold.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 80;
+        mFont = generator.generateFont(parameter);
+        parameter.size = 100;
+        mFontSelected = generator.generateFont(parameter);
+        generator.dispose();
     }
 
     private void setupBackground() {
@@ -107,6 +114,7 @@ public class MainScreen extends BaseScreen {
         layer.setTileModeX(ParallaxLayer.TileMode.single);
         layer.setTileModeY(ParallaxLayer.TileMode.single);
         mParallaxBackground.addLayers(layer);
+        mParallaxBackground.setOffset(new Vector3(-2000, 0, 0));
     }
 
     public void setMapData(StarMapData data) {
@@ -161,7 +169,7 @@ public class MainScreen extends BaseScreen {
                 mShapeRenderer.circle(s.positionX, s.positionY, systemBackgroundRadius);
 
                 mShapeRenderer.setColor(mSystemHandleBackgroundColor);
-                mShapeRenderer.circle(s.positionX, s.positionY, systemBackgroundRadius - 1);
+                mShapeRenderer.circle(s.positionX, s.positionY, systemBackgroundRadius - 3);
             }
 
             mShapeRenderer.setColor(Color.BLUE);
@@ -174,7 +182,7 @@ public class MainScreen extends BaseScreen {
                 mFont.draw(mSpriteBatch,
                         s.name,
                         s.positionX - mFontGlyphlayout.width / 2,
-                        s.positionY + 115);
+                        s.positionY + 165);
             }
             mSpriteBatch.end();
         }
