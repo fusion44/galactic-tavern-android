@@ -34,7 +34,6 @@ public class MapFragment extends AndroidFragmentApplication implements GtStarMap
     public View mLoadingIndicator;
     private PopupWindow mCurrentPopupWindow;
     private StarMapData mBootUpData;
-    private FrameLayout mStarMapView;
     private GtStarMap mGtStarMap;
 
     public MapFragment() {
@@ -53,12 +52,12 @@ public class MapFragment extends AndroidFragmentApplication implements GtStarMap
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
-        mStarMapView = (FrameLayout) v.findViewById(R.id.starMapFrameLayout);
+        FrameLayout starMapView = (FrameLayout) v.findViewById(R.id.starMapFrameLayout);
         mLoadingIndicator = v.findViewById(R.id.loadingIndicator);
         String mapState = Prefs.getString(getString(R.string.pref_key_maps_camera_state), "");
         mGtStarMap = new GtStarMap(this, mapState);
         View view = initializeForView(mGtStarMap);
-        mStarMapView.addView(view);
+        starMapView.addView(view);
 
         mBootUpData = StarmapStore.get(GtApplication.getInstance().getRxFlux().getDispatcher())
                 .getBootUpData();
@@ -110,7 +109,7 @@ public class MapFragment extends AndroidFragmentApplication implements GtStarMap
 
             // offset the popupwindow based on whether the selected system
             // is positioned on the left or right side of the screen
-            int offset = 200;
+            int offset = 500;
             int x2;
             if (x > 0) {
                 x2 = x - offset;
