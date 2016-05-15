@@ -157,8 +157,26 @@ public class GtStarMap extends Game implements GestureDetector.GestureListener {
         void onError(String error);
     }
 
+    /**
+     * Callback for when user selects a specific system
+     */
     public interface SystemSelectedCallback {
-        void onSystemSelected(SystemsResultset s);
+        /**
+         * User tapped on empty space without selecting anything
+         *
+         * @param x Touch position x in pixels
+         * @param y Touch position y in pixels
+         */
+        void onTap(int x, int y);
+
+        /**
+         * Will be called on new selection
+         *
+         * @param systemCode The selected system
+         * @param x          Touch position x in pixels
+         * @param y          Touch position y in pixels
+         */
+        void onSystemSelected(String systemCode, int x, int y);
     }
 
     class ThumbnailsDeserializer implements JsonDeserializer<Thumbnail> {

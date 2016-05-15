@@ -191,5 +191,9 @@
         <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
     </style>
 
+    <style name="AppTheme.PopupWindowAnimation">
+        <item name="android:windowEnterAnimation">@anim/window_enter</item>
+        <item name="android:windowExitAnimation">@anim/window_exit</item>
+    </style>
 
 </resources>

@@ -94,6 +94,12 @@
             android:label=""
             android:theme="@style/AppTheme.NoActionBar" />
 
+        <activity
+            android:name=".ui.maps.SystemDetailSlidingActivity"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:theme="@style/Theme.Sliding.Light" />
+
         <receiver android:name=".ui.widgets.CommLinkWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

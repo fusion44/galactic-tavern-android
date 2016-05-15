@@ -235,10 +235,14 @@ public class MainScreen extends BaseScreen {
 
     @Override
     public boolean tap(float x, float y, int count, int button) {
+        int x_screen = -(Gdx.graphics.getWidth() / 2) + (int) x;
+        int y_screen = -(Gdx.graphics.getHeight() / 2) + (int) y;
+        mSelectedCallback.onTap(x_screen, y_screen);
+
         mTouchPos = mCam.unproject(new Vector3(x, y, 0));
         for (SystemsResultset s : GtStarMap.mapData.data.systems.resultset) {
             if (s.contains(mTouchPos.x, mTouchPos.y)) {
-                mSelectedCallback.onSystemSelected(s);
+                mSelectedCallback.onSystemSelected(s.code, x_screen, y_screen);
                 setSelectedSystem(s);
                 return true;
             }

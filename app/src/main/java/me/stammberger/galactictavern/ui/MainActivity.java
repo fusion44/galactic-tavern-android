@@ -43,6 +43,7 @@ import me.stammberger.galactictavern.stores.ShipStore;
 import me.stammberger.galactictavern.stores.UserStore;
 import me.stammberger.galactictavern.ui.commlinks.CommLinkListFragment;
 import me.stammberger.galactictavern.ui.forums.ForumListFragment;
+import me.stammberger.galactictavern.ui.maps.MapFragment;
 import me.stammberger.galactictavern.ui.orgs.OrgsFragment;
 import me.stammberger.galactictavern.ui.prefs.SettingsActivity;
 import me.stammberger.galactictavern.ui.ships.ShipListFragment;
