@@ -170,6 +170,7 @@
     <string name="pref_title_new_comm_link_notifications">New Comm-Link notifications</string>
     <string name="pref_key_new_comm_link_notifications" translatable="false">new_comm_link_notifications</string>
     <string name="pref_key_tracking" translatable="false">pref_key_tracking_enabled</string>
+    <string name="pref_key_maps_camera_state" translatable="false">pref_key_maps_camera_state</string>
     <string name="pref_title_tracking_enabled">Anonymous usage statistics</string>
     <string name="pref_summary_tracking">Help improve the application by allowing anonymous usage tracking</string>
 

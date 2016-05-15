@@ -60,7 +60,7 @@ public class MainScreen extends BaseScreen {
     private FPSLogger mFPSLogger = new FPSLogger();
     private StarMapData mMapData;
 
-    public MainScreen(GtStarMap.SystemSelectedCallback callback) {
+    public MainScreen(GtStarMap.SystemSelectedCallback callback, String lastCamPosition) {
         if (callback == null) {
             throw new NullPointerException("SystemSelectedCallback must not be null");
         }
@@ -77,7 +77,15 @@ public class MainScreen extends BaseScreen {
         float h = Gdx.graphics.getHeight();
 
         mCam = new OrthographicCamera(mViewportWidth, mViewportWidth * (h / w));
-        mCam.position.set(mCam.viewportWidth / 2f, mCam.viewportHeight / 2f, 0);
+        if (lastCamPosition.equals("")) {
+            mCam.position.set(mCam.viewportWidth / 2f, mCam.viewportHeight / 2f, 0);
+        } else {
+            String[] spl = lastCamPosition.split("__");
+            String pos = spl[0];
+            String zoom = spl[1];
+            mCam.position.fromString(pos);
+            mCam.zoom = Float.parseFloat(zoom);
+        }
         mCam.update();
 
         mFont = new BitmapFont(Gdx.files.internal("TestFont.fnt"), Gdx.files.internal("TestFont.png"), false);
@@ -103,6 +111,15 @@ public class MainScreen extends BaseScreen {
 
     public void setMapData(StarMapData data) {
         mMapData = data;
+    }
+
+    /**
+     * Gets current camera state for saving
+     *
+     * @return Camera state as string
+     */
+    public String getState() {
+        return mCam.position.toString() + "__" + String.valueOf(mCam.zoom);
     }
 
     @Override

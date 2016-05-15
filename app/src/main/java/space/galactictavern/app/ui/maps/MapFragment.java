@@ -15,6 +15,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
+import com.pixplicity.easyprefs.library.Prefs;
 
 import space.galactictavern.app.GtApplication;
 import space.galactictavern.app.R;
@@ -54,7 +55,8 @@ public class MapFragment extends AndroidFragmentApplication implements GtStarMap
         View v = inflater.inflate(R.layout.fragment_map, container, false);
         mStarMapView = (FrameLayout) v.findViewById(R.id.starMapFrameLayout);
         mLoadingIndicator = v.findViewById(R.id.loadingIndicator);
-        mGtStarMap = new GtStarMap(this);
+        String mapState = Prefs.getString(getString(R.string.pref_key_maps_camera_state), "");
+        mGtStarMap = new GtStarMap(this, mapState);
         View view = initializeForView(mGtStarMap);
         mStarMapView.addView(view);
 
@@ -125,6 +127,12 @@ public class MapFragment extends AndroidFragmentApplication implements GtStarMap
             mCurrentPopupWindow.update();
             mCurrentPopupWindow.showAtLocation(getView(), Gravity.CENTER, x2, y);
         });
+    }
+
+    @Override
+    public void onPause() {
+        Prefs.putString(getString(R.string.pref_key_maps_camera_state), mGtStarMap.getState());
+        super.onPause();
     }
 
     @Override

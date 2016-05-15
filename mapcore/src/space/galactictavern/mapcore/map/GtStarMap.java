@@ -9,19 +9,29 @@ import space.galactictavern.mapcore.map.data.StarMapData;
 import space.galactictavern.mapcore.map.screens.MainScreen;
 
 public class GtStarMap extends Game implements GestureDetector.GestureListener {
+    private final String mLastCamPosition;
     MainScreen mCurrentScreen;
     GestureDetector mGestureDetector;
     SystemSelectedCallback mSystemSelectedCallback;
     private StarMapData mMapData = null;
 
-    public GtStarMap(SystemSelectedCallback systemSelectedCallback) {
+    public GtStarMap(SystemSelectedCallback systemSelectedCallback, String lastCamPosition) {
         super();
 
         if (systemSelectedCallback == null) {
             throw new NullPointerException("Callback must not be null");
         }
 
+        mLastCamPosition = lastCamPosition;
         mSystemSelectedCallback = systemSelectedCallback;
+    }
+
+    public String getState() {
+        if (mCurrentScreen != null) {
+            return mCurrentScreen.getState();
+        } else {
+            return "";
+        }
     }
 
     public void setBootupData(StarMapData data) {
@@ -39,7 +49,7 @@ public class GtStarMap extends Game implements GestureDetector.GestureListener {
 
     @Override
     public void create() {
-        mCurrentScreen = new MainScreen(mSystemSelectedCallback);
+        mCurrentScreen = new MainScreen(mSystemSelectedCallback, mLastCamPosition);
         if (mMapData != null) {
             mCurrentScreen.setMapData(mMapData);
             // don't keep unnecessary references
