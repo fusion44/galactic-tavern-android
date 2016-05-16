@@ -14,7 +14,7 @@ import com.bumptech.glide.request.target.Target;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import space.galactictavern.app.R;
 import space.galactictavern.app.models.forums.Forum;
@@ -119,7 +119,7 @@ public class ForumListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      */
     public class SectionViewHolder extends RecyclerView.ViewHolder {
         public final View view;
-        @Bind(R.id.forumSectionHeaderTextView)
+        @BindView(R.id.forumSectionHeaderTextView)
         public TextView sectionTextView;
 
 
@@ -142,13 +142,13 @@ public class ForumListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      */
     public class ForumViewHolder extends RecyclerView.ViewHolder {
         public final View view;
-        @Bind(R.id.forumTitleTextView)
+        @BindView(R.id.forumTitleTextView)
         public TextView titleTextView;
-        @Bind(R.id.forumActivityTextView)
+        @BindView(R.id.forumActivityTextView)
         public TextView activityTextView;
-        @Bind(R.id.forumDescriptionTextView)
+        @BindView(R.id.forumDescriptionTextView)
         public TextView descriptionTextView;
-        @Bind(R.id.forumNewActivityCountTextView)
+        @BindView(R.id.forumNewActivityCountTextView)
         public TextView newDiscussionTextView;
 
 

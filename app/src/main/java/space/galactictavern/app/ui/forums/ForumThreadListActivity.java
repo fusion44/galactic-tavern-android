@@ -24,7 +24,7 @@ import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import space.galactictavern.app.GtApplication;
 import space.galactictavern.app.R;
@@ -211,15 +211,15 @@ public class ForumThreadListActivity extends RxFluxActivity implements OnMoreLis
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View view;
 
-            @Bind(R.id.forumThreadListAvatarImageView)
+            @BindView(R.id.forumThreadListAvatarImageView)
             public ImageView avatarImageView;
-            @Bind(R.id.forumThreadListTopicTextView)
+            @BindView(R.id.forumThreadListTopicTextView)
             public TextView titleTextView;
-            @Bind(R.id.forumThreadListViewCount)
+            @BindView(R.id.forumThreadListViewCount)
             public TextView viewCountTextView;
-            @Bind(R.id.forumThreadListPostCount)
+            @BindView(R.id.forumThreadListPostCount)
             public TextView postCountTextView;
-            @Bind(R.id.forumThreadListPostDate)
+            @BindView(R.id.forumThreadListPostDate)
             public TextView postDateTextView;
 
             public ForumThread forumThread;

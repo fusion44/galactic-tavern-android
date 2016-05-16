@@ -9,7 +9,7 @@ import com.hardsoftstudio.rxflux.dispatcher.RxViewDispatch;
 import com.hardsoftstudio.rxflux.store.RxStoreChange;
 import com.klinker.android.sliding.SlidingActivity;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import space.galactictavern.app.GtApplication;
 import space.galactictavern.app.R;
@@ -23,7 +23,7 @@ import space.galactictavern.app.stores.OrganizationStore;
 public class SystemDetailSlidingActivity extends SlidingActivity implements RxViewDispatch {
     public static final String SYSTEM_CODE = "user_handle";
     private static final String TRACKING_SCREEN_SYSTEM_DETAIL_ACTIVITY = "SystemDetailActivity";
-    @Bind(R.id.systemNameTextView)
+    @BindView(R.id.systemNameTextView)
     public TextView mSystemNameTextView;
 
     @Override

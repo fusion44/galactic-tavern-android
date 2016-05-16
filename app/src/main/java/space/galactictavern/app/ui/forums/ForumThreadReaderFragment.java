@@ -18,7 +18,7 @@ import com.malinskiy.superrecyclerview.SuperRecyclerView;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import space.galactictavern.app.GtApplication;
 import space.galactictavern.app.R;
@@ -172,11 +172,11 @@ public class ForumThreadReaderFragment extends Fragment implements OnMoreListene
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View view;
             public ForumThreadPost post;
-            @Bind(R.id.forumPostCreatorTextView)
+            @BindView(R.id.forumPostCreatorTextView)
             TextView postCreatorTextView;
-            @Bind(R.id.forumPostCreationDateTextView)
+            @BindView(R.id.forumPostCreationDateTextView)
             TextView postCreationDateTextView;
-            @Bind(R.id.forumPostContentTextView)
+            @BindView(R.id.forumPostContentTextView)
             TextView postContentTextView;
 
             public ViewHolder(View view) {

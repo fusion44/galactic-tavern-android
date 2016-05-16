@@ -18,7 +18,7 @@ import com.neovisionaries.i18n.CountryCode;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import space.galactictavern.app.GtApplication;
 import space.galactictavern.app.R;
@@ -37,23 +37,23 @@ import space.galactictavern.app.stores.UserStore;
 public class UserDetailSlidingActivity extends SlidingActivity implements RxViewDispatch {
     public static final String USER_HANDLE = "user_handle";
     private static final String TRACKING_SCREEN_USER_DETAIL_ACTIVITY = "UserDetailActivity";
-    @Bind(R.id.userDetailCitizenNumberTextView)
+    @BindView(R.id.userDetailCitizenNumberTextView)
     TextView mCitizenNumberTextView;
-    @Bind(R.id.userDetailCountryTextView)
+    @BindView(R.id.userDetailCountryTextView)
     TextView mCountryTextView;
-    @Bind(R.id.userDetailCountryFlagImageView)
+    @BindView(R.id.userDetailCountryFlagImageView)
     ImageView mCountryFlagImageView;
-    @Bind(R.id.userDetailAvatarRoundedImageView)
+    @BindView(R.id.userDetailAvatarRoundedImageView)
     ImageView mAvatarImageView;
-    @Bind(R.id.userDetailTitleImageView)
+    @BindView(R.id.userDetailTitleImageView)
     ImageView mUserTitleImageView;
-    @Bind(R.id.userDetailTitleTextView)
+    @BindView(R.id.userDetailTitleTextView)
     TextView mUserDetailTitleTextView;
-    @Bind(R.id.userDetailBioTextView)
+    @BindView(R.id.userDetailBioTextView)
     TextView mUserBioTextView;
-    @Bind(R.id.userDetailDiscussionsTextView)
+    @BindView(R.id.userDetailDiscussionsTextView)
     TextView mDiscussionsTextView;
-    @Bind(R.id.userDetailPostsTextView)
+    @BindView(R.id.userDetailPostsTextView)
     TextView mPostsTextView;
 
     private OrganizationStore mOrganizationStore;
