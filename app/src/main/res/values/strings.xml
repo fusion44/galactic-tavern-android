@@ -77,6 +77,8 @@
     <string name="content_desc_pref_usage_statistics">Turns collection of anonymous usage statistics on and off</string>
     <string name="content_desc_favorite_comm_link">Favorite current comm link</string>
     <string name="content_desc_open_system_detail">Opens currently selected system details screen</string>
+    <string name="content_desc_usage_statistics_collection_accept">Accept usage statistics collection button</string>
+    <string name="content_desc_usage_statistics_collection_decline">Decline usage statistics collection button</string>
 
     <!-- General UI -->
     <string name="no_data">No data to show</string>
@@ -94,6 +96,12 @@
     <string name="view_details">View Details</string>
     <string name="size">Size</string>
     <string name="affiliation">Affiliation</string>
+    <string name="no_thanks">No, thanks</string>
+    <string name="question_ask_for_data_collection">
+        Please help improve the application by allowing anonymous usage statistics collection. \n
+        This can easily be enabled and disabled in the settings menu.
+    </string>
+    <string name="onboarding_thanks">Thank you. You can change this at any time in the settings.</string>
 
     <!-- Widget -->
     <string name="widget_header_text">Comm Links</string>
@@ -151,24 +159,13 @@
 
     <!-- Strings related to Settings -->
     <string name="pref_header_data_sync">Data &amp; sync &amp; privacy</string>
-    <string-array name="pref_sync_frequency_titles">
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_sync_frequency_values">
-        <item>3600</item>
-        <item>10800</item>
-        <item>21600</item>
-        <item>-1</item>
-    </string-array>
 
     <string name="pref_header_notifications">Notifications</string>
     <string name="pref_title_new_comm_link_notifications">New Comm-Link notifications</string>
     <string name="pref_key_new_comm_link_notifications" translatable="false">new_comm_link_notifications</string>
     <string name="pref_key_tracking" translatable="false">pref_key_tracking_enabled</string>
     <string name="pref_key_maps_camera_state" translatable="false">pref_key_maps_camera_state</string>
+    <string name="pref_key_onboarding_finished">pref_key_onboarding_finished</string>
     <string name="pref_title_tracking_enabled">Anonymous usage statistics</string>
     <string name="pref_summary_tracking">Help improve the application by allowing anonymous usage tracking</string>
 

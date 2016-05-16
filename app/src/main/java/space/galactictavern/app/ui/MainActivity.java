@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -17,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 import com.hardsoftstudio.rxflux.action.RxError;
@@ -153,7 +155,9 @@ public class MainActivity extends AppCompatActivity
             }
         } else {
             String f = Prefs.getString(KEY_CURRENT_FRAGMENT, "");
-            if (f.equals("") || f.equals(CommLinkListFragment.class.getSimpleName())) {
+            if (f.equals("") || !Prefs.getBoolean(getString(R.string.pref_key_onboarding_finished), false)) {
+                openOnboardingFragment();
+            } else if (f.equals(CommLinkListFragment.class.getSimpleName())) {
                 openCommLinkFragment();
             } else if (f.equals(ShipListFragment.class.getSimpleName())) {
                 openShipsFragment();
@@ -477,6 +481,20 @@ public class MainActivity extends AppCompatActivity
         Prefs.putString(KEY_CURRENT_FRAGMENT, simpleClassName);
     }
 
+    /**
+     * Opens the onboarding fragment
+     */
+    private void openOnboardingFragment() {
+        if (!Prefs.getBoolean(getString(R.string.pref_key_onboarding_finished), false)) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            String simpleClassName = OnboardingFragment.class.getSimpleName();
+            mCurrentFragment = OnboardingFragment.newInstance();
+            fragmentTransaction.replace(R.id.fragment_container, mCurrentFragment, simpleClassName);
+            fragmentTransaction.commit();
+        }
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public void onRxStoreChanged(RxStoreChange change) {
@@ -585,6 +603,19 @@ public class MainActivity extends AppCompatActivity
 
         mStarmapStore = StarmapStore.get(dispatcher);
         mStarmapStore.register();
+    }
+
+    /**
+     * Hacky way to let the MainActivity know that the {@link OnboardingFragment} is
+     * finished and can be closed. This will start the {@link CommLinkListFragment}
+     */
+    public void onboardingFinished() {
+        Prefs.putBoolean(getString(R.string.pref_key_onboarding_finished), true);
+        openCommLinkFragment();
+        View v = findViewById(R.id.fragment_container);
+        if (v != null) {
+            Snackbar.make(v, getString(R.string.onboarding_thanks), Snackbar.LENGTH_LONG).show();
+        }
     }
 
     @Override
