@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- If you include it in your own library use this pattern: define_* -->
+    <!-- If it should be included in the AboutLibraries lib use this pattern: define_int_* -->
+    <string name="define_RxFlux"> </string>
+    <string name="library_RxFlux_author">Marcel Pintó Biescas</string>
+    <string name="library_RxFlux_authorWebsite">http://www.hardsoftstudio.com/</string>
+    <string name="library_RxFlux_libraryName">RxFlux</string>
+    <string name="library_RxFlux_libraryDescription">RxFlux is small light-weight framework that makes it easy to follow the Flux pattern with RxJava functionalities.</string>
+    <string name="library_RxFlux_libraryVersion">0.3.1</string>
+    <string name="library_RxFlux_libraryWebsite">https://github.com/skimarxall/RxFlux</string>
+    <!-- Possible values right now: apache_2_0, mit, bsd_2, bsd_3 -->
+    <string name="library_RxFlux_licenseId">apache_2_0</string>
+    <!-- you still can define the license within your library definition, but it is recommend to use the id -->
+    <!-- possible fields for a custom license: *_licenseVersion, *_licenseLink, *_licenseContent -->
+    <string name="library_RxFlux_isOpenSource">true</string>
+    <string name="library_RxFlux_repositoryLink">https://github.com/skimarxall/RxFlux</string>
+</resources>

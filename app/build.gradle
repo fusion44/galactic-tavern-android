@@ -71,14 +71,15 @@ dependencies {
     compile 'net.danlew:android.joda:2.9.3'
     compile 'com.pushtorefresh.storio:sqlite:1.8.0'
     compile 'com.pushtorefresh.storio:sqlite-annotations:1.8.0'
+    apt 'com.pushtorefresh.storio:sqlite-annotations-processor:1.8.0'
     compile 'org.apmem.tools:layouts:1.10@aar'
     compile 'com.github.renaudcerrato:FloatingSearchView:1.0.0'
-    apt 'com.pushtorefresh.storio:sqlite-annotations-processor:1.8.0'
     compile 'com.klinkerapps:sliding-activity:1.2.3'
     compile 'com.makeramen:roundedimageview:2.2.1'
-
-
     compile 'com.pixplicity.easyprefs:library:1.8.1@aar'
+    compile('com.mikepenz:aboutlibraries:5.6.6@aar') {
+        transitive = true
+    }
 
     // This if for converting full country name to its short ISO representation and the other way around
     // Norway -> NO

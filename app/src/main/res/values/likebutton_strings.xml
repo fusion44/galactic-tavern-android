@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- If you include it in your own library use this pattern: define_* -->
+    <!-- If it should be included in the AboutLibraries lib use this pattern: define_int_* -->
+    <string name="define_likebutton"> </string>
+    <string name="library_likebutton_author">Joel Dean</string>
+    <string name="library_likebutton_authorWebsite">https://github.com/jd-alexander/LikeButton</string>
+    <string name="library_likebutton_libraryName">Like Button</string>
+    <string name="library_likebutton_libraryDescription">Like Button is a library that allows you to create a button with animation effects similar to Twitter\'s heart when you like something.</string>
+    <string name="library_likebutton_libraryVersion">0.2.0</string>
+    <string name="library_likebutton_libraryWebsite">https://github.com/jd-alexander/LikeButton</string>
+    <!-- Possible values right now: apache_2_0, mit, bsd_2, bsd_3 -->
+    <string name="library_likebutton_licenseId">apache_2_0</string>
+    <!-- you still can define the license within your library definition, but it is recommend to use the id -->
+    <!-- possible fields for a custom license: *_licenseVersion, *_licenseLink, *_licenseContent -->
+    <string name="library_likebutton_isOpenSource">true</string>
+    <string name="library_likebutton_repositoryLink">https://github.com/jd-alexander/LikeButton</string>
+</resources>

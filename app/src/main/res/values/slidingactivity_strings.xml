@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- If you include it in your own library use this pattern: define_* -->
+    <!-- If it should be included in the AboutLibraries lib use this pattern: define_int_* -->
+    <string name="define_SlidingActivity"> </string>
+    <string name="library_SlidingActivity_author">Jacob Klinker</string>
+    <string name="library_SlidingActivity_authorWebsite">http://www.klinkerapps.com</string>
+    <string name="library_SlidingActivity_libraryName">Android Sliding Activity Library</string>
+    <string name="library_SlidingActivity_libraryDescription">Easily create activities that can slide vertically on the screen and fit well into the Material Design age.</string>
+    <string name="library_SlidingActivity_libraryVersion">1.2.3</string>
+    <string name="library_SlidingActivity_libraryWebsite">https://github.com/klinker41/android-slidingactivity</string>
+    <!-- Possible values right now: apache_2_0, mit, bsd_2, bsd_3 -->
+    <string name="library_SlidingActivity_licenseId">apache_2_0</string>
+    <!-- you still can define the license within your library definition, but it is recommend to use the id -->
+    <!-- possible fields for a custom license: *_licenseVersion, *_licenseLink, *_licenseContent -->
+    <string name="library_SlidingActivity_isOpenSource">true</string>
+    <string name="library_SlidingActivity_repositoryLink">https://github.com/klinker41/android-slidingactivity</string>
+</resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- If you include it in your own library use this pattern: define_* -->
+    <!-- If it should be included in the AboutLibraries lib use this pattern: define_int_* -->
+    <string name="define_storio"> </string>
+    <string name="library_storio_author">Artem Zinnatulλin + Dmitrii Nikitin</string>
+    <string name="library_storio_authorWebsite">https://pushtorefresh.com/</string>
+    <string name="library_storio_libraryName">StorIO</string>
+    <string name="library_storio_libraryDescription">Beautiful API for SQLiteDatabase and ContentResolver</string>
+    <string name="library_storio_libraryVersion">1.8.0</string>
+    <string name="library_storio_libraryWebsite">https://github.com/pushtorefresh/storio</string>
+    <!-- Possible values right now: apache_2_0, mit, bsd_2, bsd_3 -->
+    <string name="library_storio_licenseId">apache_2_0</string>
+    <!-- you still can define the license within your library definition, but it is recommend to use the id -->
+    <!-- possible fields for a custom license: *_licenseVersion, *_licenseLink, *_licenseContent -->
+    <string name="library_storio_isOpenSource">true</string>
+    <string name="library_storio_repositoryLink">https://github.com/pushtorefresh/storio</string>
+</resources>

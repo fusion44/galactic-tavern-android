@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- If you include it in your own library use this pattern: define_* -->
+    <!-- If it should be included in the AboutLibraries lib use this pattern: define_int_* -->
+    <string name="define_floatingsearchview"> </string>
+    <string name="library_floatingsearchview_author">Cerrato Renaud</string>
+    <string name="library_floatingsearchview_authorWebsite">https://github.com/renaudcerrato</string>
+    <string name="library_floatingsearchview_libraryName">FloatingSearchView</string>
+    <string name="library_floatingsearchview_libraryDescription">Yet another floating search view implementation, also known as persistent search.</string>
+    <string name="library_floatingsearchview_libraryVersion">1.0.1</string>
+    <string name="library_floatingsearchview_libraryWebsite">https://github.com/renaudcerrato/FloatingSearchView</string>
+    <!-- Possible values right now: apache_2_0, mit, bsd_2, bsd_3 -->
+    <string name="library_floatingsearchview_licenseId">apache_2_0</string>
+    <!-- you still can define the license within your library definition, but it is recommend to use the id -->
+    <!-- possible fields for a custom license: *_licenseVersion, *_licenseLink, *_licenseContent -->
+    <string name="library_floatingsearchview_isOpenSource">true</string>
+    <string name="library_floatingsearchview_repositoryLink">https://github.com/renaudcerrato/FloatingSearchView</string>
+</resources>

@@ -23,8 +23,11 @@ import com.hardsoftstudio.rxflux.action.RxError;
 import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
 import com.hardsoftstudio.rxflux.dispatcher.RxViewDispatch;
 import com.hardsoftstudio.rxflux.store.RxStoreChange;
+import com.mikepenz.aboutlibraries.LibsBuilder;
+import com.mikepenz.aboutlibraries.ui.LibsFragment;
 import com.pixplicity.easyprefs.library.Prefs;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity
     private static final String TRACKING_SCREEN_FORUMS_FRAGMENT = "ForumsFragment";
     private static final String TRACKING_SCREEN_ORG_FRAGMENT = "OrgsFragment";
     private static final String TRACKING_SCREEN_MAPS_FRAGMENT = "MapsFragment";
+    private static final String TRACKING_SCREEN_ABOUT_FRAGMENT = "AboutFragment";
 
     private static final String KEY_CURRENT_FRAGMENT = "stores_registered";
     /**
@@ -143,6 +147,8 @@ public class MainActivity extends AppCompatActivity
                     openOrgFragment();
                 } else if (fragment.equals(MapFragment.class.getSimpleName())) {
                     openMapFragment();
+                } else if (fragment.equals(LibsFragment.class.getSimpleName())) {
+                    openAboutFragment();
                 }
             }
         } else {
@@ -159,6 +165,8 @@ public class MainActivity extends AppCompatActivity
                 openOrgFragment();
             } else if (f.equals(MapFragment.class.getSimpleName())) {
                 openMapFragment();
+            } else if (f.equals(LibsFragment.class.getSimpleName())) {
+                openAboutFragment();
             }
         }
 
@@ -203,6 +211,8 @@ public class MainActivity extends AppCompatActivity
                 GtApplication.getInstance().trackScreen(TRACKING_SCREEN_ORG_FRAGMENT);
             } else if (fragment.equals(MapFragment.class.getSimpleName())) {
                 GtApplication.getInstance().trackScreen(TRACKING_SCREEN_MAPS_FRAGMENT);
+            } else if (fragment.equals(LibsFragment.class.getSimpleName())) {
+                GtApplication.getInstance().trackScreen(TRACKING_SCREEN_ABOUT_FRAGMENT);
             }
         }
         registerReceiver();
@@ -276,6 +286,8 @@ public class MainActivity extends AppCompatActivity
             openMapFragment();
         } else if (id == R.id.nav_settings) {
             openSettings();
+        } else if (id == R.id.nav_about) {
+            openAboutFragment();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -426,6 +438,43 @@ public class MainActivity extends AppCompatActivity
     private void openSettings() {
         Intent i = new Intent(this, SettingsActivity.class);
         startActivity(i);
+    }
+
+    /**
+     * Creates the About Fragment using {@link LibsFragment}
+     */
+    private void openAboutFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        String simpleClassName = LibsFragment.class.getSimpleName();
+
+        mCurrentFragment = fragmentManager.findFragmentByTag(simpleClassName);
+        if (mCurrentFragment == null) {
+            Field[] fields = R.string.class.getFields();
+            String[] excluded = new String[]{
+                    "ActionBarSherlock"
+            };
+
+            LibsBuilder b = new LibsBuilder()
+                    .withFields(fields);
+            b.excludeLibraries = excluded;
+            b.withAboutSpecial1(getString(R.string.privacy_policy));
+            b.withAboutSpecial1Description(getString(R.string.privacy_policy_text));
+
+            b.withAboutSpecial2(getString(R.string.changelog));
+            b.withAboutSpecial2Description(getString(R.string.changelog_text));
+
+            mCurrentFragment = b.supportFragment();
+        }
+
+        fragmentTransaction.replace(R.id.fragment_container, mCurrentFragment, simpleClassName);
+        fragmentTransaction.commit();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(R.string.navigation_drawer_about);
+        }
+
+        GtApplication.getInstance().trackScreen(TRACKING_SCREEN_ABOUT_FRAGMENT);
+        Prefs.putString(KEY_CURRENT_FRAGMENT, simpleClassName);
     }
 
     @SuppressWarnings("unchecked")

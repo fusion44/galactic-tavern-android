@@ -36,6 +36,7 @@
     <string name="navigation_drawer_personal">Personal</string>
     <string name="navigation_drawer_favorites">Favorites</string>
     <string name="navigation_drawer_settings">Settings</string>
+    <string name="navigation_drawer_about">About</string>
 
     <!-- Unit conversions -->
     <string name="dist_light_years">%.0fAU</string>
@@ -175,6 +176,45 @@
     <string name="pref_summary_tracking">Help improve the application by allowing anonymous usage tracking</string>
 
     <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+
+    <!-- About section -->
+    <string name="aboutLibraries_description_showIcon">true</string>
+    <string name="aboutLibraries_description_showVersion">true</string>
+    <string name="aboutLibraries_description_text">
+        <![CDATA[This is an app about the game Star Citizen by Cloud Imperium Games.<br>
+        Follow the latest official news about the developments of the game and its community.<br>
+        Search for Users, Organizations and the forums. Follow your favourite organizations and users for quick access to their latest news and progressions.]]>
+    </string>
+    <string name="changelog">Changelog</string>
+    <string name="changelog_text">
+        <![CDATA[
+            <p>
+            <h5>V 1.0</h5>
+            Initial release
+            </p>
+        ]]>
+    </string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="privacy_policy_text">
+        <![CDATA[
+            <h3>Privacy Policy</h3>
+            <p>
+            This application uses Google Analytics to help Analyse how users use the application. You can turn off the data collection at any time in the settings menu.
+            </p>
+
+            <p>
+            I will never (and will not allow any third party to) use the statistical analytics tool to track or to collect any Personally Identifiable Information. Google will not associate your IP address with any other data held by Google. Neither me nor Google will link, or seek to link, an IP address. I will not associate any data gathered from this application with any Personally Identifiable Information from any source, unless you explicitly submit that information via a fill-in form.
+            </p>
+
+            <p>
+            User’s Personal Information: Users of our application may be able to register to use our services, attend events, make a purchase, join a community or upload/download information. When you register, you will provide personal information such as name, address, email, telephone number or facsimile number and other relevant information. Any financial information I collect is used only to bill you for your purchase. I will not disclose personally identifiable information I collect from you to third parties without your permission except to the extent necessary, including: To fulfill your requests, to protect ourselves from liability, to comply with the terms and conditions of our internet host provider.
+            </p>
+            <p>
+            <h5>3rd Party Policies</h5>
+            Related services and offerings linked to or from this application have their own privacy statements that can be viewed by clicking on the corresponding links within each respective website. Since I do not have control over the policies or practices of participating merchants and other third parties, I’m not responsible for the privacy practices or contents of those sites. I do recommend you review their policies before you provide any personal information or complete any transaction with them.
+            </p>
+        ]]>
+    </string>
 
     <!-- Strings related to notifications -->
     <string name="notification_big_content_title">Comm link updates</string>
