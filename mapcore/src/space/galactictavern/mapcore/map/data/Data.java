@@ -27,7 +27,7 @@ public class Data {
     @Expose
     public Systems systems;
 
-    public HashMap<Integer, SystemsResultset> systemHashMap = new HashMap();
+    public HashMap<Integer, SystemsResultset> systemHashMap;
 
     public Vector2 origin;
 }

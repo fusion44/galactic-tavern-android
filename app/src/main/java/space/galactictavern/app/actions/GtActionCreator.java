@@ -332,6 +332,7 @@ public class GtActionCreator extends RxActionCreator implements Actions {
                     starMapData.data.origin = origin;
 
                     Vector2 dist = new Vector2();
+                    HashMap<Integer, SystemsResultset> systemHashMap = new HashMap<>();
                     for (SystemsResultset s : starMapData.data.systems.resultset) {
                         // calculate distance between starmap origin and system
                         dist.x = s.positionX - origin.x;
@@ -345,10 +346,10 @@ public class GtActionCreator extends RxActionCreator implements Actions {
                         s.positionY = dist.y + origin.y;
 
                         // Add the system to a HashMap so we can retrieve single systems by id
-                        starMapData.data.systemHashMap.put(s.id, s);
-
+                        systemHashMap.put(s.id, s);
                         s.generateBoundingCircle();
                     }
+                    starMapData.data.systemHashMap = systemHashMap;
 
                     action.getData().put(Keys.STARMAP_BOOTUP_DATA, starMapData);
                     postRxAction(action);

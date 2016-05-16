@@ -16,6 +16,8 @@
 #   public *;
 #}
 
+-dontobfuscate
+
 # for retrolambda
 -dontwarn java.lang.invoke.*
 
@@ -53,11 +55,31 @@
 -dontwarn com.malinskiy.superrecyclerview.SwipeDismissRecyclerViewTouchListener*
 -keep class jp.wasabeef.recyclerview.animators.** { *; }
 
-# PkRSS
--keep class com.pkmmte.pkrss.Callback{ *; }
-
 # Okio
 -dontwarn okio.**
 
 # FloatingSearchView
 -keep class com.mypopsy.widget.** { *; }
+
+# libgdx
+-dontwarn android.support.**
+-dontwarn com.badlogic.gdx.backends.android.AndroidFragmentApplication
+-dontwarn com.badlogic.gdx.utils.GdxBuild
+-dontwarn com.badlogic.gdx.physics.box2d.utils.Box2DBuild
+-dontwarn com.badlogic.gdx.graphics.g2d.freetype.FreetypeBuild
+-dontwarn com.badlogic.gdx.jnigen.BuildTarget*
+
+-keepclassmembers class com.badlogic.gdx.backends.android.AndroidInput* {
+   <init>(com.badlogic.gdx.Application, android.content.Context, java.lang.Object, com.badlogic.gdx.backends.android.AndroidApplicationConfiguration);
+}
+
+
+-keepclassmembers class com.badlogic.gdx.physics.box2d.World {
+   boolean contactFilter(long, long);
+   void    beginContact(long);
+   void    endContact(long);
+   void    preSolve(long, long);
+   void    postSolve(long, long);
+   boolean reportFixture(long);
+   float   reportRayFixture(long, float, float, float, float, float);
+}
