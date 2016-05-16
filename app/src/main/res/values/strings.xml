@@ -151,9 +151,6 @@
 
     <!-- Strings related to Settings -->
     <string name="pref_header_data_sync">Data &amp; sync &amp; privacy</string>
-    <string name="pref_title_sync_frequency">Sync frequency</string>
-    <string name="pref_sync_frequency_default_value" translatable="false">10800</string>
-    <string name="pref_key_comm_link_sync_frequency" translatable="false">comm_link_sync_frequency</string>
     <string-array name="pref_sync_frequency_titles">
         <item>1 hour</item>
         <item>3 hours</item>

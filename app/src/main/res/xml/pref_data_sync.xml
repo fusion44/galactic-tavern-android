@@ -1,14 +1,4 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <ListPreference
-        android:defaultValue="@string/pref_sync_frequency_default_value"
-        android:entries="@array/pref_sync_frequency_titles"
-        android:entryValues="@array/pref_sync_frequency_values"
-        android:key="@string/pref_key_comm_link_sync_frequency"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_sync_frequency" />
-
     <SwitchPreference
         android:contentDescription="@string/content_desc_pref_usage_statistics"
         android:defaultValue="false"

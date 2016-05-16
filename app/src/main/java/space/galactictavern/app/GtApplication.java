@@ -17,7 +17,6 @@ import com.pushtorefresh.storio.sqlite.impl.DefaultStorIOSQLite;
 import net.danlew.android.joda.JodaTimeAndroid;
 
 import space.galactictavern.app.actions.GtActionCreator;
-import space.galactictavern.app.core.CommLinkUpdaterService;
 import space.galactictavern.app.models.commlink.CommLinkModel;
 import space.galactictavern.app.models.commlink.CommLinkModelSQLiteTypeMapping;
 import space.galactictavern.app.models.commlink.ContentBlock1;
@@ -105,13 +104,6 @@ public class GtApplication extends Application {
                 .setMode(ContextWrapper.MODE_PRIVATE)
                 .setUseDefaultSharedPreference(true)
                 .build();
-
-        if (!Prefs.contains(getString(R.string.pref_key_comm_link_sync_frequency))) {
-            Timber.d("CommLinkUpdaterServer is not yet set up -> setting to default values");
-            String interval = getString(R.string.pref_sync_frequency_default_value);
-            CommLinkUpdaterService.scheduleRepeatedUpdates(this, Integer.valueOf(interval));
-            Prefs.putString(getString(R.string.pref_key_comm_link_sync_frequency), interval);
-        }
 
         mTrackingEnabled = Prefs.getBoolean(getString(R.string.pref_key_tracking), false);
         setUpAnalytics();

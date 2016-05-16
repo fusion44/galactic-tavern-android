@@ -19,7 +19,6 @@ import java.util.List;
 
 import space.galactictavern.app.GtApplication;
 import space.galactictavern.app.R;
-import space.galactictavern.app.core.CommLinkUpdaterService;
 import timber.log.Timber;
 
 /**
@@ -60,15 +59,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
                     } else {
                         preference.setSummary(stringValue);
-                    }
-
-                    if (stringValue.equals("-1")) {
-                        CommLinkUpdaterService.cancelUpdater(GtApplication.getContext());
-                    } else {
-                        int newInterval = Integer.valueOf(stringValue);
-                        CommLinkUpdaterService.scheduleRepeatedUpdates(
-                                GtApplication.getContext(),
-                                newInterval);
                     }
 
                     return true;
@@ -177,13 +167,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_data_sync);
             setHasOptionsMenu(true);
-
-            Preference preference = findPreference(
-                    getString(R.string.pref_key_comm_link_sync_frequency));
-            bindPreferenceSummaryToValue(preference);
-            preference.getOnPreferenceChangeListener().onPreferenceChange(preference,
-                    preference.getSharedPreferences().getString(preference.getKey(),
-                            getString(R.string.pref_sync_frequency_default_value)));
 
             findPreference(getString(R.string.pref_key_tracking))
                     .setOnPreferenceChangeListener((pref, newValue) -> {
