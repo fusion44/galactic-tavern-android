@@ -38,12 +38,18 @@ public class Utility {
      * The URL to rsi.com
      */
     public static final String RSI_BASE_URL = "https://robertsspaceindustries.com/";
-
+    /**
+     * Analytics source key
+     */
+    public static final String ANALYTICS_KEY_SOURCE = "analytics_key_source";
+    /**
+     * Analytics value key
+     */
+    public static final String ANALYTICS_KEY_VALUE = "analytics_key_value";
     /**
      * The Notification ID for all notifications related to comm links
      */
     private static final int NOTIFICATION_ID_COMM_LINK = 2210;
-
     /**
      * Request ID for resolving case play services not installed
      */

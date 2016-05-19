@@ -22,15 +22,8 @@ import space.galactictavern.app.stores.OrganizationStore;
  */
 public class SystemDetailSlidingActivity extends SlidingActivity implements RxViewDispatch {
     public static final String SYSTEM_CODE = "user_handle";
-    private static final String TRACKING_SCREEN_SYSTEM_DETAIL_ACTIVITY = "SystemDetailActivity";
     @BindView(R.id.systemNameTextView)
     public TextView mSystemNameTextView;
-
-    @Override
-    protected void onResume() {
-        GtApplication.getInstance().trackScreen(TRACKING_SCREEN_SYSTEM_DETAIL_ACTIVITY);
-        super.onResume();
-    }
 
     @Override
     public void init(Bundle savedInstanceState) {

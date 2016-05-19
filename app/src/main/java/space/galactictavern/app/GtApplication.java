@@ -3,12 +3,11 @@ package space.galactictavern.app;
 import android.app.Application;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.os.Bundle;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
-import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.hardsoftstudio.rxflux.RxFlux;
 import com.pixplicity.easyprefs.library.Prefs;
 import com.pushtorefresh.storio.sqlite.SQLiteTypeMapping;
@@ -17,6 +16,7 @@ import com.pushtorefresh.storio.sqlite.impl.DefaultStorIOSQLite;
 import net.danlew.android.joda.JodaTimeAndroid;
 
 import space.galactictavern.app.actions.GtActionCreator;
+import space.galactictavern.app.core.Utility;
 import space.galactictavern.app.models.commlink.CommLinkModel;
 import space.galactictavern.app.models.commlink.CommLinkModelSQLiteTypeMapping;
 import space.galactictavern.app.models.commlink.ContentBlock1;
@@ -66,9 +66,9 @@ public class GtApplication extends Application {
     private DefaultStorIOSQLite mStorIOSQLite;
 
     /**
-     * Google Analytics Tracker
+     * Firebase analytics service instance
      */
-    private Tracker mTracker;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     /**
      * Shows whether tracking is enabled or not
@@ -106,7 +106,7 @@ public class GtApplication extends Application {
                 .build();
 
         mTrackingEnabled = Prefs.getBoolean(getString(R.string.pref_key_tracking), false);
-        setUpAnalytics();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         mInstance = this;
     }
@@ -151,18 +151,6 @@ public class GtApplication extends Application {
     }
 
     /**
-     * Setup Google Analytics
-     */
-    private void setUpAnalytics() {
-        if (mTracker == null && mTrackingEnabled) {
-            GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-            analytics.enableAutoActivityReports(this);
-            // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
-            mTracker = analytics.newTracker(R.xml.global_tracker);
-        }
-    }
-
-    /**
      * Gets the current tracking enabled state
      *
      * @return true if enabled, false otherwise
@@ -179,21 +167,13 @@ public class GtApplication extends Application {
     public void setTrackingEnabled(boolean trackingEnabled) {
         mTrackingEnabled = trackingEnabled;
         if (!trackingEnabled) {
-            mTracker = null;
+            if (mFirebaseAnalytics != null) {
+                mFirebaseAnalytics.setAnalyticsCollectionEnabled(false);
+            }
+            mFirebaseAnalytics = null;
         } else {
-            setUpAnalytics();
-        }
-    }
-
-    /**
-     * Tracks the current screen name
-     *
-     * @param screenName the screen name
-     */
-    public void trackScreen(String screenName) {
-        if (mTrackingEnabled && mTracker != null) {
-            mTracker.setScreenName(screenName);
-            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+            mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+            mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
         }
     }
 
@@ -202,14 +182,18 @@ public class GtApplication extends Application {
      *
      * @param category Event category
      * @param action   Event action
+     * @param label    Event label
      */
     public void trackEvent(String category, String action, String label) {
-        if (mTrackingEnabled && mTracker != null) {
-            mTracker.send(new HitBuilders.EventBuilder()
-                    .setCategory(category)
-                    .setAction(action)
-                    .setLabel(label)
-                    .build());
+        if (mTrackingEnabled && mFirebaseAnalytics != null) {
+
+            Bundle bundle = new Bundle();
+
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+            Bundle params = new Bundle();
+            params.putString(Utility.ANALYTICS_KEY_SOURCE, action);
+            params.putString(Utility.ANALYTICS_KEY_VALUE, label);
+            mFirebaseAnalytics.logEvent(category, params);
         }
     }
 

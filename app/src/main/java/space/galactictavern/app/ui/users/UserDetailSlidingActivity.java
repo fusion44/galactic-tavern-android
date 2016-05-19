@@ -36,7 +36,6 @@ import space.galactictavern.app.stores.UserStore;
  */
 public class UserDetailSlidingActivity extends SlidingActivity implements RxViewDispatch {
     public static final String USER_HANDLE = "user_handle";
-    private static final String TRACKING_SCREEN_USER_DETAIL_ACTIVITY = "UserDetailActivity";
     @BindView(R.id.userDetailCitizenNumberTextView)
     TextView mCitizenNumberTextView;
     @BindView(R.id.userDetailCountryTextView)
@@ -59,12 +58,6 @@ public class UserDetailSlidingActivity extends SlidingActivity implements RxView
     private OrganizationStore mOrganizationStore;
     private User mUser;
     private Organization mOrganization;
-
-    @Override
-    protected void onResume() {
-        GtApplication.getInstance().trackScreen(TRACKING_SCREEN_USER_DETAIL_ACTIVITY);
-        super.onResume();
-    }
 
     @Override
     public void init(Bundle savedInstanceState) {

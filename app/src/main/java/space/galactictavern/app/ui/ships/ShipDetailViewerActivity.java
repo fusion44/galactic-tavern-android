@@ -34,7 +34,6 @@ import space.galactictavern.app.ui.RxFluxActivity;
  */
 public class ShipDetailViewerActivity extends RxFluxActivity implements RequestListener<String, GlideDrawable> {
     public static final String SHIP_ITEM = "ship_item";
-    private static final String TRACKING_SCREEN_SHIP_DETAIL_ACTIVITY = "ShipDetailActivity";
     private static final String PREF_KEY_SCROLL_POSITION =
             ShipDetailViewerActivity.class.getSimpleName() + "ScrollView";
     private String mShipId;
@@ -117,12 +116,6 @@ public class ShipDetailViewerActivity extends RxFluxActivity implements RequestL
 
         tv = (TextView) findViewById(R.id.shipDetailCardRoleTextView);
         tv.setText(mShip.titlecontainer.role);
-    }
-
-    @Override
-    protected void onResume() {
-        GtApplication.getInstance().trackScreen(TRACKING_SCREEN_SHIP_DETAIL_ACTIVITY);
-        super.onResume();
     }
 
     /**

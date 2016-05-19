@@ -291,10 +291,4 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
         // we did not manually update the ImageView target, thus return false
         return false;
     }
-
-    @Override
-    protected void onResume() {
-        GtApplication.getInstance().trackScreen(TRACKING_SCREEN_COMM_LINK_READER_ACTIVITY);
-        super.onResume();
-    }
 }

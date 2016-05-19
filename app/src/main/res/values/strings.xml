@@ -193,7 +193,7 @@
         <![CDATA[
             <h3>Privacy Policy</h3>
             <p>
-            This application uses Google Analytics to help Analyse how users use the application. You can turn off the data collection at any time in the settings menu.
+            This application uses Firebase Analytics to help Analyse how the application is used. You can turn off the data collection at any time in the settings menu.
             </p>
 
             <p>
