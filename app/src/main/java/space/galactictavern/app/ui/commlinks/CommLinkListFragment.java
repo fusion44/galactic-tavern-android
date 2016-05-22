@@ -210,18 +210,19 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
                 GtApplication.getInstance().getRxFlux().getDispatcher());
         if (!mShowingFilteredView) {
             if (mCommLinksAdapter != null) {
-                mCommLinksAdapter.addItems(calculateSpanCount(store.getFavorites()));
-                mRecyclerView.getAdapter().notifyDataSetChanged();
+                mCommLinksAdapter.replaceItems(calculateSpanCount(store.getFavorites()));
             }
 
+            // Don't request more when showing filtered view -> We should have all comm links already
+            mRecyclerView.setOnMoreListener(null);
             mShowingFilteredView = true;
             return true;
         } else {
             if (mCommLinksAdapter != null) {
-                mCommLinksAdapter.addItems(calculateSpanCount(store.getCommLinks()));
-                mRecyclerView.getAdapter().notifyDataSetChanged();
+                mCommLinksAdapter.replaceItems(calculateSpanCount(store.getCommLinks()));
             }
 
+            mRecyclerView.setOnMoreListener(this);
             mShowingFilteredView = false;
             return false;
         }

@@ -105,6 +105,11 @@ public class CommLinkListRecyclerViewAdapter extends RecyclerView.Adapter<CommLi
         notifyItemRangeInserted(lastPos, items.size());
     }
 
+    public void replaceItems(List<CommLinkModel> items) {
+        mValues = items;
+        notifyDataSetChanged();
+    }
+
     /**
      * Interface for communication between list items and the host fragment
      */
