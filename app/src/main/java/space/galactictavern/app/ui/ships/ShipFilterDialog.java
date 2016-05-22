@@ -3,6 +3,8 @@ package space.galactictavern.app.ui.ships;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -11,6 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 
 import org.apmem.tools.layouts.FlowLayout;
 
@@ -23,8 +29,9 @@ import space.galactictavern.app.core.Utility;
 import space.galactictavern.app.stores.ShipStore;
 
 
+@SuppressWarnings("WeakerAccess")
 public class ShipFilterDialog extends DialogFragment implements View.OnClickListener {
-    public static final String KEY_FILTER = "key_filter";
+    private static final String KEY_FILTER = "key_filter";
 
     private static final String ITEM_AVAILABLE = "availableItem";
     private static final String ITEM_FILTER = "filterItem";
@@ -34,8 +41,8 @@ public class ShipFilterDialog extends DialogFragment implements View.OnClickList
     private FlowLayout mFlowLayoutAvailableItems;
     private TextView mNoneView;
 
-    public static ShipFilterDialog newInstance(ShipFilterDialogClickListener listener,
-                                               ArrayList<String> filter) {
+    static ShipFilterDialog newInstance(ShipFilterDialogClickListener listener,
+                                        ArrayList<String> filter) {
         ShipFilterDialog frag = new ShipFilterDialog();
         Bundle b = new Bundle();
         b.putStringArrayList(KEY_FILTER, filter);
@@ -102,9 +109,7 @@ public class ShipFilterDialog extends DialogFragment implements View.OnClickList
                         }
                 )
                 .setNegativeButton(R.string.alert_dialog_cancel,
-                        (dialog, whichButton) -> {
-                            mListener.doNegativeClick();
-                        }
+                        (dialog, whichButton) -> mListener.doNegativeClick()
                 );
 
         return b.create();
@@ -146,6 +151,19 @@ public class ShipFilterDialog extends DialogFragment implements View.OnClickList
                 Utility.getFullManufacturerName(getActivity(), manufacturer)));
         btn.setTag(R.id.ship_list_filter_manufacturer_tag, manufacturer);
         btn.setOnClickListener(this);
+        Utility.getManufacturerIcon(manufacturer);
+        Glide.with(getActivity())
+                .load(Utility.getManufacturerIcon(manufacturer))
+                .asBitmap()
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        BitmapDrawable dw = new BitmapDrawable(getResources(), resource);
+                        dw.setBounds(0, 0, 70, 70);
+                        btn.setCompoundDrawables(dw, null, null, null);
+                    }
+                });
+
         return btn;
     }
 

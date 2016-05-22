@@ -231,6 +231,46 @@ public class Utility {
     }
 
     /**
+     * Gets the manufacturer icon url.
+     *
+     * @param shortName Short name for the manufacturer
+     * @return Manufacturer logo image url
+     */
+    public static String getManufacturerIcon(String shortName) {
+        switch (shortName) {
+            case "AEGS":
+                return RSI_BASE_URL + "/media/1apfbr0v0vbnur/logo/Aegis.png";
+            case "ANVL":
+                return RSI_BASE_URL + "/media/w0o33qmdai9wpr/logo/Anvil.png";
+            case "BANU":
+                return RSI_BASE_URL + "/media/3ktltnm6ph4cfr/logo/Banu.png";
+            case "CNOU":
+                return RSI_BASE_URL + "/media/khu6mwy8zo5sar/logo/Consolidated_outland.png";
+            case "CRSD":
+                return RSI_BASE_URL + "/media/c83tyi4pwogrnr/logo/Crusader.png";
+            case "DRAK":
+                return RSI_BASE_URL + "/media/bdkpvl2bpxaqar/logo/Drake.png";
+            case "ESPERIA":
+                return RSI_BASE_URL + "/media/ofli1kgpqq5y6r/logo/Vanduul.png";
+            case "KRGR":
+                return RSI_BASE_URL + "/media/4u3vwg26y1wm3r/logo/Kruger.png";
+            case "MISC":
+                return RSI_BASE_URL + "/media/6irnix69d4a8rr/logo/MISC.png";
+            case "ORIG":
+                return RSI_BASE_URL + "/media/0ffygmebwd3t1r/logo/Origin.png";
+            case "RSI":
+                return RSI_BASE_URL + "/media/tb6ui8j38wwscr/logo/RSI.png";
+            case "VANDUUL":
+                return RSI_BASE_URL + "/media/ofli1kgpqq5y6r/logo/Vanduul.png'";
+            case "XIAN":
+                return RSI_BASE_URL + "/media/p8niedyslwh6kr/logo/Xian.png";
+            default:
+                Timber.d("Unknown manufacturer: %s", shortName);
+                return "";
+        }
+    }
+
+    /**
      * Converts a unix timestamp to a human readable String.
      * The output will be relative to current device time
      * <p>
