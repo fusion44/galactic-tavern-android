@@ -2,6 +2,7 @@ package space.galactictavern.app.ui.users;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.text.Html;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,6 +13,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.hardsoftstudio.rxflux.action.RxError;
 import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
 import com.hardsoftstudio.rxflux.dispatcher.RxViewDispatch;
+import com.hardsoftstudio.rxflux.store.RxStore;
 import com.hardsoftstudio.rxflux.store.RxStoreChange;
 import com.klinker.android.sliding.SlidingActivity;
 import com.neovisionaries.i18n.CountryCode;
@@ -211,8 +213,15 @@ public class UserDetailSlidingActivity extends SlidingActivity implements RxView
 
     }
 
+    @Nullable
     @Override
-    public void onRxStoresRegister() {
+    public List<RxStore> getRxStoreListToRegister() {
+        return null;
+    }
 
+    @Nullable
+    @Override
+    public List<RxStore> getRxStoreListToUnRegister() {
+        return null;
     }
 }

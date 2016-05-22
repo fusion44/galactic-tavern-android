@@ -1,13 +1,17 @@
 package space.galactictavern.app.ui.maps;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.widget.TextView;
 
 import com.hardsoftstudio.rxflux.action.RxError;
 import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
 import com.hardsoftstudio.rxflux.dispatcher.RxViewDispatch;
+import com.hardsoftstudio.rxflux.store.RxStore;
 import com.hardsoftstudio.rxflux.store.RxStoreChange;
 import com.klinker.android.sliding.SlidingActivity;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -76,8 +80,15 @@ public class SystemDetailSlidingActivity extends SlidingActivity implements RxVi
 
     }
 
+    @Nullable
     @Override
-    public void onRxStoresRegister() {
+    public List<RxStore> getRxStoreListToRegister() {
+        return null;
+    }
 
+    @Nullable
+    @Override
+    public List<RxStore> getRxStoreListToUnRegister() {
+        return null;
     }
 }

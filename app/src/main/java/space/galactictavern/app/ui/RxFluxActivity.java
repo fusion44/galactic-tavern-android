@@ -2,12 +2,16 @@ package space.galactictavern.app.ui;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.hardsoftstudio.rxflux.RxFlux;
 import com.hardsoftstudio.rxflux.action.RxError;
 import com.hardsoftstudio.rxflux.dispatcher.RxViewDispatch;
+import com.hardsoftstudio.rxflux.store.RxStore;
 import com.hardsoftstudio.rxflux.store.RxStoreChange;
+
+import java.util.List;
 
 import space.galactictavern.app.GtApplication;
 
@@ -80,8 +84,15 @@ public class RxFluxActivity extends AppCompatActivity implements RxViewDispatch 
 
     }
 
+    @Nullable
     @Override
-    public void onRxStoresRegister() {
+    public List<RxStore> getRxStoreListToRegister() {
+        return null;
+    }
 
+    @Nullable
+    @Override
+    public List<RxStore> getRxStoreListToUnRegister() {
+        return null;
     }
 }

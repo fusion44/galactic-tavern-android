@@ -3,6 +3,7 @@ package space.galactictavern.app.ui.commlinks;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -23,6 +24,7 @@ import com.bumptech.glide.request.target.Target;
 import com.hardsoftstudio.rxflux.action.RxError;
 import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
 import com.hardsoftstudio.rxflux.dispatcher.RxViewDispatch;
+import com.hardsoftstudio.rxflux.store.RxStore;
 import com.hardsoftstudio.rxflux.store.RxStoreChange;
 
 import org.joda.time.DateTime;
@@ -237,9 +239,17 @@ public class CommLinkReaderActivity extends AppCompatActivity implements RxViewD
 
     }
 
+    @Nullable
     @Override
-    public void onRxStoresRegister() {
+    public List<RxStore> getRxStoreListToRegister() {
+        return null;
+    }
 
+    @Nullable
+    @Override
+    public List<RxStore> getRxStoreListToUnRegister() {
+
+        return null;
     }
 
     /**

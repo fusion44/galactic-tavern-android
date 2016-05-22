@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -24,6 +25,7 @@ import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 import com.hardsoftstudio.rxflux.action.RxError;
 import com.hardsoftstudio.rxflux.dispatcher.Dispatcher;
 import com.hardsoftstudio.rxflux.dispatcher.RxViewDispatch;
+import com.hardsoftstudio.rxflux.store.RxStore;
 import com.hardsoftstudio.rxflux.store.RxStoreChange;
 import com.mikepenz.aboutlibraries.LibsBuilder;
 import com.mikepenz.aboutlibraries.ui.LibsFragment;
@@ -31,6 +33,7 @@ import com.pixplicity.easyprefs.library.Prefs;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import space.galactictavern.app.GtApplication;
@@ -549,27 +552,26 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    @Nullable
     @Override
-    public void onRxStoresRegister() {
+    public List<RxStore> getRxStoreListToRegister() {
         Dispatcher dispatcher = GtApplication.getInstance().getRxFlux().getDispatcher();
 
         mCommLinkStore = CommLinkStore.get(dispatcher);
-        mCommLinkStore.register();
-
         mShipStore = ShipStore.get(dispatcher);
-        mShipStore.register();
-
         mUserStore = UserStore.get(dispatcher);
-        mUserStore.register();
-
         mOrganizationStore = OrganizationStore.get(dispatcher);
-        mOrganizationStore.register();
-
         mForumsStore = ForumStore.get(dispatcher);
-        mForumsStore.register();
-
         mStarmapStore = StarmapStore.get(dispatcher);
-        mStarmapStore.register();
+
+        return Arrays.asList(mCommLinkStore, mShipStore, mUserStore,
+                mOrganizationStore, mForumsStore, mStarmapStore);
+    }
+
+    @Nullable
+    @Override
+    public List<RxStore> getRxStoreListToUnRegister() {
+        return null;
     }
 
     /**
