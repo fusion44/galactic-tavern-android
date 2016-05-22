@@ -163,7 +163,8 @@ public class GtActionCreator extends RxActionCreator implements Actions {
                                 String content = ""
                                         + "<a href=\"https://www.youtube.com/watch?v=" + cb1.youtubeVideoId + "\" >"
                                         + "<img src=\"http://img.youtube.com/vi/" + cb1.youtubeVideoId + "/0.jpg\">"
-                                        + "</a>";
+                                        + "</a>"
+                                        + GtApplication.getContext().getString(R.string.click_to_open_video);
                                 strings.add(content);
                                 cb1.setContent(strings);
                             }

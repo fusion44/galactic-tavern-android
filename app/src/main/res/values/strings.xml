@@ -102,6 +102,7 @@
         This can easily be enabled and disabled in the settings menu.
     </string>
     <string name="onboarding_thanks">Thank you. You can change this at any time in the settings.</string>
+    <string name="click_to_open_video"><![CDATA[<small><i>Click image to open the video</i></small>]]></string>
 
     <!-- Widget -->
     <string name="widget_header_text">Comm Links</string>
