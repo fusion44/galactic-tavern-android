@@ -32,6 +32,7 @@ import space.galactictavern.app.core.retrofit.ShipApiService;
 import space.galactictavern.app.core.retrofit.StarMapService;
 import space.galactictavern.app.core.retrofit.UserApiService;
 import space.galactictavern.app.models.commlink.CommLinkModel;
+import space.galactictavern.app.models.commlink.ContentBlock1;
 import space.galactictavern.app.models.commlink.ContentBlock2;
 import space.galactictavern.app.models.commlink.Wrapper;
 import space.galactictavern.app.models.favorites.Favorite;
@@ -150,6 +151,23 @@ public class GtActionCreator extends RxActionCreator implements Actions {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(parts -> {
                     for (Wrapper wrapper : parts) {
+                        ContentBlock1 cb1 = wrapper.getContentBlock1();
+                        if (cb1 != null &&
+                                cb1.getContent().size() > 0 &&
+                                cb1.getContent().get(0).contains("embed-container youtube")) {
+                            String[] split = cb1.getContent().get(0).split("youtube.com/embed/");
+                            if (split.length > 1 && split[1].contains("?wmode=")) {
+                                cb1.youtube = true;
+                                cb1.youtubeVideoId = split[1].split("wmode=")[0].replace("?", "");
+                                ArrayList<String> strings = new ArrayList<>();
+                                String content = ""
+                                        + "<a href=\"https://www.youtube.com/watch?v=" + cb1.youtubeVideoId + "\" >"
+                                        + "<img src=\"http://img.youtube.com/vi/" + cb1.youtubeVideoId + "/0.jpg\">"
+                                        + "</a>";
+                                strings.add(content);
+                                cb1.setContent(strings);
+                            }
+                        }
                         if (wrapper.getContentBlock2() != null &&
                                 wrapper.getContentBlock2().headerImageType == ContentBlock2.TYPE_SLIDESHOW) {
                             int size = wrapper.getContentBlock2().getHeaderImages().size();

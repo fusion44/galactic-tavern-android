@@ -60,7 +60,8 @@ public final class GlideImageGetter implements Html.ImageGetter, Drawable.Callba
         final UrlDrawable urlDrawable = new UrlDrawable();
 
         String fullUrl = url;
-        if (!url.startsWith(Utility.RSI_BASE_URL)) {
+        if (!url.startsWith(Utility.RSI_BASE_URL) &&
+                !url.contains("youtube")) {
             fullUrl = Utility.RSI_BASE_URL + url;
         }
 

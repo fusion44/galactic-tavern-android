@@ -1,5 +1,6 @@
 package space.galactictavern.app.ui.commlinks;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.Snackbar;
@@ -97,6 +98,9 @@ public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             } else {
                 Timber.d("Error parsing discussion id from url %s", url);
             }
+        } else if (url.contains("youtube.com")) {
+            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            mActivity.startActivity(i);
         } else {
             // simple check whether this is a usable link
             if (url.contains("robertsspaceindustries")) {

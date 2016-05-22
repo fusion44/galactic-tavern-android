@@ -21,6 +21,16 @@ public class ContentBlock1 {
     public static final String DATA_SEPARATOR = "@#|_|#@";
 
     /**
+     * This content block is a youtube video if true
+     */
+    public boolean youtube = false;
+
+    /**
+     * If {@link #youtube} is true this will contain the appropriate youtube video id
+     */
+    public String youtubeVideoId;
+
+    /**
      * SQLite ID of this clock. Null if not yet saved to SQLite
      * The {@link Wrapper} will store this id to this DB entry
      */
