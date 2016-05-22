@@ -15,6 +15,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import space.galactictavern.app.R;
@@ -26,17 +27,16 @@ import timber.log.Timber;
  * {@link RecyclerView.Adapter} that can display a {@link CommLinkModel} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  */
-public class CommLinkListRecyclerViewAdapter extends RecyclerView.Adapter<CommLinkListRecyclerViewAdapter.ViewHolder> implements RequestListener<String, GlideDrawable> {
+class CommLinkListRecyclerViewAdapter extends RecyclerView.Adapter<CommLinkListRecyclerViewAdapter.ViewHolder> implements RequestListener<String, GlideDrawable> {
 
     private final SpanSizeLookup mSpanSizeLookup = new SpanSizeLookup();
     private final OnListFragmentInteractionListener mListener;
     private List<CommLinkModel> mValues;
     private Context mContext;
 
-    public CommLinkListRecyclerViewAdapter(Context c, List<CommLinkModel> items,
-                                           OnListFragmentInteractionListener listener) {
+    CommLinkListRecyclerViewAdapter(Context c, OnListFragmentInteractionListener listener) {
         mContext = c;
-        mValues = items;
+        mValues = new ArrayList<>();
         mListener = listener;
     }
 
@@ -84,7 +84,7 @@ public class CommLinkListRecyclerViewAdapter extends RecyclerView.Adapter<CommLi
         return mValues.size();
     }
 
-    public GridLayoutManager.SpanSizeLookup getSpanSizeLookup() {
+    GridLayoutManager.SpanSizeLookup getSpanSizeLookup() {
         return mSpanSizeLookup;
     }
 
@@ -99,13 +99,13 @@ public class CommLinkListRecyclerViewAdapter extends RecyclerView.Adapter<CommLi
         return false;
     }
 
-    public void addItems(List<CommLinkModel> items) {
+    void addItems(List<CommLinkModel> items) {
         int lastPos = mValues.size();
         mValues.addAll(items);
         notifyItemRangeInserted(lastPos, items.size());
     }
 
-    public void replaceItems(List<CommLinkModel> items) {
+    void replaceItems(List<CommLinkModel> items) {
         mValues = items;
         notifyDataSetChanged();
     }
@@ -113,7 +113,7 @@ public class CommLinkListRecyclerViewAdapter extends RecyclerView.Adapter<CommLi
     /**
      * Interface for communication between list items and the host fragment
      */
-    public interface OnListFragmentInteractionListener {
+    interface OnListFragmentInteractionListener {
         /**
          * The ImageView is passed for making Activity transitions possible.
          * The ImageView tag and transitionName has been set to its image source url
@@ -127,9 +127,9 @@ public class CommLinkListRecyclerViewAdapter extends RecyclerView.Adapter<CommLi
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View view;
-        public final TextView titleTextView;
-        public final TextView dateTextView;
-        public final ImageView backdropImageView;
+        final TextView titleTextView;
+        final TextView dateTextView;
+        final ImageView backdropImageView;
         public CommLinkModel item;
 
         public ViewHolder(View view) {

@@ -45,6 +45,7 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
     private CommLinkListRecyclerViewAdapter mCommLinksAdapter;
     private long mLastCommLinkPublished = 0;
     private int mMaxResults = 15;
+    private SlideInBottomAnimationAdapter mSlideInAdapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -70,7 +71,6 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
 
-        setRetainInstance(true);
         setHasOptionsMenu(true);
     }
 
@@ -83,6 +83,14 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
         if (view instanceof SuperRecyclerView) {
             mRecyclerView = (SuperRecyclerView) view;
             mRecyclerView.setOnMoreListener(this);
+            mCommLinksAdapter = new CommLinkListRecyclerViewAdapter(getContext(), this);
+            mSlideInAdapter = new SlideInBottomAnimationAdapter(mCommLinksAdapter);
+            mSlideInAdapter.setDuration(500);
+            mSlideInAdapter.setInterpolator(new DecelerateInterpolator());
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), mColumnCount);
+            gridLayoutManager.setSpanSizeLookup(mCommLinksAdapter.getSpanSizeLookup());
+            mRecyclerView.setLayoutManager(gridLayoutManager);
+            mRecyclerView.setAdapter(mSlideInAdapter);
             CommLinkStore commLinkStore = CommLinkStore.get(GtApplication.getInstance().getRxFlux().getDispatcher());
 
             // Check if the store has the articles already loaded
@@ -109,36 +117,6 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
     }
 
     /**
-     * Setup the RecyclerView's Adapter and animations
-     *
-     * @param commLinks Comm link list for the Adapter
-     */
-    private void setupRecyclerView(List<CommLinkModel> commLinks) {
-        if (commLinks == null) {
-            throw new NullPointerException("Comm links are null");
-        }
-
-        if (mLastCommLinkPublished == 0) {
-            mCommLinksAdapter = new CommLinkListRecyclerViewAdapter(getContext(), commLinks, this);
-
-            GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), mColumnCount);
-            gridLayoutManager.setSpanSizeLookup(mCommLinksAdapter.getSpanSizeLookup());
-            mRecyclerView.setLayoutManager(gridLayoutManager);
-
-            SlideInBottomAnimationAdapter slideInAdapter
-                    = new SlideInBottomAnimationAdapter(mCommLinksAdapter);
-
-            slideInAdapter.setDuration(500);
-            slideInAdapter.setInterpolator(new DecelerateInterpolator());
-
-            mRecyclerView.setAdapter(slideInAdapter);
-        } else {
-            mCommLinksAdapter.addItems(commLinks);
-            mRecyclerView.setLoadingMore(false);
-        }
-    }
-
-    /**
      * Called when swipe to refresh gesture was accomplished
      */
     @Override
@@ -151,7 +129,7 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
     public void onStart() {
         super.onStart();
 
-        if (!Utility.isNetworkAvailable(getActivity())) {
+        if (!Utility.isNetworkAvailable(getActivity()) && getView() != null) {
             Snackbar.make(getView(), R.string.error_no_network_generic, Snackbar.LENGTH_LONG).show();
         }
     }
@@ -164,9 +142,9 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
     public void addCommLinks(ArrayList<CommLinkModel> commLinks) {
         if (mShowingFilteredView) {
             CommLinkStore cls = CommLinkStore.get(GtApplication.getInstance().getRxFlux().getDispatcher());
-            setupRecyclerView(calculateSpanCount(cls.getFavorites()));
+            mCommLinksAdapter.addItems(calculateSpanCount(cls.getFavorites()));
         } else {
-            setupRecyclerView(calculateSpanCount(commLinks));
+            mCommLinksAdapter.addItems(calculateSpanCount(commLinks));
         }
         mLastCommLinkPublished = commLinks.get(commLinks.size() - 1).published;
     }
