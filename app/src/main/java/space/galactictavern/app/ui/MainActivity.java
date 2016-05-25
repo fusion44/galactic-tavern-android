@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -467,7 +468,7 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("unchecked")
     @Override
-    public void onRxStoreChanged(RxStoreChange change) {
+    public void onRxStoreChanged(@NonNull RxStoreChange change) {
         switch (change.getStoreId()) {
             case CommLinkStore.ID:
                 switch (change.getRxAction().getType()) {
@@ -477,6 +478,12 @@ public class MainActivity extends AppCompatActivity
                             ArrayList<CommLinkModel> o = (ArrayList<CommLinkModel>)
                                     change.getRxAction().getData().get(Keys.COMM_LINKS);
                             f.addCommLinks(o);
+                        }
+                        break;
+                    case (Actions.GET_COMM_LINK_FAVORITES):
+                        if (mCurrentFragment != null && mCurrentFragment instanceof CommLinkListFragment) {
+                            CommLinkListFragment f = (CommLinkListFragment) mCurrentFragment;
+                            f.replaceCommLinks(mCommLinkStore.getFavorites());
                         }
                         break;
                 }

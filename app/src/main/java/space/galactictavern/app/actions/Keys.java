@@ -42,6 +42,11 @@ public interface Keys {
     String COMM_LINK_CONTENT_WRAPPERS = "comm_link_parts";
 
     /**
+     * Key for favorite comm link data
+     */
+    String COMM_LINK_FAVORITES = "comm_link_favorites";
+
+    /**
      * Key for the {@link ShipData} object
      */
     String SHIP_DATA_ALL = "ship_data_all";

@@ -140,13 +140,19 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
      * @param commLinks New comm links for the Adapter
      */
     public void addCommLinks(ArrayList<CommLinkModel> commLinks) {
-        if (mShowingFilteredView) {
-            CommLinkStore cls = CommLinkStore.get(GtApplication.getInstance().getRxFlux().getDispatcher());
-            mCommLinksAdapter.addItems(calculateSpanCount(cls.getFavorites()));
-        } else {
-            mCommLinksAdapter.addItems(calculateSpanCount(commLinks));
-        }
+        mCommLinksAdapter.addItems(calculateSpanCount(commLinks));
         mLastCommLinkPublished = commLinks.get(commLinks.size() - 1).published;
+    }
+
+    /**
+     * Replaces all currently shown comm links
+     *
+     * @param commLinkModels List of comm links
+     */
+    public void replaceCommLinks(List<CommLinkModel> commLinkModels) {
+        if (mShowingFilteredView) {
+            mCommLinksAdapter.replaceItems(commLinkModels);
+        }
     }
 
     /**
@@ -188,7 +194,7 @@ public class CommLinkListFragment extends Fragment implements SwipeRefreshLayout
                 GtApplication.getInstance().getRxFlux().getDispatcher());
         if (!mShowingFilteredView) {
             if (mCommLinksAdapter != null) {
-                mCommLinksAdapter.replaceItems(calculateSpanCount(store.getFavorites()));
+                GtApplication.getInstance().getActionCreator().getCommLinkFavorites();
             }
 
             // Don't request more when showing filtered view -> We should have all comm links already

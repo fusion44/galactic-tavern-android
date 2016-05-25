@@ -14,6 +14,7 @@ import space.galactictavern.app.actions.Actions;
 import space.galactictavern.app.actions.Keys;
 import space.galactictavern.app.models.commlink.CommLinkModel;
 import space.galactictavern.app.models.commlink.Wrapper;
+import timber.log.Timber;
 
 /**
  * Stores all comm links once they've been loaded by an action
@@ -30,7 +31,7 @@ public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
     private static CommLinkStore mInstance;
     private LinkedHashMap<Long, CommLinkModel> mCommLinks;
     private HashMap<Long, List<Wrapper>> mCommLinkContentWrappers;
-    private ArrayList<CommLinkModel> mFavorites = new ArrayList<>();
+    private LinkedHashMap<Long, CommLinkModel> mFavorites = new LinkedHashMap<>();
 
     /**
      * Private constructor. Use @CommLinkStore.get to retrieve an instance
@@ -62,7 +63,11 @@ public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
      */
     @Override
     public CommLinkModel getCommLink(Long id) {
-        return mCommLinks.get(id) == null ? new CommLinkModel() : mCommLinks.get(id);
+        if (mCommLinks.get(id) == null && mFavorites.get(id) != null) {
+            return mFavorites.get(id);
+        } else {
+            return mCommLinks.get(id) == null ? new CommLinkModel() : mCommLinks.get(id);
+        }
     }
 
     /**
@@ -89,7 +94,7 @@ public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
      */
     @Override
     public List<CommLinkModel> getFavorites() {
-        return mFavorites;
+        return new ArrayList<>(mFavorites.values());
     }
 
     /**
@@ -106,9 +111,13 @@ public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
                 for (int i = 0; i < m.size(); i++) {
                     CommLinkModel cl = m.get(i);
                     mCommLinks.put(cl.commLinkId, cl);
-                    if (cl.favorite) {
-                        mFavorites.add(cl);
-                    }
+                }
+                break;
+            case Actions.GET_COMM_LINK_FAVORITES:
+                mFavorites = (LinkedHashMap<Long, CommLinkModel>) action.getData().get(Keys.COMM_LINK_FAVORITES);
+                if (mFavorites == null) {
+                    mFavorites = new LinkedHashMap<>();
+                    Timber.d("Got null favorite comm links ArrayList.");
                 }
                 break;
             case Actions.GET_COMM_LINK_CONTENT_WRAPPERS:
@@ -125,13 +134,12 @@ public class CommLinkStore extends RxStore implements CommLinkStoreInterface {
                 ArrayList<CommLinkModel> models =
                         (ArrayList<CommLinkModel>) action.getData().get(Keys.COMM_LINKS);
                 for (CommLinkModel model : models) {
-                    if (model.favorite & !mFavorites.contains(model)) {
-                        mFavorites.add(model);
-                    } else if (!model.favorite && mFavorites.contains(model)) {
-                        mFavorites.remove(model);
+                    if (model.favorite & !mFavorites.containsValue(model)) {
+                        mFavorites.put(model.commLinkId, model);
+                    } else if (!model.favorite && mFavorites.containsValue(model)) {
+                        mFavorites.remove(model.commLinkId);
                     }
                 }
-
                 break;
             default:
                 // return without posting a change to the store.

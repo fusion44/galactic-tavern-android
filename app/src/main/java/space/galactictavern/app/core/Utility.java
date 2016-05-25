@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.firebase.crash.FirebaseCrash;
 import com.pixplicity.easyprefs.library.Prefs;
 
 import net.danlew.android.joda.DateUtils;
@@ -356,5 +357,12 @@ public class Utility {
             return false;
         }
         return true;
+    }
+
+    /*
+     * Reports a custom crash report to Firebase.
+     */
+    public static void reportFirebaseCrash(Throwable throwable) {
+        FirebaseCrash.report(throwable);
     }
 }

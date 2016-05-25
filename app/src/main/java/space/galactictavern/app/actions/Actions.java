@@ -11,6 +11,7 @@ public interface Actions {
     String GET_COMM_LINK = "get_comm_link";
     String GET_COMM_LINKS = "get_comm_links";
     String GET_COMM_LINK_CONTENT_WRAPPERS = "get_comm_link_content_wrappers";
+    String GET_COMM_LINK_FAVORITES = "get_comm_link_favorites";
 
     // called when data from a comm link is updated. For example Favorite is added / removed.
     String COMM_LINK_DATA_UPDATED = "comm_link_data_updated";
@@ -77,6 +78,11 @@ public interface Actions {
      * @param comm_link_id The id of the comm link
      */
     void getCommLinkContentWrappers(Long comm_link_id);
+
+    /**
+     * Gets all favorite comm links the user has
+     */
+    void getCommLinkFavorites();
 
     /**
      * Fetches all available ships

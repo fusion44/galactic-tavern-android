@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import rx.Observable;
@@ -182,6 +183,60 @@ public class GtActionCreator extends RxActionCreator implements Actions {
                     Timber.d("error %s \n %s", throwable.toString(), throwable.getCause());
                     postError(action, throwable);
                 }));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void getCommLinkFavorites() {
+        RxAction action = newRxAction(GET_COMM_LINK_FAVORITES);
+        if (hasRxAction(action)) return;
+
+        getFavoritesInternal(Favorite.TYPE_COMM_LINK)
+                .observeOn(Schedulers.io())
+                .subscribe(favorites -> {
+                    if (favorites.size() > 0) {
+                        ArrayList<CommLinkModel> favoriteCommLinks = new ArrayList<>();
+                        for (Favorite favorite : favorites.values()) {
+                            if (favorite.type != Favorite.TYPE_COMM_LINK) {
+                                Utility.reportFirebaseCrash(new Throwable(
+                                        "Getting comm link favorites but got type "
+                                                + favorite.type + " instead."));
+                                continue;
+                            }
+
+                            CommLinkModel commLink = CommLinkStore.get(
+                                    GtApplication.getInstance().getRxFlux().getDispatcher())
+                                    .getCommLink(Long.valueOf(favorite.reference));
+                            if (commLink.id == null) {
+                                CommLinkModel cl = CommLinkApiService.Factory.getInstance().getCommLink(
+                                        Secrets.GT_API_SECRET, Long.valueOf(favorite.reference)).toBlocking().first();
+                                favoriteCommLinks.add(cl);
+                            } else {
+                                favoriteCommLinks.add(commLink);
+                            }
+                        }
+                        Collections.sort(favoriteCommLinks, (lhs, rhs) -> {
+                            if (lhs.commLinkId < rhs.commLinkId) {
+                                return -1;
+                            } else if (lhs.commLinkId.equals(rhs.commLinkId)) {
+                                return 0;
+                            } else {
+                                return 1;
+                            }
+                        });
+                        LinkedHashMap<Long, CommLinkModel> sa = new LinkedHashMap<>(favoriteCommLinks.size());
+                        for (CommLinkModel favoriteCommLink : favoriteCommLinks) {
+                            sa.put(favoriteCommLink.commLinkId, favoriteCommLink);
+                        }
+                        action.getData().put(Keys.COMM_LINK_FAVORITES, sa);
+                        postRxAction(action);
+                    } else {
+                        action.getData().put(Keys.COMM_LINK_FAVORITES, new ArrayList<CommLinkModel>());
+                        postRxAction(action);
+                    }
+                });
     }
 
     /**
@@ -555,6 +610,7 @@ public class GtActionCreator extends RxActionCreator implements Actions {
                         a.getData().put(Keys.SHIP_DATA_LIST, shipList);
                         postRxAction(a);
                     } else if (favorite.type == Favorite.TYPE_COMM_LINK) {
+                        // TODO: save the comm link for offline viewing
                         CommLinkStore commLinkStore = CommLinkStore.get(GtApplication.getInstance().getRxFlux().getDispatcher());
                         CommLinkModel cl = commLinkStore.getCommLink(Long.valueOf(favorite.reference));
                         cl.favorite = true;
