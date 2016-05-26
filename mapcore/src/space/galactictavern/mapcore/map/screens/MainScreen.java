@@ -28,6 +28,9 @@ import space.galactictavern.mapcore.map.data.SystemsResultset;
 import space.galactictavern.mapcore.map.data.TunnelsResultset;
 
 public class MainScreen extends BaseScreen {
+    private final static int ORIENTATION_SQUARE = 0;
+    private final static int ORIENTATION_PORTRAIT = 1;
+    private final static int ORIENTATION_LANDSCAPE = 2;
     private final float mViewportWidth = 1000f;
     private final float mMaxZoom = 12.5f;
     private final float mMinZoom = 2.5f;
@@ -105,16 +108,24 @@ public class MainScreen extends BaseScreen {
     }
 
     private void setupBackground() {
+        int screenOrientation = getScreenOrientation();
         mBackgroundTexture = new Texture(Gdx.files.internal("space_background.jpg"));
         mParallaxBackground = new ParallaxBackground();
-        TextureRegionParallaxLayer layer = new TextureRegionParallaxLayer(
-                new TextureRegion(mBackgroundTexture), mViewportWidth * 16, new Vector2(), Utils.WH.width);
+        TextureRegionParallaxLayer layer;
+        if (screenOrientation == ORIENTATION_PORTRAIT) {
+            layer = new TextureRegionParallaxLayer(
+                    new TextureRegion(mBackgroundTexture), mViewportWidth * 20, new Vector2(), Utils.WH.height);
+            mParallaxBackground.setOffset(new Vector3(-5000, -5000, 0));
+        } else {
+            layer = new TextureRegionParallaxLayer(
+                    new TextureRegion(mBackgroundTexture), mViewportWidth * 20, new Vector2(), Utils.WH.width);
+            mParallaxBackground.setOffset(new Vector3(-2000, 0, 0));
+        }
         layer.setAllPad(-mViewportWidth * 5);
         layer.setParallaxRatio(0.1f, 0.1f);
         layer.setTileModeX(ParallaxLayer.TileMode.single);
         layer.setTileModeY(ParallaxLayer.TileMode.single);
         mParallaxBackground.addLayers(layer);
-        mParallaxBackground.setOffset(new Vector3(-2000, 0, 0));
     }
 
     public void setMapData(StarMapData data) {
@@ -389,5 +400,20 @@ public class MainScreen extends BaseScreen {
         mCam.update();
         Vector3 newUnprojection = mCam.unproject(origin.cpy()).cpy();
         mCam.position.add(oldUnprojection.cpy().add(newUnprojection.cpy().scl(-1f)));
+    }
+
+    private int getScreenOrientation() {
+        int w = Gdx.graphics.getWidth();
+        int h = Gdx.graphics.getHeight();
+
+        int orientation;
+        if (w == h) {
+            orientation = ORIENTATION_SQUARE;
+        } else if (w < h) {
+            orientation = ORIENTATION_PORTRAIT;
+        } else {
+            orientation = ORIENTATION_LANDSCAPE;
+        }
+        return orientation;
     }
 }
