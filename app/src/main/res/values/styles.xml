@@ -196,4 +196,6 @@
         <item name="android:windowExitAnimation">@anim/window_exit</item>
     </style>
 
+    <style name="AppTheme.MapActivity" parent="AppTheme.NoActionBar"></style>
+
 </resources>

@@ -49,10 +49,10 @@ import space.galactictavern.app.stores.CommLinkStore;
 import space.galactictavern.app.stores.ForumStore;
 import space.galactictavern.app.stores.OrganizationStore;
 import space.galactictavern.app.stores.ShipStore;
-import space.galactictavern.app.stores.StarmapStore;
 import space.galactictavern.app.stores.UserStore;
 import space.galactictavern.app.ui.commlinks.CommLinkListFragment;
 import space.galactictavern.app.ui.forums.ForumListFragment;
+import space.galactictavern.app.ui.maps.MapActivity;
 import space.galactictavern.app.ui.maps.MapFragment;
 import space.galactictavern.app.ui.orgs.OrgsFragment;
 import space.galactictavern.app.ui.prefs.SettingsActivity;
@@ -88,11 +88,6 @@ public class MainActivity extends AppCompatActivity
      * Instance of {@link OrganizationStore} for retrieving organization data
      */
     private OrganizationStore mOrganizationStore;
-
-    /**
-     * Instance of {@link StarmapStore} for retrieving starmap data
-     */
-    private StarmapStore mStarmapStore;
 
     /**
      * Instance of {@link ForumStore} for retrieving forum data
@@ -393,22 +388,8 @@ public class MainActivity extends AppCompatActivity
      * Creates and shows the {@link .MapsFragment}
      */
     private void openMapFragment() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        String simpleClassName = MapFragment.class.getSimpleName();
-
-        mCurrentFragment = fragmentManager.findFragmentByTag(simpleClassName);
-        if (mCurrentFragment == null) {
-            mCurrentFragment = MapFragment.newInstance();
-        }
-
-        fragmentTransaction.replace(R.id.fragment_container, mCurrentFragment, simpleClassName);
-        fragmentTransaction.commit();
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(R.string.navigation_drawer_starmap);
-        }
-
-        Prefs.putString(KEY_CURRENT_FRAGMENT, simpleClassName);
+        Intent i = new Intent(this, MapActivity.class);
+        startActivity(i);
     }
 
     private void openSettings() {
@@ -532,15 +513,6 @@ public class MainActivity extends AppCompatActivity
                         }
                 }
                 break;
-            case StarmapStore.ID:
-                switch (change.getRxAction().getType()) {
-                    case Actions.GET_STARMAP_BOOT_UP_DATA:
-                        if (mCurrentFragment != null && mCurrentFragment instanceof MapFragment) {
-                            MapFragment f = (MapFragment) mCurrentFragment;
-                            f.setStarMapData(mStarmapStore.getBootUpData());
-                        }
-                }
-                break;
         }
     }
 
@@ -569,10 +541,9 @@ public class MainActivity extends AppCompatActivity
         mUserStore = UserStore.get(dispatcher);
         mOrganizationStore = OrganizationStore.get(dispatcher);
         mForumsStore = ForumStore.get(dispatcher);
-        mStarmapStore = StarmapStore.get(dispatcher);
 
         return Arrays.asList(mCommLinkStore, mShipStore, mUserStore,
-                mOrganizationStore, mForumsStore, mStarmapStore);
+                mOrganizationStore, mForumsStore);
     }
 
     @Nullable

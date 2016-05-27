@@ -159,6 +159,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="space.galactictavern.app.ui.MainActivity" />
         </activity>
+        <activity
+            android:name=".ui.maps.MapActivity"
+            android:theme="@style/AppTheme.MapActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="space.galactictavern.app.ui.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

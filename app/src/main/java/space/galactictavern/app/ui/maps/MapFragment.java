@@ -17,9 +17,7 @@ import android.widget.TextView;
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 import com.pixplicity.easyprefs.library.Prefs;
 
-import space.galactictavern.app.GtApplication;
 import space.galactictavern.app.R;
-import space.galactictavern.app.stores.StarmapStore;
 import space.galactictavern.mapcore.map.GtStarMap;
 import space.galactictavern.mapcore.map.data.StarMapData;
 import space.galactictavern.mapcore.map.data.SystemsResultset;
@@ -58,14 +56,6 @@ public class MapFragment extends AndroidFragmentApplication implements GtStarMap
         mGtStarMap = new GtStarMap(this, mapState);
         View view = initializeForView(mGtStarMap);
         starMapView.addView(view);
-
-        mBootUpData = StarmapStore.get(GtApplication.getInstance().getRxFlux().getDispatcher())
-                .getBootUpData();
-        if (mBootUpData.data == null) {
-            GtApplication.getInstance().getActionCreator().getStarMapBootUpData();
-        } else {
-            setupStarMap();
-        }
         return v;
     }
 

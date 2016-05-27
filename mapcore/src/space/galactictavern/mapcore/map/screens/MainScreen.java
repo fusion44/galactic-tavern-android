@@ -277,6 +277,10 @@ public class MainScreen extends BaseScreen {
 
     @Override
     public boolean tap(float x, float y, int count, int button) {
+        if (mMapData == null) {
+            return true;
+        }
+
         int x_screen = -(Gdx.graphics.getWidth() / 2) + (int) x;
         int y_screen = -(Gdx.graphics.getHeight() / 2) + (int) y;
         mSelectedCallback.onTap(x_screen, y_screen);
