@@ -24,6 +24,7 @@ import space.galactictavern.app.core.chrome.WebviewFallback;
 import space.galactictavern.app.models.commlink.CommLinkModel;
 import space.galactictavern.app.models.commlink.ContentBlock2;
 import space.galactictavern.app.models.commlink.Wrapper;
+import space.galactictavern.app.ui.FullScreenImageGallery;
 import space.galactictavern.app.ui.GlideImageGetter;
 import space.galactictavern.app.ui.InterceptLinkMovementMethod;
 import timber.log.Timber;
@@ -98,6 +99,17 @@ public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             } else {
                 Timber.d("Error parsing discussion id from url %s", url);
             }
+        } else if (url.startsWith("js-open-in-slideshow:")) {
+            String key = url.split("js-open-in-slideshow:")[1];
+            Integer pos = mCommLinkModel.commLinkBaseSlideShowKeyPositions.get(key);
+            Intent intent = new Intent(mActivity, FullScreenImageGallery.class);
+
+            intent.putStringArrayListExtra(
+                    FullScreenImageGallery.KEY_IMAGES, mCommLinkModel.commLinkBaseSlideShow);
+            intent.putExtra(FullScreenImageGallery.KEY_POSITION, pos);
+            intent.putExtra(FullScreenImageGallery.KEY_TITLE, "Comm Link");
+
+            mActivity.startActivity(intent);
         } else if (url.contains("youtube.com")) {
             Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             mActivity.startActivity(i);

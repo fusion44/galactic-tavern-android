@@ -151,6 +151,9 @@ public class GtActionCreator extends RxActionCreator implements Actions {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(parts -> {
+                    // slideShowLinkPosition keeps track at which position each
+                    // key (the href from link) will be located in the LinkedHashMap
+                    int slideShowLinkPosition = 0;
                     for (Wrapper wrapper : parts) {
                         ContentBlock1 cb1 = wrapper.getContentBlock1();
                         if (cb1 != null &&
@@ -168,6 +171,21 @@ public class GtActionCreator extends RxActionCreator implements Actions {
                                         + GtApplication.getContext().getString(R.string.click_to_open_video);
                                 strings.add(content);
                                 cb1.setContent(strings);
+                            }
+                        } else if (cb1 != null &&
+                                cb1.getContent().size() > 0) {
+                            Dispatcher d = GtApplication.getInstance().getRxFlux().getDispatcher();
+                            CommLinkModel cm = CommLinkStore.get(d).getCommLink(id);
+                            for (String contentPart : cb1.getContent()) {
+                                String[] split = contentPart.split("js-open-in-slideshow:");
+                                for (String url : split) {
+                                    if (url.startsWith("/media/")) {
+                                        String[] imgUrl = url.split("\"><img src");
+                                        cm.commLinkBaseSlideShow.add(Utility.RSI_BASE_URL + imgUrl[0]);
+                                        cm.commLinkBaseSlideShowKeyPositions.put(imgUrl[0], slideShowLinkPosition);
+                                        slideShowLinkPosition++;
+                                    }
+                                }
                             }
                         }
                         if (wrapper.getContentBlock2() != null &&

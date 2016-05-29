@@ -46,6 +46,7 @@ public class FullScreenImageGallery extends FragmentActivity {
                 .setZoom(true)
                 .setFragmentManager(getSupportFragmentManager())
                 .addMedia(infos);
+        mGalleryView.setCurrentItem(mInitialPosition);
     }
 
     public class GlideImageLoader implements MediaLoader {

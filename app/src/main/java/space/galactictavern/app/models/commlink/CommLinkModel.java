@@ -6,6 +6,7 @@ import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteColumn;
 import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import space.galactictavern.app.models.common.BaseModel;
@@ -66,6 +67,14 @@ public class CommLinkModel extends BaseModel {
      * Depicts whether the user has favorited this comm link or not
      */
     public boolean favorite = false;
+
+    /**
+     * A comm link can have a slide show which is overarching through the content.
+     * Such image links will be collected here
+     */
+    public ArrayList<String> commLinkBaseSlideShow = new ArrayList<>();
+
+    public HashMap<String, Integer> commLinkBaseSlideShowKeyPositions = new HashMap<>();
 
     /**
      * No args constructor for use in serialization
