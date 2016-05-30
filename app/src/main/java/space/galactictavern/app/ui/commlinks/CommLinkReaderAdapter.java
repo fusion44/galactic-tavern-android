@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
+import android.text.method.MovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+
+import java.util.ArrayList;
 
 import space.galactictavern.app.R;
 import space.galactictavern.app.core.Utility;
@@ -38,11 +41,23 @@ public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         implements InterceptLinkMovementMethod.LinkClickedCallback {
     private final CommLinkModel mCommLinkModel;
     private AppCompatActivity mActivity;
+    private ArrayList<MovementMethod> mMovementMethods = new ArrayList<>();
 
     public CommLinkReaderAdapter(CommLinkModel model, AppCompatActivity c) {
         super();
         mCommLinkModel = model;
         mActivity = c;
+    }
+
+    @Override
+    public void onViewRecycled(RecyclerView.ViewHolder holder) {
+        if (holder instanceof SingleViewHolder) {
+            // This is to prevent leaks of mActivity
+            SingleViewHolder svh = (SingleViewHolder) holder;
+            mMovementMethods.add(svh.contentTextView.getMovementMethod());
+            svh.contentTextView.setMovementMethod(null);
+        }
+        super.onViewRecycled(holder);
     }
 
     @Override
@@ -74,9 +89,24 @@ public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        mMovementMethods.clear();
+    }
+
+    @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof SingleViewHolder) {
             SingleViewHolder vh = (SingleViewHolder) holder;
+            if (vh.contentTextView.getMovementMethod() == null) {
+                if (mMovementMethods.size() > 0) {
+                    MovementMethod m = mMovementMethods.remove(0);
+                    vh.contentTextView.setMovementMethod(m);
+                } else {
+                    vh.contentTextView.setMovementMethod(
+                            InterceptLinkMovementMethod.getInstance(this));
+                }
+            }
             vh.bindWrapper(mCommLinkModel.wrappers.get(position));
         } else if (holder instanceof SlideshowViewHolder) {
             SlideshowViewHolder vh = (SlideshowViewHolder) holder;
@@ -100,16 +130,18 @@ public class CommLinkReaderAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 Timber.d("Error parsing discussion id from url %s", url);
             }
         } else if (url.startsWith("js-open-in-slideshow:")) {
-            String key = url.split("js-open-in-slideshow:")[1];
-            Integer pos = mCommLinkModel.commLinkBaseSlideShowKeyPositions.get(key);
-            Intent intent = new Intent(mActivity, FullScreenImageGallery.class);
+            if (url.split("js-open-in-slideshow:").length > 0) {
+                String key = url.split("js-open-in-slideshow:")[1];
+                Integer pos = mCommLinkModel.commLinkBaseSlideShowKeyPositions.get(key);
+                Intent intent = new Intent(mActivity, FullScreenImageGallery.class);
 
-            intent.putStringArrayListExtra(
-                    FullScreenImageGallery.KEY_IMAGES, mCommLinkModel.commLinkBaseSlideShow);
-            intent.putExtra(FullScreenImageGallery.KEY_POSITION, pos);
-            intent.putExtra(FullScreenImageGallery.KEY_TITLE, "Comm Link");
+                intent.putStringArrayListExtra(
+                        FullScreenImageGallery.KEY_IMAGES, mCommLinkModel.commLinkBaseSlideShow);
+                intent.putExtra(FullScreenImageGallery.KEY_POSITION, pos);
+                intent.putExtra(FullScreenImageGallery.KEY_TITLE, "Comm Link");
 
-            mActivity.startActivity(intent);
+                mActivity.startActivity(intent);
+            }
         } else if (url.contains("youtube.com")) {
             Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             mActivity.startActivity(i);
