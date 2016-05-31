@@ -1,8 +1,7 @@
-package space.galactictavern.app.core.gcm;
+package space.galactictavern.app.core.fcm;
 
-import android.os.Bundle;
-
-import com.google.android.gms.gcm.GcmListenerService;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -12,25 +11,17 @@ import space.galactictavern.app.core.Utility;
 import space.galactictavern.app.models.commlink.CommLinkModel;
 import timber.log.Timber;
 
-public class GtGcmListenerService extends GcmListenerService {
-
-    /**
-     * Called when message is received.
-     *
-     * @param from SenderID of the sender.
-     * @param data Data bundle containing message data as key/value pairs.
-     *             For Set of keys use data.keySet().
-     */
+public class GtFirebaseMessagingService extends FirebaseMessagingService {
     @Override
-    public void onMessageReceived(String from, Bundle data) {
-        Timber.d("Got message from %s", from);
+    public void onMessageReceived(RemoteMessage remoteMessage) {
+        Timber.d("Got message from %s", remoteMessage.getFrom());
 
-        String dat = data.getString("CommLink");
+        String dat = remoteMessage.getData().get("CommLink");
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
         CommLinkModel m = gson.fromJson(dat, CommLinkModel.class);
 
-        if (from.startsWith("/topics/")) {
+        if (remoteMessage.getFrom().startsWith("/topics/")) {
             // Not yet!
             Timber.d("message received from some topic.");
         } else {

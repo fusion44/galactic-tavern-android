@@ -48,6 +48,14 @@ public class Utility {
      */
     public static final String ANALYTICS_KEY_VALUE = "analytics_key_value";
     /**
+     * Key for getting whether the device registration id was successfully registered with the server
+     */
+    public static final String PREFS_FCM_DEVICE_REGISTRATION_TOKEN_SENT = "FCM_DEVICE_REGISTRATION_SENT";
+    /**
+     * Intent for broadcasting the successful device registration
+     */
+    public static final String FCM_DEVICE_REGISTRATION_COMPLETE = "INTENT_FCM_DEVICE_REGISTRATION_COMPLETED";
+    /**
      * The Notification ID for all notifications related to comm links
      */
     private static final int NOTIFICATION_ID_COMM_LINK = 2210;

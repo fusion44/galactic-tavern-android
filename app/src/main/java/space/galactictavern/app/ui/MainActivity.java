@@ -42,7 +42,7 @@ import space.galactictavern.app.R;
 import space.galactictavern.app.actions.Actions;
 import space.galactictavern.app.actions.Keys;
 import space.galactictavern.app.core.Utility;
-import space.galactictavern.app.core.gcm.GcmRegistrationIntentService;
+import space.galactictavern.app.core.fcm.GtFirebaseInstanceIdService;
 import space.galactictavern.app.models.commlink.CommLinkModel;
 import space.galactictavern.app.models.ship.Ship;
 import space.galactictavern.app.stores.CommLinkStore;
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity
     private Fragment mCurrentFragment;
 
     /**
-     * Listens for changes to the GCM device registration state
+     * Listens for changes to the FCM device registration state
      */
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     private boolean mIsReceiverRegistered;
@@ -169,13 +169,13 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onReceive(Context context, Intent intent) {
                 boolean sentToken = Prefs.getBoolean(
-                        GcmRegistrationIntentService.DEVICE_REGISTRATION_TOKEN_SENT, false);
+                        Utility.PREFS_FCM_DEVICE_REGISTRATION_TOKEN_SENT, false);
                 // TODO: Handle incoming messages if UI is active
             }
         };
 
         if (Utility.checkPlayServices(this)) {
-            Intent intent = new Intent(this, GcmRegistrationIntentService.class);
+            Intent intent = new Intent(this, GtFirebaseInstanceIdService.class);
             startService(intent);
         }
 
@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity
     private void registerReceiver() {
         if (!mIsReceiverRegistered) {
             LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                    new IntentFilter(GcmRegistrationIntentService.DEVICE_REGISTRATION_COMPLETE));
+                    new IntentFilter(Utility.FCM_DEVICE_REGISTRATION_COMPLETE));
             mIsReceiverRegistered = true;
         }
     }

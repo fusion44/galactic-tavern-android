@@ -9,9 +9,9 @@ import rx.Observable;
 import space.galactictavern.app.models.common.StandardResponse;
 
 /**
- * Retrofit interface for managing this devices GCM subscription
+ * Retrofit interface for managing this devices FCM subscription
  */
-public interface GcmApiService {
+public interface FcmApiService {
     String BASE_URL = "https://galactictavern.appspot.com";
 
     /**
@@ -21,7 +21,7 @@ public interface GcmApiService {
      * @param token  Registration token of the device
      * @return Observable which will be called once done loading
      */
-    @POST("/v1/gcm_backend/register_device")
+    @POST("/v1/fcm_backend/register_device")
     Observable<StandardResponse> registerDevice(
             @Query("secret") String secret,
             @Query("token") String token,
@@ -34,7 +34,7 @@ public interface GcmApiService {
      * @param token  Registration token of the device
      * @return Observable which will be called once done loading
      */
-    @POST("/v1/gcm_backend/unregister_device")
+    @POST("/v1/fcm_backend/unregister_device")
     Observable<String> unregisterDevice(
             @Query("secret") String secret,
             @Query("token") String token);
@@ -43,14 +43,14 @@ public interface GcmApiService {
      * Factory class to create and store the singleton
      */
     class Factory {
-        private static GcmApiService mService;
+        private static FcmApiService mService;
 
         /**
          * Get the service instance without logging enabled
          *
          * @return the api service without logging
          */
-        public static synchronized GcmApiService getInstance() {
+        public static synchronized FcmApiService getInstance() {
             if (mService == null) {
                 Retrofit retrofit =
                         new Retrofit.Builder()
@@ -58,7 +58,7 @@ public interface GcmApiService {
                                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                                 .baseUrl(BASE_URL)
                                 .build();
-                mService = retrofit.create(GcmApiService.class);
+                mService = retrofit.create(FcmApiService.class);
 
             }
             return mService;
