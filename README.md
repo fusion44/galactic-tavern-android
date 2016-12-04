@@ -10,11 +10,15 @@ Search for Users, Organizations and the forums. Follow your favourite organizati
 People that are interested in the Star Citizen game.
 More info about the game can be found at: https://robertsspaceindustries.com/
 
-
 #### Features
 Get the latest official news as soon as they are released
 Search Users, Organizations, Ships and more
 Favorite Users, Orgs and Forum threads for quick access later on
+
+#### Screenshots
+![Screenshot of the drawer menu](./screenshots/appscreenshots_drawer.jpg?raw=true "Screenshot of the drawer menu")
+![Screenshot of the start map activity](./screenshots/appscreenshots_map.jpg?raw=true "Screenshot of the start map activity")
+![Screenshot of the ships viewer activity](./screenshots/appscreenshots_ships.jpg?raw=true "Screenshot of the ships viewer activity")
 
 ### Development
 #### Some rules for the source code layout:
@@ -23,7 +27,7 @@ Favorite Users, Orgs and Forum threads for quick access later on
 * Bundle keys reside in the *receiving* class
 
 #### Used libraries
-[RxFlux](www.fsdg.de) - provides a framework to build an apps upon. It provides guides to implement the
+[RxFlux](https://github.com/skimarxall/RxFlux) - provides a framework to build an apps upon. It provides guides to implement the
 Facebooks Flux pattern with the help of RxJava. This will help keeping the code maintainable
 once it grows in size.
 
@@ -32,16 +36,11 @@ Retrofit integrates nicely with RxJava. This will be used fetch data from http:/
 
 [Retrolambda](https://github.com/orfjackal/retrolambda) and [Retrolambda Grade Plugin](https://github.com/evant/gradle-retrolambda) Backport of Java 8’s Lambdas to Android’s Java 7
 
-[PkRSS](https://github.com/Pkmmte/PkRSS)  - Is a library for reading an RSS feed and making it available for easy consumption within my code
-
 [StorIO](https://github.com/pushtorefresh/storio) - An abstraction layout for SQLiteDatabase and ContentResolver. This is for persisting data to SQLite
 
 [Stetho](http://facebook.github.io/stetho/) - For making debugging easier (especially browsing the SQL database easily from Chrome). This will be implemented in Debug build only.
 
 [FloatingSearchView](https://github.com/renaudcerrato/FloatingSearchView) - For providing a nice looking search view
-
-Optional:
-[Dagger2](http://google.github.io/dagger/) - A dependency injection framework for managing dependencies in a maintainable way. This needs serious research which might cause the project to take much longer.
 
 #### Lessons learned during development
 Here I keep a loose log of problems and weird stuff I came across during development for future reference.
@@ -66,3 +65,18 @@ to avoid the newly created action being mistaken to an existing one
 * While [jsonschema2pojo](http://www.jsonschema2pojo.org/) is great for quickly converting a JSON string to a usable POJO there are some things to consider.
   * Make sure to have a JSON file which has all data and does not contain nulls where there should be an actual object.
   * Check the resulting POJOs for Object fields where there should be another type like String or another class instance.
+
+### License
+Copyright 2016 Stefan Stammberger
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
