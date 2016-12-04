@@ -20,6 +20,9 @@ Favorite Users, Orgs and Forum threads for quick access later on
 ![Screenshot of the start map activity](./screenshots/appscreenshots_map.jpg?raw=true "Screenshot of the start map activity")
 ![Screenshot of the ships viewer activity](./screenshots/appscreenshots_ships.jpg?raw=true "Screenshot of the ships viewer activity")
 
+#### Video
+[![Video](https://img.youtube.com/vi/SJ-6UW2xP-E/0.jpg)](https://www.youtube.com/watch?v=SJ-6UW2xP-E)
+
 ### Development
 #### Some rules for the source code layout:
 * Before every commit, apply the source code formatter and cleanup
