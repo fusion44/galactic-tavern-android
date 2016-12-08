@@ -45,6 +45,12 @@ Retrofit integrates nicely with RxJava. This will be used fetch data from http:/
 
 [FloatingSearchView](https://github.com/renaudcerrato/FloatingSearchView) - For providing a nice looking search view
 
+[ScrollGalleryView](https://github.com/VEINHORN/ScrollGalleryView) - for the gallery view in the comm links section
+
+[LibGDX](https://libgdx.badlogicgames.com/) - OpenGL library for rendering the star map
+
+[ParallaxBackground-libgdx](https://github.com/surahul/ParallaxBackground-libgdx) - For the paralax scroll effect in star map
+
 #### Lessons learned during development
 Here I keep a loose log of problems and weird stuff I came across during development for future reference.
 
